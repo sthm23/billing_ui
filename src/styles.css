@@ -3,4 +3,6 @@
 @import "tailwindcss";
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
+@import "./assets/styles/common.css";
 @custom-variant dark (&:where(.app-dark, .app-dark *));
+

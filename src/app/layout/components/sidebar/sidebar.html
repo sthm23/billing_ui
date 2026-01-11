@@ -1,0 +1,13 @@
+<div class="layout-sidebar">
+  <ul class="layout-menu">
+    @for (item of model; track $index; let i = $index) {
+    @if (item.separator) {
+    <li class="menu-separator"></li>
+    }@else {
+    <li app-menuitem [item]="item" [index]="i" [root]="true"></li>
+    }
+    }
+
+
+  </ul>
+</div>
