@@ -4,5 +4,6 @@
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 @import "./assets/styles/common.css";
+@import "./assets/styles/menu.css";
 @custom-variant dark (&:where(.app-dark, .app-dark *));
 
