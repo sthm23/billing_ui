@@ -8,7 +8,6 @@
     <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
     <span class="layout-menuitem-text">{{ item.label }}</span>
     @if(item.items) {
-
     <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
     }
   </a>
@@ -30,7 +29,7 @@
   </a>
   }
   @if(item.items && item.visible !== false) {
-  <ul [@children]="submenuAnimation">
+  <ul class="layout-submenu" [class.layout-submenu-expanded]="submenuAnimation === 'expanded'">
     <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
       <li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child['badgeClass']"></li>
     </ng-template>
