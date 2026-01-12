@@ -4,7 +4,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
-import { MyPreset } from './custom-theme';
+import { Noir } from './custom-theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     providePrimeNG({
       theme: {
-        preset: MyPreset,
+        preset: Noir,
         options: {
           darkModeSelector: '.app-dark'
         }

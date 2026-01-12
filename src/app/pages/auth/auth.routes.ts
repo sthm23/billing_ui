@@ -1,9 +1,9 @@
 import { Routes } from "@angular/router";
 import { Login } from "./login/login";
-import { SignIn } from "./sign-in/sign-in";
+import { SignUp } from "./sign-up/sign-up";
 
 
 export default [
-  { path: 'sign-in', component: SignIn },
+  { path: 'sign-up', component: SignUp },
   { path: 'login', component: Login }
 ] as Routes;

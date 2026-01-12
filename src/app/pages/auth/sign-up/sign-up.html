@@ -1,0 +1,63 @@
+<div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+  <div class="flex w-full max-w-sm flex-col gap-6">
+    <a routerLink="/" class="flex items-center gap-2 self-center font-medium">
+      <div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+        <i class="pi pi-box"></i>
+      </div>
+      My billing
+    </a>
+
+    <div class="flex flex-col">
+      <div class="card">
+        <div class="text-center">
+          <h2 class="text-xl">Create your account</h2>
+          <p>
+            Enter your email below to create your account
+          </p>
+        </div>
+        <div class="card-content">
+          <form>
+
+            <div class="flex flex-col gap-2 mt-4">
+              <label for="name">Full Name</label>
+              <input pInputText id="name" type="text" placeholder="John Doe" required fluid />
+            </div>
+            <div class="flex flex-col gap-2 mt-4">
+              <label for="email">Email</label>
+              <input pInputText id="email" type="email" placeholder="m@example.com" required fluid />
+            </div>
+            <div class="flex flex-col gap-2 mb-4">
+              <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="flex flex-col gap-2">
+                  <label for="password">Password</label>
+                  <Input pInputText id="password" type="password" required />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="confirm-password">
+                    Confirm Password
+                  </label>
+                  <Input pInputText id="confirm-password" type="password" required />
+                </div>
+              </div>
+              <p class="text-sm text-muted">
+                Must be at least 8 characters long.
+              </p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <button pButton type="submit" fluid>Create Account</button>
+              <p class="text-center">
+                Already have an account? <a routerLink="/auth/login">Sign in</a>
+              </p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <p class="px-6 text-center">
+        By clicking continue, you agree to our <a class="underline" routerLink="/">Terms of Service </a>
+        and <a class="underline" routerLink="/">Privacy Policy</a>.
+      </p>
+    </div>
+
+  </div>
+</div>
