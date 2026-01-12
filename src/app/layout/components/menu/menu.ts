@@ -42,9 +42,9 @@ export class Menu {
                 routerLink: ['/auth/login']
               },
               {
-                label: 'Sign In',
+                label: 'Sign Up',
                 icon: 'pi pi-fw pi-lock',
-                routerLink: ['/auth/sign-in']
+                routerLink: ['/auth/sign-up']
               }
             ]
           },
