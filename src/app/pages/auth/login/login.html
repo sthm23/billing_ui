@@ -1,1 +1,57 @@
-<p>login works!</p>
+<div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+  <div class="flex w-full max-w-sm flex-col gap-6">
+    <a routerLink="/" class="flex items-center gap-2 self-center font-medium">
+      <div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+        <i class="pi pi-box"></i>
+      </div>
+      My billing
+    </a>
+
+    <div class="flex flex-col">
+      <div class="card">
+        <h2 class="text-center">Welcome back</h2>
+        <p class="text-center"> Login with your Apple or Google account </p>
+        <div class="card-content">
+          <form>
+            <div class="flex flex-col">
+              <p-button class="mt-4" label="Login with Apple" icon="pi pi-apple" type="button" variant="outlined"
+                fluid />
+              <p-button class="mt-4" label="Login with Google" icon="pi pi-google" type="button" variant="outlined"
+                fluid />
+            </div>
+            <p-divider>
+              <b>Or continue with</b>
+            </p-divider>
+            <div class="flex flex-col">
+              <label for="email">Email</label>
+              <input class="mt-2" pInputText id="email" autocomplete="off" placeholder="m@example.com" required fluid />
+            </div>
+
+            <div class="flex flex-col mt-4">
+              <div class="flex items-center">
+                <label for="password">Password</label>
+                <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">
+                  Forgot your password?
+                </a>
+              </div>
+              <input class="mt-2" pInputText id="password" type="password" required />
+            </div>
+            <div class="flex flex-col gap-2 mt-4">
+              <p-button label="Login" class="w-full" styleClass="w-full" fluid />
+
+              <p class="text-center">
+                Don&apos;t have an account? <a [routerLink]="['/sign-up']">Sign up</a>
+              </p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <p class="text-center">
+        By clicking continue, you agree to our <a class="underline" routerLink="/">Terms of Service </a>
+        and <a class="underline" routerLink="/">Privacy Policy</a>.
+      </p>
+    </div>
+
+  </div>
+</div>

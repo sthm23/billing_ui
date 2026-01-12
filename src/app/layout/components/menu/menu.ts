@@ -20,6 +20,9 @@ export class Menu {
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
       },
       {
+        separator: true
+      },
+      {
         label: 'Pages',
         icon: 'pi pi-fw pi-briefcase',
         routerLink: ['/pages'],
