@@ -49,6 +49,22 @@ export class Menu {
             ]
           },
           {
+            label: 'Product',
+            icon: 'pi pi-fw pi-tag',
+            items: [
+              {
+                label: 'List',
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/pages/product/list']
+              },
+              {
+                label: 'Create',
+                icon: 'pi pi-fw pi-plus-circle',
+                routerLink: ['/pages/product/create']
+              }
+            ]
+          },
+          {
             label: 'Not Found',
             icon: 'pi pi-fw pi-exclamation-circle',
             routerLink: ['/pages/notfound']
