@@ -33,6 +33,17 @@ export class Menu {
             routerLink: ['/landing']
           },
           {
+            label: 'Organization',
+            icon: 'pi pi-fw pi-sitemap',
+            items: [
+              {
+                label: 'Organization',
+                icon: 'pi pi-fw pi-globe',
+                routerLink: ['/pages/organization/org-tree']
+              },
+            ]
+          },
+          {
             label: 'Auth',
             icon: 'pi pi-fw pi-user',
             items: [
