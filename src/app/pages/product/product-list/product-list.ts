@@ -35,7 +35,7 @@ export class ProductList implements OnInit, OnDestroy {
   constructor() { }
 
   ngOnInit() {
-    this.fetchProducts(this.first() / this.rows + 1, this.rows);
+    // this.fetchProducts(this.first() / this.rows + 1, this.rows);
   }
 
   fetchProducts(page = 1, pageSize = 10) {

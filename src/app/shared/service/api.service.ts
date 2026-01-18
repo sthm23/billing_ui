@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { User, UserType } from "../../models/user.model";
+import { AuthRequest, AuthResponse } from "../../models/auth.model";
 
 
 @Injectable({
@@ -50,7 +51,7 @@ export class ApiService {
       totalItems: this.users.length,
       data: this.users.slice((page - 1) * pageSize, page * pageSize)
     })
-    // return this.http.get<{ result: any[] }>('http://localhost:3000/products');
+    // return this.http.get<{ result: any[] }>('/api/products');
   }
 
   getUsers(page: number = 1, pageSize: number = 10): Observable<{ currentPage: number; totalPages: number; pageSize: number; totalItems: number; data: User[] }> {
@@ -61,6 +62,6 @@ export class ApiService {
       totalItems: this.users.length,
       data: this.users.slice((page - 1) * pageSize, page * pageSize)
     })
-    // return this.http.get<{ result: any[] }>('http://localhost:3000/users');
+    // return this.http.get<{ result: any[] }>('/api/users');
   }
 }

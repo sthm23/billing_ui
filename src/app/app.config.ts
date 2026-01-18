@@ -1,10 +1,13 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
 import { Noir } from './custom-theme';
+import { AuthInterceptor } from './shared/service/auth.interceptor';
+import { TokenInterceptor } from './shared/service/token.interceptor';
+import { BaseUrlInterceptor } from './shared/service/url.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +17,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
       withEnabledBlockingInitialNavigation()
     ),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
     providePrimeNG({
       theme: {
         preset: Noir,
@@ -22,6 +25,9 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: '.app-dark'
         }
       }
-    })
+    }),
+    { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ]
 };
