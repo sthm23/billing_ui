@@ -1,5 +1,5 @@
 <div class="card">
-  <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
+  <p-table #dt [lazy]="true" [value]="users" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
     [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
     <ng-template #header>
       <tr>
@@ -9,12 +9,12 @@
         <th style="width:25%">Type</th>
       </tr>
     </ng-template>
-    <ng-template #body let-product>
+    <ng-template #body let-user>
       <tr>
-        <td>{{ product.fullName }}</td>
-        <td>{{ product.phone }}</td>
-        <td>{{ product.createdAt }}</td>
-        <td>{{ product.type }}</td>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.createdAt }}</td>
+        <td>{{ user.type }}</td>
       </tr>
     </ng-template>
   </p-table>

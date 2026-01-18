@@ -94,6 +94,10 @@ export const AppStore = signalStore(
         productsConfig));
     },
 
+    removeProduct(id: string) {
+      patchState(store, removeEntity(id, productsConfig))
+    },
+
     // setOrders(orders: OrderType[]) {
     //   patchState(store, addEntities(orders, ordersConfig))
     // },
@@ -111,9 +115,7 @@ export const AppStore = signalStore(
     //     ordersConfig));
     // },
 
-    // removeProduct(id: string) {
-    //   patchState(store, removeEntity(id, productsConfig))
-    // },
+
     // removeOrder(id: string) {
     //   patchState(store, removeEntity(id, ordersConfig))
     // },

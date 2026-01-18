@@ -65,6 +65,22 @@ export class Menu {
             ]
           },
           {
+            label: 'User',
+            icon: 'pi pi-fw pi-users',
+            items: [
+              {
+                label: 'List',
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/pages/user/list']
+              },
+              {
+                label: 'Create',
+                icon: 'pi pi-fw pi-plus-circle',
+                routerLink: ['/pages/user/create']
+              }
+            ]
+          },
+          {
             label: 'Not Found',
             icon: 'pi pi-fw pi-exclamation-circle',
             routerLink: ['/pages/notfound']

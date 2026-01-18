@@ -1,7 +1,7 @@
 
-enum UserType {
-  CUSTOMER,
-  STAFF
+export enum UserType {
+  CUSTOMER = 'CUSTOMER',
+  STAFF = 'STAFF'
 }
 enum StaffRole {
   SELLER,
@@ -18,12 +18,12 @@ export interface User {
   type: UserType
   createdAt: string
 
-  auth: AuthAccount
-  staff: Staff
-  stores: Store[]
+  auth?: AuthAccount
+  staff?: Staff
+  stores?: Store[]
   admin?: Admin
   // orders: Order[]
-  refreshSessions: RefreshSession[]
+  refreshSessions?: RefreshSession[]
 }
 
 
