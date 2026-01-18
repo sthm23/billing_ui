@@ -4,11 +4,11 @@ export enum UserType {
   STAFF = 'STAFF'
 }
 enum StaffRole {
-  SELLER,
-  MANAGER,
-  CASHIER,
-  WAREHOUSE,
-  OWNER,
+  SELLER = 'SELLER',
+  MANAGER = 'MANAGER',
+  CASHIER = 'CASHIER',
+  WAREHOUSE = 'WAREHOUSE',
+  OWNER = 'OWNER',
 }
 
 export interface User {
@@ -95,4 +95,14 @@ export interface StaffWarehouse {
   warehouseId: string
   staff: Staff
   // warehouse: Warehouse
+}
+
+export interface UserCreateRequest {
+  fullName: string
+  phone: string
+  login: string
+  password: string
+  role: string
+  isActive: boolean
+  type: UserType
 }

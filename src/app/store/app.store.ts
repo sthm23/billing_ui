@@ -14,12 +14,14 @@ import { User } from '../models/user.model';
 type AppStoreState = {
   storeId: string | null;
   isLoading: boolean;
+  selectedOwnerId: string | null;
   filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: AppStoreState = {
   storeId: null,
   isLoading: false,
+  selectedOwnerId: null,
   filter: { query: '', order: 'asc' },
 };
 
@@ -75,6 +77,14 @@ export const AppStore = signalStore(
 
     startLoader() {
       patchState(store, () => ({ isLoading: true }))
+    },
+
+    setOwnerId(ownerId: string) {
+      patchState(store, () => ({ selectedOwnerId: ownerId }))
+    },
+
+    setStoreId(storeId: string) {
+      patchState(store, () => ({ storeId: storeId }))
     },
 
     setProducts(products: Product[]) {

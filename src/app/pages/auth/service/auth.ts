@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, pipe, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, take, tap, throwError } from 'rxjs';
 import { AuthRequest, AuthResponse } from '../../../models/auth.model';
 import { Router } from '@angular/router';
 
@@ -55,10 +55,18 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('accessToken');
-    this.router.navigate(['auth/login']);
+
     this.http.post('/api/logout', {}, {
       withCredentials: true
-    }).pipe(take(1)).subscribe({});
+    }).pipe(take(1)).subscribe({
+      next: () => {
+        this.router.navigate(['auth/login']);
+      },
+      error: (err) => {
+        console.error('Logout failed', err);
+        this.router.navigate(['auth/login']);
+      }
+    });
   }
 
 

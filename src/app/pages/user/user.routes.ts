@@ -6,5 +6,5 @@ import { UserView } from './user-view/user-view';
 export default [
   { path: 'list', component: UserList },
   { path: 'create', component: UserCreate },
-  { path: ':id', component: UserView },
+  { path: 'view/:id', component: UserView },
 ] as Routes;
