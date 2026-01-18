@@ -18,12 +18,10 @@ import { Loader } from '../../../shared/components/loader/loader';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AppStore } from '../../../store/app.store';
+import { SelectType } from '../../../models/app.models';
 
 
-export type SelectType = {
-  code: string,
-  name: string
-}
+
 @Component({
   selector: 'app-product-create',
   imports: [

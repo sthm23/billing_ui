@@ -1,1 +1,83 @@
-<p>user-create works!</p>
+<p-toast />
+<div class="card" [formGroup]="userForm">
+  <div class="font-semibold text-xl">Tovarlar yaratish</div>
+  <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+    <ng-template #item let-item>
+      @if(item.route) {
+      <a [routerLink]="item.route" class="p-breadcrumb-item-link">
+        <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
+        <span class="text-primary font-semibold">{{ item.label }}</span>
+      </a>
+      }@else {
+      <a [href]="item.url">
+        <span class="text-color">{{ item.label }}</span>
+      </a>
+      }
+    </ng-template>
+  </p-breadcrumb>
+
+  <app-loader [loading]="false">
+    <p-fluid>
+      <div class="flex ">
+        <div class="card flex flex-col gap-6 w-full">
+
+          <!-- <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="category">Mahsulot turi</label>
+              <p-select id="category" formControlName="category" [options]="categories" optionLabel="name"
+                placeholder="Bittasini tanlang" class="w-full"
+                [class]="userForm.controls.size.touched && userForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"></p-select>
+            </div>
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="name">Nomlanishi</label>
+              <input pInputText id="name" type="text" formControlName="name"
+                [class]="userForm.controls.size.touched && userForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''" />
+            </div>
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="price">Narxi</label>
+              <p-inputnumber id="price" formControlName="price"
+                [class]="userForm.controls.size.touched && userForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"
+                inputId="integeronly" fluid />
+            </div>
+            <div class="flex flex-wrap gap-3 w-full">
+              <p-checkbox formControlName="hasDiscount" value="true" inputId="ny" />
+              <label for="ny">Skidka</label>
+              <p-inputnumber id="discount" formControlName="newPrice" inputId="integeronly" fluid />
+            </div>
+          </div> -->
+
+          <!-- <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="brand">Brand</label>
+              <input pInputText id="brand" type="text" formControlName="brand" />
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="sizeType">Razmeri sonda</label>
+              <p-checkbox value="true" inputId="sizeType" formControlName="sizeType" />
+              <p-multiselect [options]="sizeItems" formControlName="size" optionLabel="name" placeholder="Select sizes"
+                [maxSelectedLabels]="3"
+                [class]="userForm.controls.size.touched && userForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"
+                class="w-full md:w-80" />
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="type">Type</label>
+              <p-select id="type" formControlName="tag" [options]="tagItems" optionLabel="name"
+                placeholder="Bittasini tanlang" class="w-full"></p-select>
+            </div>
+          </div> -->
+
+          <div class="flex flex-wrap gap-2">
+            <label for="description">Qushimcha malumot</label>
+            <textarea pTextarea id="description" rows="4" formControlName="description"></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button label="Bekor qilish" variant="outlined" (onClick)="clearForm()"></p-button>
+        <p-button label="Tasdiqlash" severity="contrast" (onClick)="submitForm()"></p-button>
+      </div>
+    </p-fluid>
+  </app-loader>
+</div>
