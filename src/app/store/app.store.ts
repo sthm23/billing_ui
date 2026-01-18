@@ -8,13 +8,17 @@ import {
   updateEntity,
   withEntities,
 } from '@ngrx/signals/entities';
+import { Product } from '../models/product.model';
+import { User } from '../models/user.model';
 
 type AppStoreState = {
+  storeId: string | null;
   isLoading: boolean;
   filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: AppStoreState = {
+  storeId: null,
   isLoading: false,
   filter: { query: '', order: 'asc' },
 };
@@ -26,42 +30,42 @@ enum APP_ENTITY {
   USER = 'user'
 }
 
-// const selectProductId: SelectEntityId<ProductType> = (product) => product._id;
-// const productsConfig = entityConfig({
-//   entity: type<ProductType>(),
-//   collection: APP_ENTITY.PRODUCT,
-//   selectId: selectProductId,
-// });
+const selectProductId: SelectEntityId<Product> = (product) => product.id;
+const productsConfig = entityConfig({
+  entity: type<Product>(),
+  collection: APP_ENTITY.PRODUCT,
+  selectId: selectProductId,
+});
 
-// const selectOrderId: SelectEntityId<OrderType> = (order) => order._id;
+// const selectOrderId: SelectEntityId<OrderType> = (order) => order.id;
 // const ordersConfig = entityConfig({
 //   entity: type<OrderType>(),
 //   collection: APP_ENTITY.ORDER,
 //   selectId: selectOrderId,
 // });
 
-// const selectPaymentId: SelectEntityId<PaymentDetails> = (payment) => payment._id;
+// const selectPaymentId: SelectEntityId<PaymentDetails> = (payment) => payment.id;
 // const paymentsConfig = entityConfig({
 //   entity: type<PaymentDetails>(),
 //   collection: APP_ENTITY.PAYMENT,
 //   selectId: selectPaymentId,
 // });
 
-// const selectUserId: SelectEntityId<UserType> = (user) => user._id;
-// const usersConfig = entityConfig({
-//   entity: type<UserType>(),
-//   collection: APP_ENTITY.USER,
-//   selectId: selectUserId,
-// });
+const selectUserId: SelectEntityId<User> = (user) => user.id;
+const usersConfig = entityConfig({
+  entity: type<User>(),
+  collection: APP_ENTITY.USER,
+  selectId: selectUserId,
+});
 
 export const AppStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
 
-  // withEntities(productsConfig),
+  withEntities(productsConfig),
   // withEntities(ordersConfig),
   // withEntities(paymentsConfig),
-  // withEntities(usersConfig),
+  withEntities(usersConfig),
 
   withMethods((store) => ({
 
@@ -73,22 +77,22 @@ export const AppStore = signalStore(
       patchState(store, () => ({ isLoading: true }))
     },
 
-    // setProducts(products: ProductType[]) {
-    //   patchState(store, addEntities(products, productsConfig))
-    // },
+    setProducts(products: Product[]) {
+      patchState(store, addEntities(products, productsConfig))
+    },
 
-    // addProduct(product: ProductType) {
-    //   patchState(store, addEntity(product, productsConfig))
-    // },
+    addProduct(product: Product) {
+      patchState(store, addEntity(product, productsConfig))
+    },
 
-    // updateProduct(product: ProductType) {
-    //   patchState(store, updateEntity(
-    //     {
-    //       id: product._id,
-    //       changes: { ...product }
-    //     },
-    //     productsConfig));
-    // },
+    updateProduct(product: Product) {
+      patchState(store, updateEntity(
+        {
+          id: product.id,
+          changes: { ...product }
+        },
+        productsConfig));
+    },
 
     // setOrders(orders: OrderType[]) {
     //   patchState(store, addEntities(orders, ordersConfig))
@@ -101,7 +105,7 @@ export const AppStore = signalStore(
     // updateOrder(order: OrderType) {
     //   patchState(store, updateEntity(
     //     {
-    //       id: order._id,
+    //       id: order.id,
     //       changes: { ...order }
     //     },
     //     ordersConfig));
@@ -123,7 +127,7 @@ export const AppStore = signalStore(
     // updatePayment(payment: PaymentDetails) {
     //   patchState(store, updateEntity(
     //     {
-    //       id: payment._id,
+    //       id: payment.id,
     //       changes: { ...payment }
     //     },
     //     paymentsConfig));
@@ -133,27 +137,27 @@ export const AppStore = signalStore(
     //   patchState(store, removeEntity(id, paymentsConfig))
     // },
 
-    // // User methods
-    // setUsers(users: UserType[]) {
-    //   patchState(store, addEntities(users, usersConfig))
-    // },
+    // User methods
+    setUsers(users: User[]) {
+      patchState(store, addEntities(users, usersConfig))
+    },
 
-    // addUser(user: UserType) {
-    //   patchState(store, addEntity(user, usersConfig))
-    // },
+    addUser(user: User) {
+      patchState(store, addEntity(user, usersConfig))
+    },
 
-    // updateUser(user: UserType) {
-    //   patchState(store, updateEntity(
-    //     {
-    //       id: user._id,
-    //       changes: { ...user }
-    //     },
-    //     usersConfig));
-    // },
+    updateUser(user: User) {
+      patchState(store, updateEntity(
+        {
+          id: user.id,
+          changes: { ...user }
+        },
+        usersConfig));
+    },
 
-    // removeUser(id: string) {
-    //   patchState(store, removeEntity(id, usersConfig))
-    // }
+    removeUser(id: string) {
+      patchState(store, removeEntity(id, usersConfig))
+    }
 
   })
   )
