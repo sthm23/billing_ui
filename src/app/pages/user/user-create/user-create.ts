@@ -46,8 +46,6 @@ export class UserCreate implements OnInit, OnDestroy {
     login: new FormControl<string>('', [Validators.required]),//
     password: new FormControl<string>('', [Validators.required]),//
     role: new FormControl<string>('', [Validators.required]),//
-    isActive: new FormControl<boolean>(true),//
-    type: new FormControl<UserType>(UserType.STAFF),//
   });
 
   userRole: SelectType[] = [
@@ -70,17 +68,13 @@ export class UserCreate implements OnInit, OnDestroy {
         fullName,
         phone,
         login,
-        isActive,
         password,
         role,
-        type
       } = this.userForm.value;
       const payload = {
         fullName,
         login,
         password,
-        isActive,
-        type,
         phone: '+998' + phone?.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '').trim(),
         role: (role as any).code,
       } as UserCreateRequest;
