@@ -4,9 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
-import { ApiService } from '../../../shared/service/api.service';
 import { delay } from 'rxjs';
-import { Product } from '../../service/product.service';
+import { Product, ProductService } from '../../service/product.service';
 
 @Component({
   selector: 'app-product-list',
@@ -29,7 +28,7 @@ export class ProductList implements OnInit, OnDestroy {
 
   @ViewChild('dt') dataTable!: Table;
 
-  private apiService = inject(ApiService)
+  private productService = inject(ProductService)
   public appStore = inject(AppStore);
 
   constructor() { }
@@ -40,14 +39,14 @@ export class ProductList implements OnInit, OnDestroy {
 
   fetchProducts(page = 1, pageSize = 10) {
     this.appStore.startLoader();
-    this.apiService.getProducts(page, pageSize)
+    this.productService.getProducts(page, pageSize)
       .pipe(
         delay(1500)
       ).subscribe({
         next: (response) => {
           this.appStore.stopLoader();
           this.products = response.data;
-          this.total.set(response.totalItems);
+          this.total.set(response.total);
         },
         error: (err) => {
           this.appStore.stopLoader();

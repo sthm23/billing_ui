@@ -5,8 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { User } from '../../../models/user.model';
 import { AppStore } from '../../../store/app.store';
-import { ApiService } from '../../../shared/service/api.service';
 import { delay } from 'rxjs';
+import { UserService } from '../service/user.service';
 
 @Component({
   selector: 'app-user-list',
@@ -29,7 +29,7 @@ export class UserList implements OnInit, OnDestroy {
 
   @ViewChild('dt') dataTable!: Table;
 
-  private apiService = inject(ApiService)
+  private userService = inject(UserService)
   public appStore = inject(AppStore);
 
   constructor() { }
@@ -40,14 +40,14 @@ export class UserList implements OnInit, OnDestroy {
 
   fetchUsers(page = 1, pageSize = 10) {
     this.appStore.startLoader();
-    this.apiService.getUsers(page, pageSize)
+    this.userService.getUsers(page, pageSize)
       .pipe(
         delay(1500)
       ).subscribe({
         next: (response) => {
           this.appStore.stopLoader();
           this.users = response.data;
-          this.total.set(response.totalItems);
+          this.total.set(response.total);
         },
         error: (err) => {
           this.appStore.stopLoader();

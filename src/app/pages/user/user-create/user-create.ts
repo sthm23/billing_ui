@@ -13,7 +13,7 @@ import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
 import { SelectType } from '../../../models/app.models';
 import { InputMaskModule } from 'primeng/inputmask';
-import { UserCreateRequest, UserType } from '../../../models/user.model';
+import { UserCreateRequest, UserErrorResponse, UserType } from '../../../models/user.model';
 import { PasswordModule } from 'primeng/password';
 import { UserService } from '../service/user.service';
 import { AppStore } from '../../../store/app.store';
@@ -56,7 +56,7 @@ export class UserCreate implements OnInit, OnDestroy {
   ];
 
   messageService = inject(MessageService);
-  productService = inject(UserService);
+  userService = inject(UserService);
   appStore = inject(AppStore);
   router = inject(Router);
 
@@ -79,7 +79,7 @@ export class UserCreate implements OnInit, OnDestroy {
         role: (role as any).code,
       } as UserCreateRequest;
       const url = payload.role === 'OWNER' ? '/api/store/owner' : '/api/store/staff';
-      this.productService.createUser(url, payload).subscribe({
+      this.userService.createUser(url, payload).subscribe({
         next: (res) => {
           const ownerId = res.id;
           this.appStore.setOwnerId(ownerId);
@@ -87,7 +87,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.userForm.reset();
           this.router.navigate(['/pages/user/view', res.id]);
         },
-        error: (err) => {
+        error: (err: { error: UserErrorResponse }) => {
           this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error.message || 'Foydalanuvchi yaratishda xatolik yuz berdi' });
         }
       });

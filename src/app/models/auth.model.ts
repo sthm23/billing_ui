@@ -7,3 +7,8 @@ export interface AuthRequest {
 export interface AuthResponse {
   accessToken: string;
 }
+
+export interface LogoutRequest {
+  isAllDevices: boolean;
+  sessionId: string;
+}

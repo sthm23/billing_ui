@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,12 +19,24 @@ import { AuthService } from '../service/auth';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   loginForm = new FormGroup({
     login: new FormControl(null, [Validators.required, Validators.minLength(5)]),
     password: new FormControl(null, [Validators.required, Validators.minLength(3)]),
   })
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+    const isLoggedIn = this.authService.getAccessToken() !== null;
+    if (isLoggedIn) {
+      this.router.navigate(['/']);
+    }
+
+  }
 
   login() {
     if (this.loginForm.valid) {
@@ -34,6 +46,7 @@ export class Login {
         next: (res) => {
           this.authService.saveToken(res.accessToken);
           this.router.navigate(['/']);
+          this.cd.markForCheck();
         },
         error: (err) => {
           console.error('Login failed', err);

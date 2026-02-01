@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from '../service/auth';
 
 @Component({
   selector: 'app-sign-up',
@@ -17,6 +18,19 @@ import { InputTextModule } from 'primeng/inputtext';
   templateUrl: './sign-up.html',
   styleUrl: './sign-up.css',
 })
-export class SignUp {
+export class SignUp implements OnInit {
+  registerForm = new FormGroup({
+    login: new FormControl(null, [Validators.required, Validators.minLength(5)]),
+    password: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+  })
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) { }
 
+  ngOnInit(): void {
+
+
+  }
 }

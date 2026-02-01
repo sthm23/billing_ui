@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card min-h-[80vh]">
   <p-table #dt [lazy]="true" [value]="users" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
     [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
     <ng-template #header>

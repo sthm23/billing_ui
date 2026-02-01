@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { User, UserCreateRequest } from "../../../models/user.model";
+import { User, UserCreateRequest, UsersResponse } from "../../../models/user.model";
 
 
 @Injectable({
@@ -11,6 +11,12 @@ export class UserService {
 
   createUser(ownerUrl: string, userData: UserCreateRequest) {
     return this.http.post<User>(ownerUrl, userData, {
+      withCredentials: true
+    });
+  }
+
+  getUsers(page: number = 1, pageSize: number = 10) {
+    return this.http.get<UsersResponse>(`/api/users?page=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }

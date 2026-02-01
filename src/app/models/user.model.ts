@@ -3,12 +3,19 @@ export enum UserType {
   CUSTOMER = 'CUSTOMER',
   STAFF = 'STAFF'
 }
-enum StaffRole {
+export enum StaffRole {
   SELLER = 'SELLER',
   MANAGER = 'MANAGER',
   CASHIER = 'CASHIER',
   WAREHOUSE = 'WAREHOUSE',
   OWNER = 'OWNER',
+}
+
+export enum OrgLevel {
+  OWNER = 'OWNER',
+  STORE = 'STORE',
+  WAREHOUSE = 'WAREHOUSE',
+  STAFF = 'STAFF'
 }
 
 export interface User {
@@ -105,4 +112,16 @@ export interface UserCreateRequest {
   role: string
   isActive: boolean
   type: UserType
+}
+
+export interface UsersResponse {
+  currentPage: number
+  pageSize: number
+  total: number
+  data: User[]
+}
+export interface UserErrorResponse {
+  statusCode: number
+  message: string
+  error: string
 }

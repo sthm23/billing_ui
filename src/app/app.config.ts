@@ -5,9 +5,9 @@ import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScroll
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
 import { Noir } from './custom-theme';
-import { AuthInterceptor } from './shared/service/auth.interceptor';
-import { TokenInterceptor } from './shared/service/token.interceptor';
-import { BaseUrlInterceptor } from './shared/service/url.interceptor';
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { TokenInterceptor } from './shared/interceptors/token.interceptor';
+import { BaseUrlInterceptor } from './shared/interceptors/url.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ]
 };

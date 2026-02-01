@@ -111,7 +111,7 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1024px) {
     .layout-topbar {
         padding: 0 2rem;
 
