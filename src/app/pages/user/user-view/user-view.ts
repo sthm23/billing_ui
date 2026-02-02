@@ -1,33 +1,51 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { AppStore } from '../../../store/app.store';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { AppStore } from '../../../store/app.store';
 import { UserService } from '../service/user.service';
 import { OrgLevel, User } from '../../../models/user.model';
-import { TreeNode } from 'primeng/api';
+import { MessageService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-user-view',
   imports: [
     OrganizationChartModule,
     ButtonModule,
-    TooltipModule
+    TooltipModule,
+    DialogModule,
+    InputTextModule,
+    ToastModule,
+    ReactiveFormsModule
   ],
   templateUrl: './user-view.html',
   styleUrl: './user-view.css',
+  providers: [MessageService]
 })
 export class UserView implements OnInit {
   user = signal<User | null>(null);
   orgTree = signal<TreeNode[]>([])
+  visible = false;
   orgLevel = OrgLevel;
+  currentLevel = OrgLevel.OWNER;
+  currentStoreId: string | null = null;
   appStore = inject(AppStore);
+
+  createOrgForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(4)]),
+  });
+
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -39,6 +57,17 @@ export class UserView implements OnInit {
 
         this.user.set(user);
         this.addOrgNode(user.id, user.fullName, OrgLevel.OWNER);
+        if (user.stores && user.stores.length) {
+          for (const store of user.stores) {
+            this.addOrgNode(store.id, store.name, OrgLevel.STORE, user.id);
+            if (store.warehouses && store.warehouses.length) {
+              for (const warehouse of store.warehouses) {
+                this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, store.id);
+              }
+            }
+          }
+        }
+
       },
       error: (err) => {
         console.error('Error fetching user:', err);
@@ -47,22 +76,28 @@ export class UserView implements OnInit {
     });
   }
 
-  addNode(parentKey: string) {
-    const parent = this.findNodeByKey(this.orgTree(), parentKey);
+  addNode(node: TreeNode) {
+    const parent = this.findParentNodeByKey(this.orgTree(), node.key!);
     console.log(parent);
 
-    if (!parent) return;
-    if (parent.data.level === OrgLevel.OWNER) {
+    // if (!parent) return;
+    if (node.data.level === OrgLevel.OWNER) {
       // create store
-      // this.addOrgNode('store-' + Date.now(), 'MENS magazin', OrgLevel.STORE, parent.key);
-    } else if (parent.data.level === OrgLevel.STORE) {
+      this.visible = true;
+      this.currentLevel = OrgLevel.OWNER;
+    } else if (node.data.level === OrgLevel.STORE) {
       // create warehouse
-      // this.addOrgNode('wargouse-' + Date.now(), 'MENS sklad', OrgLevel.WAREHOUSE, parent.key);
-    } else if (parent.data.level === OrgLevel.WAREHOUSE) {
+      this.visible = true;
+      this.currentStoreId = node.key!;
+      this.currentLevel = OrgLevel.STORE;
+    } else if (node.data.level === OrgLevel.WAREHOUSE) {
       // create staff
-      // this.addOrgNode('staff-' + Date.now(), 'MENS hodimi', OrgLevel.STAFF, parent.key);
-    } else if (parent.data.level === OrgLevel.STAFF) {
+      this.currentLevel = OrgLevel.WAREHOUSE;
+      this.currentStoreId = parent!.key!;
+      this.router.navigate(['/pages/user/create'], { queryParams: { warehouseId: `${node.key}!!${node.label}`, storeId: `${parent!.key}!!${parent!.label}` } });
+    } else if (node.data.level === OrgLevel.STAFF) {
       // go to staff info
+      this.currentLevel = OrgLevel.STAFF;
     } else {
       return;
     }
@@ -89,6 +124,25 @@ export class UserView implements OnInit {
     return text;
   }
 
+  closeModal() {
+    this.visible = false;
+    this.createOrgForm.reset();
+  }
+
+  submitModal() {
+    if (this.createOrgForm.valid) {
+      const name = this.createOrgForm.value.name!;
+      if (this.currentLevel === OrgLevel.OWNER) {
+        // create store
+        this.createStore(name);
+      } else if (this.currentLevel === OrgLevel.STORE) {
+        //create warehouse
+        this.createWarehouse(name, this.currentStoreId!);
+      }
+    }
+
+  }
+
   private addOrgNode(nodeId: string, nodeName: string, level: OrgLevel, parentId?: string) {
     const currentTree = this.orgTree();
     const newNode: TreeNode = {
@@ -101,7 +155,7 @@ export class UserView implements OnInit {
     if (parentId) {
       const parentNode = this.findNodeByKey(currentTree, parentId);
       if (!parentNode) return;
-      parentNode.children = [...(parentNode.children || []), newNode];
+      parentNode.children?.push(newNode);
       this.orgTree.set([...currentTree]);
     } else {
       //because it is owner node
@@ -113,11 +167,66 @@ export class UserView implements OnInit {
     for (const n of nodes) {
       if (n.key === key) return n;
       if (n.children?.length) {
-        const found = this.findNodeByKey(n.children as TreeNode[], key);
+        const found = this.findNodeByKey(
+          n.children as TreeNode[],
+          key
+        );
         if (found) return found;
       }
-
     }
     return null;
+  }
+
+  private findParentNodeByKey(
+    nodes: TreeNode[],
+    key: string,
+    parent: TreeNode | null = null
+  ): TreeNode | null {
+
+    for (const n of nodes) {
+      if (n.key === key) return parent;
+      if (n.children?.length) {
+        const found = this.findParentNodeByKey(
+          n.children as TreeNode[],
+          key,
+          n
+        );
+        if (found) return found;
+      }
+    }
+    return parent;
+  }
+
+  private createStore(name: string) {
+    this.userService.createStore({ name, ownerId: this.user()!.id }).subscribe({
+      next: (store) => {
+        this.visible = false;
+        console.log('Store created:', store);
+        this.addOrgNode(store.id, store.name, OrgLevel.STORE, this.user()!.id);
+        this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Magazin yaratildi' });
+        this.createOrgForm.reset();
+      },
+      error: (err) => {
+        console.error('Error creating store:', err);
+        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error.message || 'Magazin yaratishda xatolik yuz berdi' });
+      }
+    });
+  }
+
+  private createWarehouse(name: string, storeId: string) {
+
+    this.userService.createWarehouse({ name, storeId, ownerId: this.user()!.id! }).subscribe({
+      next: ({ warehouse }) => {
+        this.visible = false;
+        console.log('Warehouse created:', warehouse);
+        this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, storeId);
+        this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Sklad yaratildi' });
+        this.createOrgForm.reset();
+      },
+      error: (err) => {
+        console.error('Error creating warehouse:', err);
+        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error.message || 'Sklad yaratishda xatolik yuz berdi' });
+      }
+    });
   }
 }

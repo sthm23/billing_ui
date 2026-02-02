@@ -11,6 +11,12 @@ export enum StaffRole {
   OWNER = 'OWNER',
 }
 
+export enum UserRole {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
 export enum OrgLevel {
   OWNER = 'OWNER',
   STORE = 'STORE',
@@ -25,10 +31,10 @@ export interface User {
   type: UserType
   createdAt: string
 
-  auth?: AuthAccount
-  staff?: Staff
-  stores?: Store[]
-  admin?: Admin
+  auth: AuthAccount | null
+  staff: Staff | null
+  stores: Store[]
+  role: UserRole
   // orders: Order[]
   refreshSessions?: RefreshSession[]
 }
@@ -40,9 +46,8 @@ export interface AuthAccount {
   login: string   // e.g. email or username or phone
   passwordHash: string
   isActive: boolean
-  lastLoginAt: string
   createdAt: string
-  user: User
+  user?: User
 }
 
 export interface Admin {
@@ -78,7 +83,7 @@ export interface Store {
   owner: User
   staff: Staff[]
   // products:   Product[]
-  // warehouses: Warehouse[]
+  warehouses: Warehouse[]
   // orders:     Order[]
 }
 
@@ -112,16 +117,41 @@ export interface UserCreateRequest {
   role: string
   isActive: boolean
   type: UserType
+  storeId?: string
+  warehouseId?: string
 }
-
-export interface UsersResponse {
+interface BaseResponse {
   currentPage: number
   pageSize: number
   total: number
+}
+export interface UsersResponse extends BaseResponse {
   data: User[]
+}
+
+export interface StoreResponse extends BaseResponse {
+  data: Store[]
 }
 export interface UserErrorResponse {
   statusCode: number
   message: string
   error: string
+}
+export interface CreateStore {
+  name: string
+  ownerId: string
+}
+
+export interface CreateWarehouse {
+  name: string
+  storeId: string
+  ownerId: string
+}
+
+export interface Warehouse {
+  id: string
+  name: string
+  storeId: string
+  isActive: boolean
+  createdAt: string
 }

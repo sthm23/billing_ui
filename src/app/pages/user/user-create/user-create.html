@@ -24,7 +24,7 @@
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
               <label for="role">User role</label>
-              <p-select id="role" formControlName="role" [options]="userRole" optionLabel="name"
+              <p-select id="role" formControlName="role" [options]="userRole" optionLabel="label" [group]="true"
                 placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
             </div>
             <div class="flex flex-wrap gap-3 w-full">
@@ -52,7 +52,20 @@
             </div>
 
           </div>
-
+          @if(isShopHidden) {
+          <div class="flex flex-col md:flex-row gap-6" [formGroup]="staff">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="storeId">Store</label>
+              <p-select id="storeId" formControlName="storeId" [options]="storeList()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="warehouseId">Store</label>
+              <p-select id="warehouseId" formControlName="warehouseId" [options]="warehouses()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+            </div>
+          </div>
+          }
         </div>
       </div>
 

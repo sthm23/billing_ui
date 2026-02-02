@@ -8,9 +8,7 @@ import { AuthService } from '../../pages/auth/service/auth';
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private exitCode: Record<string, string> = {
-    '401': 'UNAUTHORIZED',
-    '403': 'FORBIDDEN',
-    '400': 'BADREQUEST'
+    '401': 'UNAUTHORIZED'
   }
   constructor(
     private authService: AuthService,

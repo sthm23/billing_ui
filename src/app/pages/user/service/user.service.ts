@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { User, UserCreateRequest, UsersResponse } from "../../../models/user.model";
+import { CreateStore, CreateWarehouse, Store, StoreResponse, User, UserCreateRequest, UsersResponse, Warehouse } from "../../../models/user.model";
 
 
 @Injectable({
@@ -23,6 +23,24 @@ export class UserService {
 
   getUserById(userId: string) {
     return this.http.get<User>(`/api/users/${userId}`, {
+      withCredentials: true
+    });
+  }
+
+  createStore(body: CreateStore) {
+    return this.http.post<Store>(`/api/store`, body, {
+      withCredentials: true
+    });
+  }
+
+  createWarehouse(body: CreateWarehouse) {
+    return this.http.post<{ warehouse: Warehouse, worker: any }>(`/api/warehouse`, body, {
+      withCredentials: true
+    });
+  }
+
+  getStores() {
+    return this.http.get<StoreResponse>(`/api/store`, {
       withCredentials: true
     });
   }

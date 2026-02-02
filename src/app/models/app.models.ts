@@ -6,5 +6,6 @@ export interface TableColumn {
 }
 export type SelectType = {
   code: string,
-  name: string
+  name: string,
+  child: SelectType[]
 }
