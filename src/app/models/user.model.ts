@@ -154,4 +154,5 @@ export interface Warehouse {
   storeId: string
   isActive: boolean
   createdAt: string
+  staffWarehouses: { id: string, staffId: string, warehouseId: string }[]
 }

@@ -63,8 +63,16 @@ export class UserView implements OnInit {
             if (store.warehouses && store.warehouses.length) {
               for (const warehouse of store.warehouses) {
                 this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, store.id);
+
+                if (warehouse.staffWarehouses && warehouse.staffWarehouses.length) {
+                  for (const staffWarehouse of warehouse.staffWarehouses) {
+                    const staffName = store.staff.find(s => s.id === staffWarehouse.staffId)?.role || 'Unknown Staff';
+                    this.addOrgNode(staffWarehouse.id, staffName, OrgLevel.STAFF, warehouse.id);
+                  }
+                }
               }
             }
+
           }
         }
 

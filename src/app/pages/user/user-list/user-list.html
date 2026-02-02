@@ -7,6 +7,7 @@
         <th style="width:25%">Phone</th>
         <th style="width:25%">Created At</th>
         <th style="width:25%">Type</th>
+        <th style="width:25%">Action</th>
       </tr>
     </ng-template>
     <ng-template #body let-user>
@@ -14,7 +15,16 @@
         <td>{{ user.fullName }}</td>
         <td>{{ user.phone }}</td>
         <td>{{ user.createdAt }}</td>
-        <td>{{ user.type }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          @if(user.role === 'OWNER') {
+
+          <button pButton type="button" icon="pi pi-objects-column" class="p-button-rounded p-button-info p-mr-2"
+            (click)="goToOrgSchema(user)"></button>
+          }@else {
+          <span>-</span>
+          }
+        </td>
       </tr>
     </ng-template>
   </p-table>

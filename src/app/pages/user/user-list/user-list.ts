@@ -7,6 +7,7 @@ import { User } from '../../../models/user.model';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
 import { UserService } from '../service/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
@@ -32,7 +33,7 @@ export class UserList implements OnInit, OnDestroy {
   private userService = inject(UserService)
   public appStore = inject(AppStore);
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.fetchUsers(this.first() / this.rows + 1, this.rows);
@@ -61,6 +62,10 @@ export class UserList implements OnInit, OnDestroy {
     this.first.set(event.first);
     this.rows = event.rows;
     this.fetchUsers(this.first() / this.rows + 1, this.rows);
+  }
+
+  goToOrgSchema(user: User) {
+    this.router.navigate(['/pages/user/view', user.id]);
   }
 
   ngOnDestroy() {
