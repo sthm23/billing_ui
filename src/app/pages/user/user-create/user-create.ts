@@ -162,8 +162,6 @@ export class UserCreate implements OnInit, OnDestroy {
 
       this.userService.createUser(url, payload).subscribe({
         next: (res) => {
-          const ownerId = res.id;
-          this.appStore.setOwnerId(ownerId);
           this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Foydalanuvchi yaratildi' });
           this.userForm.reset();
           this.staff.reset();

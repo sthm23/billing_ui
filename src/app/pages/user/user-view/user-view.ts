@@ -4,7 +4,7 @@ import { switchMap } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AppStore } from '../../../store/app.store';
 import { UserService } from '../service/user.service';
-import { OrgLevel, User } from '../../../models/user.model';
+import { User } from '../../../models/user.model';
 import { MessageService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { OrganizationChartModule } from 'primeng/organizationchart';
@@ -12,6 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+import { OrgLevel } from '../../../models/store.model';
 
 @Component({
   selector: 'app-user-view',

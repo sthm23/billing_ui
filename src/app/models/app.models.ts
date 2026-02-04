@@ -1,4 +1,8 @@
-
+export interface BaseListResponse {
+  currentPage: number
+  pageSize: number
+  total: number
+}
 export interface TableColumn {
   field: string;
   header: string;

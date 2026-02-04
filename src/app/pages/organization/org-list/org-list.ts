@@ -1,0 +1,75 @@
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { TableModule, Table } from 'primeng/table';
+import { AppStore } from '../../../store/app.store';
+import { delay } from 'rxjs';
+import { Router } from '@angular/router';
+import { Store } from '../../../models/store.model';
+import { StoreService } from '../service/store';
+
+@Component({
+  selector: 'app-org-list',
+  imports: [
+    CommonModule,
+    TableModule,
+    FormsModule,
+    ButtonModule
+  ],
+  templateUrl: './org-list.html',
+  styleUrl: './org-list.css',
+
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class OrgList implements OnInit, OnDestroy {
+  stores: Store[] = []
+  first = signal(0);
+  rows = 10;
+  total = signal(0);
+
+  @ViewChild('dt') dataTable!: Table;
+
+  private storeService = inject(StoreService)
+  public appStore = inject(AppStore);
+
+  constructor(private router: Router) { }
+
+  ngOnInit() {
+    this.fetchstores(this.first() / this.rows + 1, this.rows);
+  }
+
+  fetchstores(page = 1, pageSize = 10) {
+    this.appStore.startLoader();
+    this.storeService.getStores(page, pageSize)
+      .pipe(
+        delay(1500)
+      ).subscribe({
+        next: (response) => {
+          this.appStore.stopLoader();
+          this.stores = response.data;
+          this.total.set(response.total);
+        },
+        error: (err) => {
+          this.appStore.stopLoader();
+          console.error('Error fetching stores:', err);
+        }
+      });
+  }
+
+  pageChange(event: any) {
+    this.dataTable.reset();
+    this.first.set(event.first);
+    this.rows = event.rows;
+    this.fetchstores(this.first() / this.rows + 1, this.rows);
+  }
+
+  goToOrgSchema(store: Store) {
+    this.router.navigate(['/pages/organization/view', store.id]);
+  }
+
+  ngOnDestroy() {
+    this.appStore.stopLoader();
+  }
+
+}

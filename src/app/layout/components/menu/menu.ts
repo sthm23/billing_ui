@@ -37,12 +37,12 @@ export class Menu {
             icon: 'pi pi-fw pi-sitemap',
             items: [
               {
-                label: 'Organization tree',
+                label: 'Store List',
                 icon: 'pi pi-fw pi-globe',
-                routerLink: ['/pages/organization/org-tree']
+                routerLink: ['/pages/organization/list']
               },
               {
-                label: 'Create store',
+                label: 'Create Store',
                 icon: 'pi pi-fw pi-globe',
                 routerLink: ['/pages/organization/create-store']
               },

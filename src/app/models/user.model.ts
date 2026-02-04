@@ -1,3 +1,5 @@
+import { BaseListResponse } from "./app.models"
+import { Store } from "./store.model"
 
 export enum UserType {
   CUSTOMER = 'CUSTOMER',
@@ -17,12 +19,7 @@ export enum UserRole {
   USER = 'USER',
 }
 
-export enum OrgLevel {
-  OWNER = 'OWNER',
-  STORE = 'STORE',
-  WAREHOUSE = 'WAREHOUSE',
-  STAFF = 'STAFF'
-}
+
 
 export interface User {
   id: string
@@ -73,19 +70,6 @@ export interface RefreshSession {
 }
 
 
-export interface Store {
-  id: string
-  name: string
-  ownerId: string
-  createdAt: string
-  createdBy: string // adminId
-  creator: Admin
-  owner: User
-  staff: Staff[]
-  // products:   Product[]
-  warehouses: Warehouse[]
-  // orders:     Order[]
-}
 
 export interface Staff {
   id: string
@@ -120,39 +104,15 @@ export interface UserCreateRequest {
   storeId?: string
   warehouseId?: string
 }
-interface BaseResponse {
-  currentPage: number
-  pageSize: number
-  total: number
-}
-export interface UsersResponse extends BaseResponse {
+
+export interface UsersResponse extends BaseListResponse {
   data: User[]
 }
 
-export interface StoreResponse extends BaseResponse {
-  data: Store[]
-}
+
 export interface UserErrorResponse {
   statusCode: number
   message: string
   error: string
 }
-export interface CreateStore {
-  name: string
-  ownerId: string
-}
 
-export interface CreateWarehouse {
-  name: string
-  storeId: string
-  ownerId: string
-}
-
-export interface Warehouse {
-  id: string
-  name: string
-  storeId: string
-  isActive: boolean
-  createdAt: string
-  staffWarehouses: { id: string, staffId: string, warehouseId: string }[]
-}

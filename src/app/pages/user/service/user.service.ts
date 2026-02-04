@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { CreateStore, CreateWarehouse, Store, StoreResponse, User, UserCreateRequest, UsersResponse, Warehouse } from "../../../models/user.model";
+import { User, UserCreateRequest, UsersResponse } from "../../../models/user.model";
+import { CreateStore, Store, CreateWarehouse, Warehouse, StoreResponse } from "../../../models/store.model";
 
 
 @Injectable({
