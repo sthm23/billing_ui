@@ -1,3 +1,4 @@
+import { BaseListResponse } from "./app.models"
 
 export interface Product {
   id: string
@@ -7,11 +8,11 @@ export interface Product {
   brandId?: string
   isArchived: boolean
   createdAt: string
+  images: string[]
 
   // store: Store
   // category?: Category
   // brand?: Brand
-  // images: ProductImage[]
   // variants: ProductVariant[]
   // attributes: ProductAttributeValue[]
 }
@@ -28,4 +29,14 @@ export interface ProductVariant {
   // orderItems:     OrderItem[]
   // stockMovements: StockMovement[]
   // attributes:     VariantAttributeValue[]
+}
+export interface ProductResponse extends BaseListResponse {
+  data: Product[]
+}
+export interface CreateProduct {
+  storeId: string
+  name: string
+  image?: string[]
+  category?: string // categoryId
+  brand?: string // brandId
 }

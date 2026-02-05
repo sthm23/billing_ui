@@ -5,7 +5,10 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
-import { Product, ProductService } from '../../service/product.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ProductService } from '../service/product.service';
+import { Product } from '../../../models/product.model';
 
 @Component({
   selector: 'app-product-list',
@@ -13,12 +16,13 @@ import { Product, ProductService } from '../../service/product.service';
     CommonModule,
     TableModule,
     FormsModule,
-    ButtonModule
+    ButtonModule,
+    ToastModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: []
+  providers: [MessageService]
 })
 export class ProductList implements OnInit, OnDestroy {
   products: Product[] = []
@@ -30,11 +34,12 @@ export class ProductList implements OnInit, OnDestroy {
 
   private productService = inject(ProductService)
   public appStore = inject(AppStore);
+  public messageService = inject(MessageService);
 
   constructor() { }
 
   ngOnInit() {
-    // this.fetchProducts(this.first() / this.rows + 1, this.rows);
+    this.fetchProducts(this.first() / this.rows + 1, this.rows);
   }
 
   fetchProducts(page = 1, pageSize = 10) {
@@ -44,6 +49,8 @@ export class ProductList implements OnInit, OnDestroy {
         delay(1500)
       ).subscribe({
         next: (response) => {
+          console.log(response);
+
           this.appStore.stopLoader();
           this.products = response.data;
           this.total.set(response.total);
@@ -51,6 +58,7 @@ export class ProductList implements OnInit, OnDestroy {
         error: (err) => {
           this.appStore.stopLoader();
           console.error('Error fetching products:', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch products' });
         }
       });
   }

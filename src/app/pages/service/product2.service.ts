@@ -7,7 +7,7 @@ interface InventoryStatus {
   value: string;
 }
 
-export interface Product {
+export interface Product2 {
   id?: string;
   code?: string;
   name?: string;
@@ -21,7 +21,7 @@ export interface Product {
 }
 
 @Injectable()
-export class ProductService {
+export class ProductService2 {
   getProductsData() {
     return [
       {
@@ -1279,8 +1279,8 @@ export class ProductService {
     return Promise.resolve(this.getProductsWithOrdersData().slice(0, 10));
   }
 
-  generatePrduct(): Product {
-    const product: Product = {
+  generatePrduct(): Product2 {
+    const product: Product2 = {
       id: this.generateId(),
       name: this.generateName(),
       description: 'Product Description',
