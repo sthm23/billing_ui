@@ -85,7 +85,7 @@
 
 @media (max-width: 1024px) {
     .layout-topbar {
-        padding: 0 2rem;
+        padding: 0 1rem;
 
         .layout-topbar-logo-container {
             width: auto;

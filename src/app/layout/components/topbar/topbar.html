@@ -8,41 +8,31 @@
         <path d="M9 3v18"></path>
       </svg>
     </p-button>
+    <p-divider layout="vertical" class="m-2" />
+    <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+      <ng-template #item let-item>
+        @if(item.icon) {
+        <span [ngClass]="[item.icon, 'text-color']"></span>
+        }@else {
+        <span class="text-color">{{ item.label | titlecase }}</span>
+        }
+      </ng-template>
+    </p-breadcrumb>
   </div>
+
 
   <div class="layout-topbar-actions">
     <div class="layout-config-menu">
-      <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
+      <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
+        (click)="toggleDarkMode()">
         <i
           [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-      </button>
-    </div>
-
-    <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden"
-      enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
-      [hideOnOutsideClick]="true">
-      <i class="pi pi-ellipsis-v"></i>
-    </button>
-
-    <div class="layout-topbar-menu hidden lg:block">
-      <div class="layout-topbar-menu-content">
-        <button type="button" class="layout-topbar-action">
-          <i class="pi pi-calendar"></i>
-          <span>Calendar</span>
-        </button>
-        <button type="button" class="layout-topbar-action">
-          <i class="pi pi-inbox"></i>
-          <span>Messages</span>
-        </button>
-        <button type="button" class="layout-topbar-action">
-          <i class="pi pi-user"></i>
-          <span>Profile</span>
-        </button>
-        <button type="button" class="layout-topbar-action" (click)="handleExit()">
-          <i class="pi pi-power-off"></i>
-          <span>Exit</span>
-        </button>
-      </div>
+      </p-button>
+      <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
+        (click)="handleExit()">
+        <i class="pi pi-power-off"></i>
+        <span>Exit</span>
+      </p-button>
     </div>
   </div>
 </div>

@@ -7,7 +7,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
@@ -29,7 +28,6 @@ import { SelectType } from '../../../models/app.models';
     ButtonModule,
     Select,
     ToastModule,
-    BreadcrumbModule,
     RouterModule,
     InputMaskModule,
     PasswordModule
@@ -40,7 +38,6 @@ import { SelectType } from '../../../models/app.models';
   providers: [MessageService]
 })
 export class UserCreate implements OnInit, OnDestroy {
-  breadcrumbItems = [{ icon: 'pi pi-home', route: '/' }, { label: 'Foydalanuvchilar' }, { label: 'Yaratish', route: '/' }]
   userForm = new FormGroup({
     fullName: new FormControl<string>('', [Validators.required]),//
     phone: new FormControl<string>('', [Validators.required]),//

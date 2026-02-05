@@ -8,5 +8,5 @@ export default [
   { path: 'list', component: UserList },
   { path: 'create', component: UserCreate },
   { path: 'view/:id', component: UserView },
-  { path: 'view/:id/create-store', component: OrgCreate },
+  { path: 'view/:id/create', component: OrgCreate },
 ] as Routes;

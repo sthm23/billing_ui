@@ -44,7 +44,7 @@ export class Menu {
               {
                 label: 'Create Store',
                 icon: 'pi pi-fw pi-globe',
-                routerLink: ['/pages/organization/create-store']
+                routerLink: ['/pages/organization/create']
               },
             ]
           },

@@ -6,5 +6,5 @@ import { OrgView } from "./org-view/org-view";
 export default [
   { path: 'view/:id', component: OrgView },
   { path: 'list', component: OrgList },
-  { path: 'create-store', component: OrgCreate },
+  { path: 'create', component: OrgCreate },
 ] as Routes;

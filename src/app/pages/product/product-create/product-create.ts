@@ -10,7 +10,6 @@ import { TextareaModule } from 'primeng/textarea';
 import { CommonModule } from '@angular/common';
 import { FileUploadEvent, FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { RouterModule } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
 import { catchError, debounceTime, throwError } from 'rxjs';
@@ -35,7 +34,6 @@ import { SelectType } from '../../../models/app.models';
     TextareaModule,
     FileUploadModule,
     ToastModule,
-    BreadcrumbModule,
     RouterModule,
     CheckboxModule,
     InputNumberModule,
@@ -47,7 +45,6 @@ import { SelectType } from '../../../models/app.models';
   providers: [MessageService]
 })
 export class ProductCreate implements OnDestroy {
-  breadcrumbItems = [{ icon: 'pi pi-home', route: '/' }, { label: 'Tovarlar' }, { label: 'Yaratish', route: '/' }]
   uploadedFiles: any[] = [];
 
   categories = []

@@ -1,20 +1,6 @@
 <p-toast />
 <div class="card" [formGroup]="userForm">
   <div class="font-semibold text-xl">Tovarlar yaratish</div>
-  <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
-    <ng-template #item let-item>
-      @if(item.route) {
-      <a [routerLink]="item.route" class="p-breadcrumb-item-link">
-        <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
-        <span class="text-primary font-semibold">{{ item.label }}</span>
-      </a>
-      }@else {
-      <a [href]="item.url">
-        <span class="text-color">{{ item.label }}</span>
-      </a>
-      }
-    </ng-template>
-  </p-breadcrumb>
 
   <app-loader [loading]="false">
     <p-fluid>

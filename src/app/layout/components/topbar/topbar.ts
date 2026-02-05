@@ -1,11 +1,14 @@
-import { NgClass } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgClass, TitleCasePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule, Scroll } from '@angular/router';
 import { StyleClassModule } from 'primeng/styleclass';
 import { LayoutService } from '../../service/layout.service';
 import { AuthService } from '../../../pages/auth/service/auth';
-import { take } from 'rxjs';
+import { filter, Subject, take, takeUntil, tap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-topbar',
@@ -13,21 +16,34 @@ import { ButtonModule } from 'primeng/button';
     RouterModule,
     NgClass,
     StyleClassModule,
-    ButtonModule
+    ButtonModule,
+    DividerModule,
+    BreadcrumbModule,
+    TitleCasePipe
   ],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
-export class Topbar implements OnInit {
-
-
+export class Topbar implements OnInit, OnDestroy {
+  breadcrumbItems: MenuItem[] = []
+  destroyer$ = new Subject<void>();
   constructor(
     public layoutService: LayoutService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroyer$)
+    ).subscribe((e: NavigationEnd) => {
+      const result = e.urlAfterRedirects.split('/').splice(1)
+        .map((segment, ind) => (ind ? { label: segment } : { icon: 'pi pi-home' }));
 
+      this.breadcrumbItems = result;
+    });
   }
 
   toggleDarkMode() {
@@ -45,5 +61,10 @@ export class Topbar implements OnInit {
         this.authService.redirectToLogin();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyer$.next();
+    this.destroyer$.complete();
   }
 }
