@@ -32,6 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }
         if (request.url.includes('api/logout')) {
           this.authService.removeToken();
+          this.authService.removeCurrentUser();
           this.authService.redirectToLogin();
           return EMPTY;
         }
@@ -63,6 +64,7 @@ export class AuthInterceptor implements HttpInterceptor {
                 mergeMap(() => {
                   this.authService.removeToken();
                   this.authService.redirectToLogin();
+                  this.authService.removeCurrentUser();
                   return EMPTY;
                 })
               );

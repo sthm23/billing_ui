@@ -1,3 +1,5 @@
+import { Store } from "./store.model";
+import { AuthAccount, Staff, UserRole, UserType } from "./user.model";
 
 export interface AuthRequest {
   login: string;
@@ -11,4 +13,17 @@ export interface AuthResponse {
 export interface LogoutRequest {
   isAllDevices: boolean;
   sessionId: string;
+}
+
+export interface CurrentUserType {
+  id: string;
+  role: UserRole
+  login: string;
+  fullName: string;
+  phone: string;
+  stores: Store[]
+  auth: AuthAccount | null;
+  createdAt: string
+  staff: Staff | null
+  type: UserType
 }

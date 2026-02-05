@@ -51,7 +51,10 @@ export class Topbar implements OnInit, OnDestroy {
   }
 
   handleExit() {
-    this.authService.logout({ isAllDevices: false, sessionId: this.authService.getAccessToken() || '' }).pipe(
+    this.authService.logout({
+      isAllDevices: false,
+      sessionId: this.authService.getAccessToken() || ''
+    }).pipe(
       take(1)
     ).subscribe({
       next: () => {

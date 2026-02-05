@@ -1,30 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, take, tap, throwError } from 'rxjs';
-import { AuthRequest, AuthResponse, LogoutRequest } from '../../../models/auth.model';
+import { Observable, take, tap } from 'rxjs';
+import { AuthRequest, AuthResponse, CurrentUserType, LogoutRequest } from '../../../models/auth.model';
 import { Router } from '@angular/router';
+import { LOCALE_STORAGE_KEYS } from '../../../models/app.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-
   constructor(
     private http: HttpClient,
     private router: Router
   ) { }
 
-  getAccessToken() {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      return token;
-    }
-    return null;
-  }
-
-  saveToken(accessToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
-  }
 
   refreshToken(): Observable<AuthResponse> {
     return this.http.get<AuthResponse>('/api/refresh', {
@@ -42,6 +31,7 @@ export class AuthService {
       withCredentials: true
     }).pipe(take(1), tap(() => {
       this.removeToken();
+      this.removeCurrentUser();
     }));
   }
 
@@ -52,8 +42,44 @@ export class AuthService {
     });
   }
 
+  profile(): Observable<CurrentUserType> {
+    return this.http.get<CurrentUserType>('/api/auth/me', {
+      withCredentials: true
+    }).pipe(tap((user) => {
+      this.setCurrentUser(user);
+    }));
+  }
+
+  setCurrentUser(user: CurrentUserType): void {
+    localStorage.setItem(LOCALE_STORAGE_KEYS.USER, JSON.stringify(user));
+  }
+
+  removeCurrentUser(): void {
+    localStorage.removeItem(LOCALE_STORAGE_KEYS.USER);
+  }
+
+  getCurrentUser(): CurrentUserType | null {
+    const user = localStorage.getItem(LOCALE_STORAGE_KEYS.USER);
+    if (user) {
+      return JSON.parse(user) as CurrentUserType;
+    }
+    return null;
+  }
+
+  getAccessToken(): string | null {
+    const token = localStorage.getItem(LOCALE_STORAGE_KEYS.TOKEN);
+    if (token) {
+      return token;
+    }
+    return null;
+  }
+
+  saveToken(accessToken: string): void {
+    localStorage.setItem(LOCALE_STORAGE_KEYS.TOKEN, accessToken);
+  }
+
   removeToken(): void {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem(LOCALE_STORAGE_KEYS.TOKEN);
   }
 
   redirectToLogin(): void {

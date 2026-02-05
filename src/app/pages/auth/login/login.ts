@@ -5,6 +5,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterLink } from "@angular/router";
 import { AuthService } from '../service/auth';
+import { switchMap } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -14,10 +17,12 @@ import { AuthService } from '../service/auth';
     FormsModule,
     ButtonModule,
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToastModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  providers: [MessageService]
 })
 export class Login implements OnInit {
   loginForm = new FormGroup({
@@ -27,7 +32,8 @@ export class Login implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -42,16 +48,24 @@ export class Login implements OnInit {
     if (this.loginForm.valid) {
       const { login, password } = this.loginForm.value;
 
-      this.authService.login({ login: login!, password: password! }).subscribe({
-        next: (res) => {
-          this.authService.saveToken(res.accessToken);
-          this.router.navigate(['/']);
-          this.cd.markForCheck();
-        },
-        error: (err) => {
-          console.error('Login failed', err);
-        }
-      })
+      this.authService.login({ login: login!, password: password! })
+        .pipe(
+          switchMap((res) => {
+            this.authService.saveToken(res.accessToken);
+            return this.authService.profile();
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            this.authService.setCurrentUser(res);
+            this.router.navigate(['/']);
+            this.cd.markForCheck();
+          },
+          error: (err) => {
+            console.error('Login failed', err);
+            this.messageService.add({ severity: 'error', summary: 'Login Failed', detail: 'Invalid login or password' });
+          }
+        })
     }
   }
 }

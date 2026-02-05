@@ -13,3 +13,8 @@ export type SelectType = {
   name: string,
   child: SelectType[]
 }
+
+export enum LOCALE_STORAGE_KEYS {
+  TOKEN = 'my_billing_access_token',
+  USER = 'my_billing_current_user',
+}

@@ -37,7 +37,7 @@ html {
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+   font-family: "Sora", sans-serif;
     color: var(--text-color);
     background-color: var(--surface-ground);
     margin: 0;
