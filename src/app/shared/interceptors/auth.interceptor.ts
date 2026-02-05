@@ -30,6 +30,11 @@ export class AuthInterceptor implements HttpInterceptor {
         ) {
           return this.handle401Error(request, next);
         }
+        if (request.url.includes('api/logout')) {
+          this.authService.removeToken();
+          this.authService.redirectToLogin();
+          return EMPTY;
+        }
         return throwError(() => error);
       })
     );
