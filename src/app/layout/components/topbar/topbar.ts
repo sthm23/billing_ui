@@ -5,6 +5,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { LayoutService } from '../../service/layout.service';
 import { AuthService } from '../../../pages/auth/service/auth';
 import { take } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-topbar',
@@ -12,6 +13,7 @@ import { take } from 'rxjs';
     RouterModule,
     NgClass,
     StyleClassModule,
+    ButtonModule
   ],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',

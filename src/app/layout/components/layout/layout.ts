@@ -2,14 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Topbar } from '../topbar/topbar';
-import { Footer } from '../footer/footer';
 import { Sidebar } from '../sidebar/sidebar';
 import { Subscription, filter } from 'rxjs';
 import { LayoutService } from '../../service/layout.service';
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, Topbar, Sidebar, RouterModule, Footer],
+  imports: [CommonModule, Topbar, Sidebar, RouterModule],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })

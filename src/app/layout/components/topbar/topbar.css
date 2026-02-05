@@ -1,47 +1,19 @@
 
 
 .layout-topbar {
-    position: fixed;
     height: 4rem;
-    z-index: 997;
-    left: 0;
-    top: 0;
     width: 100%;
     padding: 0 2rem;
-    background-color: var(--surface-card);
+    background-color: var(--surface-overlay);
     transition: left var(--layout-section-transition-duration);
     display: flex;
     align-items: center;
+    border-bottom: 1px solid var(--surface-border);
 
     .layout-topbar-logo-container {
         width: 20rem;
         display: flex;
         align-items: center;
-    }
-
-    .layout-topbar-logo {
-        display: inline-flex;
-        align-items: center;
-        font-size: 1.5rem;
-        border-radius: var(--content-border-radius);
-        color: var(--text-color);
-        font-weight: 500;
-        gap: 0.5rem;
-
-        svg {
-            width: 3rem;
-        }
-
-        &:focus-visible {
-                outline-width: var(--focus-ring-width);
-    outline-style: var(--focus-ring-style);
-    outline-color: var(--focus-ring-color);
-    outline-offset: var(--focus-ring-offset);
-    box-shadow: var(--focus-ring-shadow);
-    transition:
-        box-shadow var(--transition-duration),
-        outline-color var(--transition-duration);
-        }
     }
 
     .layout-topbar-action {
