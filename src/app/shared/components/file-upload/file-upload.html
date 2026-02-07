@@ -1,0 +1,25 @@
+<p-toast />
+<div class="font-semibold text-xl mb-4">Upload photo</div>
+<p-fileupload #uploadElement [multiple]="true" name="photo" accept="image/*" [maxFileSize]="maxFileSize" mode="advanced"
+  url="/api/product/img/upload" withCredentials="true" (onUpload)="onUpload($event)" (onError)="onUploadError($event)">
+  <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback"
+    let-uploadCallback="uploadCallback">
+    <div class="flex gap-2">
+      <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-images" />
+      <p-button (onClick)="upload(uploadCallback)" icon="pi pi-cloud-upload" severity="info"
+        [disabled]="!files || files.length === 0" />
+      <p-button (onClick)="clear(clearCallback)" icon="pi pi-times" severity="danger"
+        [disabled]="!files || files.length === 0" />
+      <p-progressbar [value]="totalSizePercent" [showValue]="false" class="w-full"
+        class="md:w-20rem h-1 w-full md:ml-auto">
+        <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
+      </p-progressbar>
+    </div>
+  </ng-template>
+  <ng-template #empty>
+    <div class="p-6 text-center">
+      <i class="pi pi-image text-4xl text-500"></i>
+      <p>Drop image here.</p>
+    </div>
+  </ng-template>
+</p-fileupload>

@@ -5,85 +5,39 @@
   <app-loader [loading]="false">
     <p-fluid>
       <div class="flex ">
-        <div class="card flex flex-col gap-6 w-full">
+        <div class="p-6 flex flex-col gap-6 w-full">
 
           <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="store">Store</label>
+              <p-select id="store" formControlName="store" [options]="stores()" optionLabel="name"
+                [class]="productForm.controls.store.touched && productForm.controls.store.invalid ? 'ng-dirty ng-invalid' : ''" />
+            </div>
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="category">Mahsulot turi</label>
-              <p-select id="category" formControlName="category" [options]="categories" optionLabel="name"
-                placeholder="Bittasini tanlang" class="w-full"
-                [class]="productForm.controls.size.touched && productForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"></p-select>
+              <label for="category">Category</label>
+              <p-treeselect id="category" class="w-full" formControlName="category" [options]="categories()"
+                placeholder="Select last child category" />
             </div>
-            <div class="flex flex-wrap gap-3 w-full">
-              <label for="name">Nomlanishi</label>
-              <input pInputText id="name" type="text" formControlName="name"
-                [class]="productForm.controls.size.touched && productForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''" />
-            </div>
-            <div class="flex flex-wrap gap-3 w-full">
-              <label for="price">Narxi</label>
-              <p-inputnumber id="price" formControlName="price"
-                [class]="productForm.controls.size.touched && productForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"
-                inputId="integeronly" fluid />
-            </div>
-            <div class="flex flex-wrap gap-3 w-full">
-              <p-checkbox formControlName="hasDiscount" value="true" inputId="ny" />
-              <label for="ny">Skidka</label>
-              <p-inputnumber id="discount" formControlName="newPrice" inputId="integeronly" fluid />
-            </div>
-          </div>
 
-          <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
               <label for="brand">Brand</label>
-              <input pInputText id="brand" type="text" formControlName="brand" />
+              <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
+                [class]="productForm.controls.brand.touched && productForm.controls.brand.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
-            <div class="flex flex-wrap gap-2 w-full">
-              <label for="sizeType">Razmeri sonda</label>
-              <p-checkbox value="true" inputId="sizeType" formControlName="sizeType" />
-              <p-multiselect [options]="sizeItems" formControlName="size" optionLabel="name" placeholder="Select sizes"
-                [maxSelectedLabels]="3"
-                [class]="productForm.controls.size.touched && productForm.controls.size.invalid ? 'ng-dirty ng-invalid' : ''"
-                styleClass="w-full md:w-80" />
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="name">Name</label>
+              <input pInputText id="name" type="text" formControlName="name"
+                [class]="productForm.controls.name.touched && productForm.controls.name.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
-            <div class="flex flex-wrap gap-2 w-full">
-              <label for="type">Type</label>
-              <p-select id="type" formControlName="tag" [options]="tagItems" optionLabel="name"
-                placeholder="Bittasini tanlang" class="w-full"></p-select>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-2">
-            <label for="description">Qushimcha malumot</label>
-            <textarea pTextarea id="description" rows="4" formControlName="description"></textarea>
           </div>
 
         </div>
       </div>
 
+
       <div class="col-span-full lg:col-span-6">
-        <div class="card flex flex-col gap-4" formArrayName="sizes">
-          <div class="font-semibold text-xl ">Tovar haqida qushimcha malumot</div>
-          @for (item of sizes; track $index) {
-          <!-- <app-product-size [size]="item" /> -->
-          variants
-          }
-        </div>
-      </div>
-      <div class="col-span-full lg:col-span-6">
-        <div class="card">
-          <div class="font-semibold text-xl mb-4">Rasm yuklash</div>
-          <p-fileupload chooseLabel="Rasm tanlash" uploadLabel="yuklash" cancelLabel="Bekor qilish" name="photo"
-            (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced"
-            url="/product/upload-photo">
-            <ng-template #empty>
-              <div>Rasmni shu yerga olib quying.</div>
-            </ng-template>
-            <ng-template #content>
-              <ul *ngIf="uploadedFiles.length">
-                <li *ngFor="let fileObj of uploadedFiles">{{ fileObj.file.name }} - {{ fileObj.file.size }} bytes</li>
-              </ul>
-            </ng-template>
-          </p-fileupload>
+        <div class="p-6">
+          <app-file-upload [cancel]="uploadedFilesCancel$" (uploadComplete)="onUpload($event)" />
         </div>
       </div>
 

@@ -9,9 +9,15 @@ export interface TableColumn {
   customExportHeader?: string;
 }
 export type SelectType = {
-  code: string,
+  id: string,
   name: string,
-  child: SelectType[]
+  children?: SelectType[]
+}
+
+export type MultiSelectType = {
+  key: string,
+  label: string,
+  children?: MultiSelectType[]
 }
 
 export enum LOCALE_STORAGE_KEYS {

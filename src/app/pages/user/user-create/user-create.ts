@@ -12,7 +12,7 @@ import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
 import { InputMaskModule } from 'primeng/inputmask';
 import { SelectItemGroup } from 'primeng/api';
-import { UserCreateRequest, UserErrorResponse } from '../../../models/user.model';
+import { StaffRole, UserCreateRequest, UserErrorResponse, UserRole } from '../../../models/user.model';
 import { PasswordModule } from 'primeng/password';
 import { UserService } from '../service/user.service';
 import { AppStore } from '../../../store/app.store';
@@ -43,12 +43,12 @@ export class UserCreate implements OnInit, OnDestroy {
     phone: new FormControl<string>('', [Validators.required]),//
     login: new FormControl<string>('', [Validators.required]),//
     password: new FormControl<string>('', [Validators.required]),//
-    role: new FormControl<string>('', [Validators.required]),//
+    role: new FormControl<SelectItemGroup | null>(null, [Validators.required]),//
   });
 
   staff = new FormGroup({
-    storeId: new FormControl('', [Validators.required]),//
-    warehouseId: new FormControl('', [Validators.required]),//
+    storeId: new FormControl<SelectType | null>(null, [Validators.required]),//
+    warehouseId: new FormControl<SelectType | null>(null, [Validators.required]),//
   });
 
   isShopHidden = false;
@@ -56,14 +56,15 @@ export class UserCreate implements OnInit, OnDestroy {
   userRole: SelectItemGroup[] = [
     {
       label: 'Roles', items: [
-        { label: 'Owner', value: 'OWNER' },
+        { label: 'Owner', value: UserRole.OWNER },
       ]
     },
     {
       label: 'Staff', items: [
-        { label: 'Seller', value: 'SELLER' },
-        { label: 'Warehouse', value: 'WAREHOUSE' },
-        { label: 'Cashier', value: 'CASHIER' },
+        { label: 'Manager', value: StaffRole.MANAGER },
+        { label: 'Seller', value: StaffRole.SELLER },
+        { label: 'Warehouse', value: StaffRole.WAREHOUSE },
+        { label: 'Cashier', value: StaffRole.CASHIER },
       ]
     }
   ];
@@ -81,17 +82,15 @@ export class UserCreate implements OnInit, OnDestroy {
     this.route.queryParams.subscribe(params => {
       console.log(params);
       if (params.hasOwnProperty('storeId') && params.hasOwnProperty('warehouseId')) {
-
-
         const storeId = params['storeId'].split('!!');
         const warehouseId = params['warehouseId'].split('!!');
 
         if (storeId) {
-          this.storeList.set([{ name: storeId[1], code: storeId[0], child: [] }]);
+          this.storeList.set([{ name: storeId[1], id: storeId[0], children: [] }]);
           this.staff.controls.storeId.setValue({ code: storeId[0], name: storeId[1], child: [] } as any);
         }
         if (warehouseId) {
-          this.warehouses.set([{ name: warehouseId[1], code: warehouseId[0], child: [] }]);
+          this.warehouses.set([{ name: warehouseId[1], id: warehouseId[0], children: [] }]);
           this.staff.controls.warehouseId.setValue({ code: warehouseId[0], name: warehouseId[1], child: [] } as any);
         }
 
@@ -103,8 +102,8 @@ export class UserCreate implements OnInit, OnDestroy {
       }
 
     });
-    this.userForm.controls.role.valueChanges.subscribe((value: any) => {
-      if (value['value'] === 'OWNER') {
+    this.userForm.controls.role.valueChanges.subscribe((value) => {
+      if (value?.value === UserRole.OWNER) {
         this.isShopHidden = false;
       } else {
         this.isShopHidden = true;
@@ -114,7 +113,7 @@ export class UserCreate implements OnInit, OnDestroy {
       if (storeId && storeId.code) {
         const storeIdCode = storeId.code;
         this.staff.controls.warehouseId.setValue(null);
-        this.warehouses.set(this.storeList().find(store => store.code === storeIdCode)?.child || []);
+        this.warehouses.set(this.storeList().find(store => store.id === storeIdCode)?.children || []);
       }
     })
   }
@@ -122,7 +121,14 @@ export class UserCreate implements OnInit, OnDestroy {
   fetchStoreInformation() {
     this.userService.getStores().subscribe({
       next: (stores) => {
-        this.storeList.set(stores.data.map(store => ({ name: store.name, code: store.id, child: store.warehouses.map(wh => ({ name: wh.name, code: wh.id, child: [] })) })));
+        this.storeList.set(stores.data.map(store =>
+        ({
+          name: store.name, id: store.id,
+          child: store.warehouses.map(wh =>
+            ({ name: wh.name, code: wh.id, child: [] })
+          )
+        })
+        ));
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
@@ -150,19 +156,19 @@ export class UserCreate implements OnInit, OnDestroy {
         login,
         password,
         phone: '+998' + phone?.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '').trim(),
-        role: (role as any).value,
-        storeId: (storeId as any)?.code,
-        warehouseId: (warehouseId as any)?.code,
+        role: role?.value,
+        storeId: storeId?.id,
+        warehouseId: warehouseId?.id,
       } as UserCreateRequest;
 
-      const url = payload.role === 'OWNER' ? '/api/store/owner' : '/api/store/staff';
+      const url = payload.role === UserRole.OWNER ? '/api/store/owner' : '/api/store/staff';
 
       this.userService.createUser(url, payload).subscribe({
         next: (res) => {
           this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Foydalanuvchi yaratildi' });
           this.userForm.reset();
           this.staff.reset();
-          if (payload.role === 'OWNER') {
+          if (payload.role === UserRole.OWNER) {
             this.router.navigate(['/pages/user/view', res.id]);
           } else {
             this.router.navigate(['/pages/user/list']);

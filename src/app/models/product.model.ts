@@ -36,7 +36,25 @@ export interface ProductResponse extends BaseListResponse {
 export interface CreateProduct {
   storeId: string
   name: string
-  image?: string[]
+  images?: string[] | null
   category?: string // categoryId
   brand?: string // brandId
+}
+export interface Category {
+  id: string
+  name: string
+  parentId: string | null
+  children?: Category[]
+}
+export interface CategoryResponse extends BaseListResponse {
+  data: Category[]
+}
+
+export interface Brand {
+  id: string
+  name: string,
+  logoUrl: string | null
+}
+export interface BrandResponse extends BaseListResponse {
+  data: Brand[]
 }
