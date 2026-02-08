@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';
+import { BadgeModule } from 'primeng/badge';
 
 @Component({
   selector: 'app-product-list',
@@ -17,7 +18,8 @@ import { Product } from '../../../models/product.model';
     TableModule,
     FormsModule,
     ButtonModule,
-    ToastModule
+    ToastModule,
+    BadgeModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
@@ -49,8 +51,6 @@ export class ProductList implements OnInit, OnDestroy {
         delay(1500)
       ).subscribe({
         next: (response) => {
-          console.log(response);
-
           this.appStore.stopLoader();
           this.products = response.data;
           this.total.set(response.total);
@@ -68,6 +68,16 @@ export class ProductList implements OnInit, OnDestroy {
     this.first.set(event.first);
     this.rows = event.rows;
     this.fetchProducts(this.first() / this.rows + 1, this.rows);
+  }
+
+  getSeverity(variants: number) {
+    if (variants > 10) {
+      return 'success';
+    } else if (variants > 5) {
+      return 'warn';
+    } else {
+      return 'danger';
+    }
   }
 
   ngOnDestroy() {

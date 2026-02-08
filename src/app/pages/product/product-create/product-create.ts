@@ -135,9 +135,9 @@ export class ProductCreate implements OnInit, OnDestroy {
 
       const product: CreateProduct = {
         name: data.name!,
-        category: data.category?.key,
+        categoryId: data.category?.key,
         images: data.images,
-        brand: data.brand?.id,
+        brandId: data.brand?.id,
         storeId: data.store?.id!,
       };
 

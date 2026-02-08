@@ -1,20 +1,23 @@
 import { BaseListResponse } from "./app.models"
 
-export interface Product {
+export interface BaseProduct {
   id: string
   storeId: string
   name: string
-  categoryId?: string
-  brandId?: string
+  category: string
+  brand: string
   isArchived: boolean
   createdAt: string
-  images: string[]
+  images: { url: string, id: string, isMain: boolean }[]
+}
 
-  // store: Store
-  // category?: Category
-  // brand?: Brand
-  // variants: ProductVariant[]
-  // attributes: ProductAttributeValue[]
+export interface Product extends BaseProduct {
+  variants: number
+}
+
+export interface ProductDetail extends BaseProduct {
+  variants: ProductVariant[]
+  attributes: ProductAttributeValue[]
 }
 
 export interface ProductVariant {
@@ -30,6 +33,8 @@ export interface ProductVariant {
   // stockMovements: StockMovement[]
   // attributes:     VariantAttributeValue[]
 }
+
+export interface ProductAttributeValue { }
 export interface ProductResponse extends BaseListResponse {
   data: Product[]
 }
@@ -37,8 +42,8 @@ export interface CreateProduct {
   storeId: string
   name: string
   images?: string[] | null
-  category?: string // categoryId
-  brand?: string // brandId
+  categoryId?: string // categoryId
+  brandId?: string // brandId
 }
 export interface Category {
   id: string
