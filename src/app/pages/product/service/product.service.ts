@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BrandResponse, Category, CategoryResponse, CreateProduct, Product, ProductResponse } from '../../../models/product.model';
+import { BrandResponse, Category, CategoryResponse, CreateProduct, UploadImageResponse, Product, ProductResponse, UploadImageRequest } from '../../../models/product.model';
 import { StoreResponse } from '../../../models/store.model';
 
 
@@ -40,6 +40,26 @@ export class ProductService {
   createProduct(data: CreateProduct) {
     return this.http.post<Product>(`/api/product`, data, {
       withCredentials: true,
+    });
+  }
+
+  getProductById(productId: string) {
+    return this.http.get<Product>(`/api/product/${productId}`, {
+      withCredentials: true,
+    });
+  }
+
+  uploadProductImages(body: { files: UploadImageRequest[] }) {
+    return this.http.post<UploadImageResponse[]>(`/api/image/upload`, body, {
+      withCredentials: true,
+    });
+  }
+
+  uploadImagesToS3(url: string, file: File) {
+    return this.http.put<null>(url, file, {
+      headers: {
+        'Content-Type': file.type
+      }
     });
   }
 }

@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 import { RouterModule } from '@angular/router';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, switchMap } from 'rxjs';
 import { Loader } from '../../../shared/components/loader/loader';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AppStore } from '../../../store/app.store';
@@ -16,7 +16,7 @@ import { MultiSelectType, SelectType } from '../../../models/app.models';
 import { FileUploadComponent } from '../../../shared/components/file-upload/file-upload';
 import { ProductService } from '../service/product.service';
 import { TreeSelectModule } from 'primeng/treeselect';
-import { CreateProduct } from '../../../models/product.model';
+import { CreateProduct, FileUploadData } from '../../../models/product.model';
 
 @Component({
   selector: 'app-product-create',
@@ -49,7 +49,7 @@ export class ProductCreate implements OnInit, OnDestroy {
 
   productForm = new FormGroup({
     name: new FormControl<string | null>(null, [Validators.required]),//+
-    images: new FormControl<string[] | null>([]),//+
+    images: new FormControl<any[] | null>([]),//+
     category: new FormControl<MultiSelectType | null>(null, [Validators.required]), //+
     brand: new FormControl<SelectType | null>(null),
     store: new FormControl<SelectType | null>(null, [Validators.required]), //+
@@ -124,7 +124,7 @@ export class ProductCreate implements OnInit, OnDestroy {
     this.uploadedFilesCancel$.next(true);
   }
 
-  onUpload(files: string[]) {
+  onUpload(files: FileUploadData[]) {
     this.productForm.patchValue({ images: files });
   }
 
@@ -136,32 +136,39 @@ export class ProductCreate implements OnInit, OnDestroy {
       const product: CreateProduct = {
         name: data.name!,
         categoryId: data.category?.key,
-        images: data.images,
+        images: data.images?.map(file => file.url?.split('?')[0]) || [],
         brandId: data.brand?.id,
         storeId: data.store?.id!,
       };
 
-      this.productService.createProduct(product).subscribe({
-        next: (res) => {
-          console.log(res);
-
-          this.appStore.stopLoader();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Product created successfully!',
-          });
-          this.clearForm();
-        },
-        error: (err) => {
-          this.appStore.stopLoader();
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err?.error?.message || 'Error creating product. Please try again.',
-          });
-        },
-      })
+      const uploadImages = data.images?.map(file => {
+        return this.productService.uploadImagesToS3(file.url, file.file);
+      }) as Observable<null>[];
+      forkJoin(uploadImages)
+        .pipe(
+          switchMap((res) => {
+            return this.productService.createProduct(product)
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            this.appStore.stopLoader();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Product created successfully!',
+            });
+            this.clearForm();
+          },
+          error: (err) => {
+            this.appStore.stopLoader();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: err?.error?.message || 'Error creating product. Please try again.',
+            });
+          },
+        })
     } else {
       this.productForm.markAllAsTouched();
       this.productForm.markAsDirty();

@@ -1,19 +1,25 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output, signal, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ButtonClasses, ButtonModule, ButtonTemplates } from 'primeng/button';
-import { FileUpload, FileUploadErrorEvent, FileUploadEvent, FileUploadModule } from 'primeng/fileupload';
+import { FileProgressEvent, FileRemoveEvent, FileSelectEvent, FileUpload, FileUploadContentTemplateContext, FileUploadErrorEvent, FileUploadEvent, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { ProductService } from '../../../pages/product/service/product.service';
+import { CommonModule } from '@angular/common';
+import { FileUploadData, UploadImageRequest } from '../../../models/product.model';
+
 
 @Component({
   selector: 'app-file-upload',
   imports: [
+    CommonModule,
     ButtonModule,
     FileUploadModule,
     ToastModule,
-    BadgeModule, ProgressBarModule,
+    BadgeModule,
+    ProgressBarModule,
   ],
   templateUrl: './file-upload.html',
   styleUrl: './file-upload.css',
@@ -21,69 +27,121 @@ import { Observable, Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileUploadComponent implements OnInit, OnDestroy {
-  files: any[] = [];
+  destroyer$: Subject<void> = new Subject<void>();
+  files = signal<File[]>([]);
   totalSizePercent = 0;
   totalSize = 0;
-  maxFileSize: number = 1024000 * 4; // 1 MB
+  maxFileSize: number = 1000000 * 4; // 4 MB
 
-  @Output() uploadComplete = new EventEmitter<string[]>();
+  @Output() uploadComplete = new EventEmitter<FileUploadData[]>();
 
+  @Input({ required: true }) storeId?: string;
   @Input() cancel: Subject<boolean> | undefined;
 
-  ngOnChanges(changes: SimpleChanges) {
-    changes['cancel'].currentValue.subscribe((value: boolean) => {
-      if (value) {
-        if (this.uploadElement) {
-          this.uploadElement.clear()
-        }
-        this.clear();
-      }
-    });
-  }
-
-  @ViewChild('uploadElement') uploadElement!: FileUpload;
+  @ViewChild('fileUploader') uploadElement!: FileUpload;
 
   messageService = inject(MessageService);
+  productService = inject(ProductService);
 
   ngOnInit() {
   }
 
-  choose(event: Event, choose: () => void) {
-    choose();
-  }
+  ngOnChanges(changes: SimpleChanges) {
+    const cancelChange = changes['cancel']
 
-  upload(upload: () => void) {
-    upload();
-  }
-
-  clear(clearCB?: () => void) {
-    if (clearCB) {
-      clearCB()
+    if (cancelChange && cancelChange.currentValue) {
+      cancelChange.currentValue
+        .pipe(takeUntil(this.destroyer$))
+        .subscribe((value: boolean) => {
+          if (value) {
+            if (this.uploadElement) {
+              this.uploadElement.clear()
+            }
+            this.clear();
+          }
+        });
     }
-    this.files = [];
-    this.totalSize = 0;
-    this.totalSizePercent = 0;
-  }
-
-  onUploadError(event: FileUploadErrorEvent) {
-    const message = event?.error?.error?.message || 'Error uploading images. Please try again.';
-    this.showNotification('Upload photo', 'error', message);
-  }
-
-  onUpload(event: FileUploadEvent) {
-    for (let i = 0; i < event.files.length; i++) {
-      const file = event.files[i];
-      this.files.push({ file, path: (event.originalEvent as any).body[i] });
-    }
-
-    this.uploadComplete.emit(this.files.map(file => file.path));
-    this.showNotification('Upload photo', 'info', 'Images uploaded successfully!');
   }
 
 
+  customUpload(event: FileUploadHandlerEvent) {
+    const reqData = this.makeRequestData(event.files);
+    this.productService.uploadProductImages({ files: reqData }).subscribe({
+      next: (res) => {
+        const data = event.files.map((file, index) => {
+          return {
+            ...res[index],
+            file: file,
+            size: file.size,
+          }
+        }) as any[];
+
+        this.uploadElement.uploadedFiles.push(...data);
+        this.uploadElement.files = [];
+        this.uploadComplete.emit(this.uploadElement.uploadedFiles as any);
+        this.showNotification('Upload photo', 'info', 'Images uploaded successfully!');
+      },
+      error: (err) => {
+        console.error('Error uploading images:', err);
+        this.showNotification('Upload photo', 'error', err?.error?.message || 'Error uploading images. Please try again.');
+      }
+    });
+  }
+
+  onSelectedFiles(event: FileSelectEvent) {
+    this.files.set(event.currentFiles);
+    this.files().forEach((file) => {
+      this.totalSize += file.size
+    });
+    this.totalSizePercent = this.countProgress(this.totalSize, this.maxFileSize);
+  }
+
+  onRemoveTemplatingFile(event: Event, file: File, removeFileCallback: Function, index: number) {
+    removeFileCallback(event, index);
+    this.totalSize -= file.size
+
+    this.totalSizePercent = this.countProgress(this.totalSize, this.maxFileSize);
+    this.uploadComplete.emit(this.uploadElement.uploadedFiles as any[]);
+  }
 
   private showNotification(title: string, bgColor: 'info' | 'success' | 'error', message: string) {
     this.messageService.add({ severity: bgColor, summary: title, detail: message, life: 3000 })
+  }
+
+  private makeRequestData(files: File[]): UploadImageRequest[] {
+    const reqData = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      reqData.push({
+        storeId: this.storeId!,
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+      });
+    }
+    return reqData;
+  }
+  private countProgress(totalSize: number, maxSize: number): number {
+    const result = (totalSize / maxSize) * 100; // in percent
+    if (result > 100) {
+      return 100;
+    }
+    return Math.round(result);
+  }
+
+  parseProgressValueIntoKb(value: number): number {
+    return Math.round((value * this.maxFileSize) / 100 / 1000);
+  }
+
+  clear(clearCB?: Function) {
+    if (clearCB) {
+      clearCB()
+    }
+    this.files.set([]);
+    this.uploadElement.files = [];
+    this.uploadElement.uploadedFiles = [];
+    this.totalSize = 0;
+    this.totalSizePercent = 0;
   }
 
   ngOnDestroy() {
@@ -93,5 +151,21 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     if (this.cancel) {
       this.cancel.complete();
     }
+    this.destroyer$.next();
+    this.destroyer$.complete();
+  }
+
+  formatSize(bytes: number): string {
+    const k = 1024;
+    const dm = 3;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    if (bytes === 0) {
+      return `0 ${sizes[0]}`;
+    }
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+    return `${formattedSize} ${sizes[i]}`;
   }
 }

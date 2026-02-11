@@ -63,3 +63,21 @@ export interface Brand {
 export interface BrandResponse extends BaseListResponse {
   data: Brand[]
 }
+
+export interface UploadImageResponse {
+  url: string;
+  expiresIn: number;
+}
+
+export interface UploadImageRequest {
+  storeId: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+}
+
+export interface FileUploadData {
+  file: File;
+  url?: UploadImageRequest;
+  size: number;
+}

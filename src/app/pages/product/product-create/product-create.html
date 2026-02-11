@@ -37,7 +37,8 @@
 
       <div class="col-span-full lg:col-span-6">
         <div class="p-6">
-          <app-file-upload [cancel]="uploadedFilesCancel$" (uploadComplete)="onUpload($event)" />
+          <app-file-upload [storeId]="productForm.controls.store.value?.id" [cancel]="uploadedFilesCancel$"
+            (uploadComplete)="onUpload($event)" />
         </div>
       </div>
 

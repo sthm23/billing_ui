@@ -8,9 +8,15 @@ export class BaseUrlInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
     const baseUrl = 'http://localhost:4000';
-    const newReq = req.clone({
-      url: baseUrl + req.url
-    });
+    // Only prefix API-relative URLs. Absolute URLs (e.g. presigned S3 URLs)
+    // must pass through unchanged.
+    const isAbsoluteUrl = /^https?:\/\//i.test(req.url) || req.url.startsWith('//');
+    const newReq = isAbsoluteUrl
+      ? req
+      : req.clone({
+        url: baseUrl + req.url
+      });
+
     return handler.handle(newReq);
   }
 }

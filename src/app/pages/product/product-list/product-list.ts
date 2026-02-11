@@ -10,6 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';
 import { BadgeModule } from 'primeng/badge';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -38,7 +39,7 @@ export class ProductList implements OnInit, OnDestroy {
   public appStore = inject(AppStore);
   public messageService = inject(MessageService);
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.fetchProducts(this.first() / this.rows + 1, this.rows);
@@ -78,6 +79,14 @@ export class ProductList implements OnInit, OnDestroy {
     } else {
       return 'danger';
     }
+  }
+
+  getProductImg(product: Product): string {
+    return product.images.length > 0 ? product.images[0].url : 'assets/default-product.png';
+  }
+
+  goToProductView(product: Product) {
+    this.router.navigate(['/pages/product', product.id]);
   }
 
   ngOnDestroy() {

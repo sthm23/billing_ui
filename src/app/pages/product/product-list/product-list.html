@@ -16,14 +16,15 @@
     <ng-template #body let-product>
       <tr>
         <td>{{ product.name }}</td>
-        <td><img [src]="product.images[0].url" [alt]="product.name" width="50"
+        <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
             class="shadow-lg object-cover h-[40px]" />
         </td>
         <td>{{ product.brand }}</td>
         <td>{{ product.category }}</td>
         <td> <p-badge [value]="product.variants" [severity]="getSeverity(product.variants)" /></td>
         <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
-        <td><p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true" /></td>
+        <td><p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true" (onClick)="goToProductView(product)" />
+        </td>
       </tr>
     </ng-template>
   </p-table>

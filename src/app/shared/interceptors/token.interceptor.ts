@@ -9,9 +9,12 @@ export class TokenInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) { }
   intercept(req: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
     const authToken = this.authService.getAccessToken();
-    const newReq = req.clone({
-      headers: req.headers.append('Authorization', `Bearer ${authToken}`),
-    });
+    const isS3Url = req.url.includes('/billing/')
+    const newReq = isS3Url
+      ? req
+      : req.clone({
+        headers: req.headers.append('Authorization', `Bearer ${authToken}`),
+      });
     return handler.handle(newReq);
   }
 }

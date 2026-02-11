@@ -1,1 +1,11 @@
-<p>product-card works!</p>
+<div class="card">
+  <p-galleria [value]="images()" [showItemNavigators]="true" [responsiveOptions]="responsiveOptions" [circular]="true"
+    [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
+    <ng-template #item let-item>
+      <img [src]="item.itemImageSrc" style="width: 100%; height: 400px; object-fit: cover; display: block;" />
+    </ng-template>
+    <ng-template #thumbnail let-item>
+      <img [src]="item.thumbnailImageSrc" style="display: block;" />
+    </ng-template>
+  </p-galleria>
+</div>
