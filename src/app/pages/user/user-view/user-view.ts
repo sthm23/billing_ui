@@ -13,6 +13,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { OrgLevel } from '../../../models/store.model';
+import { StoreService } from '../../organization/service/store';
 
 @Component({
   selector: 'app-user-view',
@@ -44,6 +45,7 @@ export class UserView implements OnInit {
 
   constructor(
     private userService: UserService,
+    private storeService: StoreService,
     private route: ActivatedRoute,
     private router: Router,
     private messageService: MessageService
@@ -58,22 +60,13 @@ export class UserView implements OnInit {
 
         this.user.set(user);
         this.addOrgNode(user.id, user.fullName, OrgLevel.OWNER);
-        if (user.stores && user.stores.length) {
-          for (const store of user.stores) {
-            this.addOrgNode(store.id, store.name, OrgLevel.STORE, user.id);
-            if (store.warehouses && store.warehouses.length) {
-              for (const warehouse of store.warehouses) {
-                this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, store.id);
+        if (user.staff && user.staff.store) {
+          const store = user.staff.store
+          this.addOrgNode(store.id, store.name, OrgLevel.STORE, user.id);
 
-                if (warehouse.staffWarehouses && warehouse.staffWarehouses.length) {
-                  for (const staffWarehouse of warehouse.staffWarehouses) {
-                    const staffName = store.staff.find(s => s.id === staffWarehouse.staffId)?.role || 'Unknown Staff';
-                    this.addOrgNode(staffWarehouse.id, staffName, OrgLevel.STAFF, warehouse.id);
-                  }
-                }
-              }
-            }
-
+          if (user.staff.warehouse) {
+            const warehouse = user.staff.warehouse
+            this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, store.id);
           }
         }
 
@@ -207,24 +200,12 @@ export class UserView implements OnInit {
   }
 
   private createStore(name: string) {
-    this.userService.createStore({ name, ownerId: this.user()!.id }).subscribe({
-      next: (store) => {
-        this.visible = false;
-        console.log('Store created:', store);
-        this.addOrgNode(store.id, store.name, OrgLevel.STORE, this.user()!.id);
-        this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Magazin yaratildi' });
-        this.createOrgForm.reset();
-      },
-      error: (err) => {
-        console.error('Error creating store:', err);
-        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error.message || 'Magazin yaratishda xatolik yuz berdi' });
-      }
-    });
+    this.router.navigate(['/pages/organization/create'], { queryParams: { name, ownerId: `${this.user()!.id}!!${this.user()!.fullName}` } });
   }
 
   private createWarehouse(name: string, storeId: string) {
 
-    this.userService.createWarehouse({ name, storeId, ownerId: this.user()!.id! }).subscribe({
+    this.storeService.createWarehouse({ name, storeId, ownerId: this.user()!.id! }).subscribe({
       next: ({ warehouse }) => {
         this.visible = false;
         console.log('Warehouse created:', warehouse);

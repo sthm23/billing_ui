@@ -17,6 +17,7 @@ import { PasswordModule } from 'primeng/password';
 import { UserService } from '../service/user.service';
 import { AppStore } from '../../../store/app.store';
 import { SelectType } from '../../../models/app.models';
+import { StoreService } from '../../organization/service/store';
 @Component({
   selector: 'app-user-create',
   imports: [
@@ -74,6 +75,7 @@ export class UserCreate implements OnInit, OnDestroy {
 
   messageService = inject(MessageService);
   userService = inject(UserService);
+  storeService = inject(StoreService);
   appStore = inject(AppStore);
   router = inject(Router);
   route = inject(ActivatedRoute);
@@ -85,11 +87,11 @@ export class UserCreate implements OnInit, OnDestroy {
         const storeId = params['storeId'].split('!!');
         const warehouseId = params['warehouseId'].split('!!');
 
-        if (storeId) {
+        if (storeId.length === 2) {
           this.storeList.set([{ name: storeId[1], id: storeId[0], children: [] }]);
           this.staff.controls.storeId.setValue({ code: storeId[0], name: storeId[1], child: [] } as any);
         }
-        if (warehouseId) {
+        if (warehouseId.length === 2) {
           this.warehouses.set([{ name: warehouseId[1], id: warehouseId[0], children: [] }]);
           this.staff.controls.warehouseId.setValue({ code: warehouseId[0], name: warehouseId[1], child: [] } as any);
         }
@@ -119,12 +121,12 @@ export class UserCreate implements OnInit, OnDestroy {
   }
 
   fetchStoreInformation() {
-    this.userService.getStores().subscribe({
+    this.storeService.getStores().subscribe({
       next: (stores) => {
         this.storeList.set(stores.data.map(store =>
         ({
           name: store.name, id: store.id,
-          child: store.warehouses.map(wh =>
+          child: store.warehouse?.map(wh =>
             ({ name: wh.name, code: wh.id, child: [] })
           )
         })

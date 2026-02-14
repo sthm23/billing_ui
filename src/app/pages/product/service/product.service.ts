@@ -19,24 +19,6 @@ export class ProductService {
     });
   }
 
-  getCategoryList(page = 1, pageSize = 10) {
-    return this.http.get<Category[]>(`/api/category?pageSize=${pageSize}&currentPage=${page}`, {
-      withCredentials: true,
-    });
-  }
-
-  getBrandList(page = 1, pageSize = 10) {
-    return this.http.get<BrandResponse>(`/api/category/brand?pageSize=${pageSize}&currentPage=${page}`, {
-      withCredentials: true,
-    });
-  }
-
-  getStoreList(page = 1, pageSize = 10) {
-    return this.http.get<StoreResponse>(`/api/store?pageSize=${pageSize}&currentPage=${page}`, {
-      withCredentials: true,
-    });
-  }
-
   createProduct(data: CreateProduct) {
     return this.http.post<Product>(`/api/product`, data, {
       withCredentials: true,
@@ -46,20 +28,6 @@ export class ProductService {
   getProductById(productId: string) {
     return this.http.get<Product>(`/api/product/${productId}`, {
       withCredentials: true,
-    });
-  }
-
-  uploadProductImages(body: { files: UploadImageRequest[] }) {
-    return this.http.post<UploadImageResponse[]>(`/api/image/upload`, body, {
-      withCredentials: true,
-    });
-  }
-
-  uploadImagesToS3(url: string, file: File) {
-    return this.http.put<null>(url, file, {
-      headers: {
-        'Content-Type': file.type
-      }
     });
   }
 }

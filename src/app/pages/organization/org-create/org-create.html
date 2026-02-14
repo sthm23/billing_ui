@@ -1,1 +1,73 @@
-<p>org-create works!</p>
+<p-toast />
+<div class="card" [formGroup]="storeForm">
+  <div class="font-semibold text-xl">Create store</div>
+
+  <app-loader [loading]="false">
+    <p-fluid>
+      <div class="flex ">
+        <div class="p-4 flex flex-col gap-6 w-full">
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="name">Store name</label>
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
+            </div>
+
+            <div class="flex flex-wrap gap-3 w-full" formGroupName="wareHouse">
+              <label for="name">Warehouse name</label>
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
+            </div>
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="ownerId">Owners</label>
+              <p-select id="ownerId" formControlName="ownerId" [options]="ownerList()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('ownerId')"></p-select>
+            </div>
+
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="categoryId">Category</label>
+              <p-treeselect id="categoryId" class="w-full" formControlName="categoryId"
+                [class]="isValidField('categoryId')" [options]="categoryList()"
+                placeholder="Select last child category" />
+              <!-- <p-select id="categoryId" formControlName="categoryId" [options]="categoryList()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('categoryId')"></p-select> -->
+            </div>
+          </div>
+
+          <!-- <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="login">Login</label>
+              <input [class]="isValidField('login')" pInputText id="login" type="text" formControlName="login" />
+            </div>
+            <div class="flex flex-col gap-2 w-full">
+              <label for="password">Password</label>
+              <p-password [class]="isValidField('password')" id="password" [feedback]="false" [toggleMask]="true"
+                formControlName="password" />
+            </div>
+
+          </div>
+          @if(isShopHidden) {
+          <div class="flex flex-col md:flex-row gap-6" [formGroup]="staff">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="storeId">Store</label>
+              <p-select id="storeId" formControlName="storeId" [options]="storeList()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="warehouseId">Warehouse</label>
+              <p-select id="warehouseId" formControlName="warehouseId" [options]="warehouses()" optionLabel="name"
+                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+            </div>
+          </div>
+          } -->
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button label="Bekor qilish" variant="outlined" (onClick)="clearForm()"></p-button>
+        <p-button label="Tasdiqlash" severity="contrast" (onClick)="submitForm()"></p-button>
+      </div>
+    </p-fluid>
+  </app-loader>
+</div>

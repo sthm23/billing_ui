@@ -18,7 +18,7 @@ export interface Store {
   owner: User
   staff: Staff[]
   // products:   Product[]
-  warehouses: Warehouse[]
+  warehouse: Warehouse[]
   // orders:     Order[]
 }
 export interface StoreResponse extends BaseListResponse {
@@ -28,6 +28,8 @@ export interface StoreResponse extends BaseListResponse {
 export interface CreateStore {
   name: string
   ownerId: string
+  categoryId: string
+  warehouseName: string
 }
 
 export interface CreateWarehouse {
@@ -42,5 +44,5 @@ export interface Warehouse {
   storeId: string
   isActive: boolean
   createdAt: string
-  staffWarehouses: { id: string, staffId: string, warehouseId: string }[]
+  // staffWarehouses: { id: string, staffId: string, warehouseId: string }[]
 }

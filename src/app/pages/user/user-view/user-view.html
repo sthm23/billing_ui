@@ -6,7 +6,7 @@
         <div class="mt-4 font-medium text-lg">{{ node.label }}</div>
         <div class="mt-4 font-medium text-lg">{{ node.data.level }}</div>
 
-        @if(node.data.level !== orgLevel.STAFF) {
+        @if((node.data.level == orgLevel.OWNER && !user()?.staff)|| node.data.level == orgLevel.WAREHOUSE) {
         <p-button class="mt-4" aria-label="add" [pTooltip]="textToolTip(node.data.level) || ''" variant="outlined"
           severity="success" (onClick)="addNode(node)">
           <i class="pi pi-plus"></i>

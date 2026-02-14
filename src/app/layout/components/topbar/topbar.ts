@@ -39,8 +39,7 @@ export class Topbar implements OnInit, OnDestroy {
       filter(event => event instanceof NavigationEnd),
       takeUntil(this.destroyer$)
     ).subscribe((e: NavigationEnd) => {
-      const result = e.urlAfterRedirects.split('/').splice(1)
-        .map((segment, ind) => (ind ? { label: segment } : { icon: 'pi pi-home' }));
+      const result = this.makeBreadcrumbLabel(e.urlAfterRedirects);
 
       this.breadcrumbItems = result;
     });
@@ -64,6 +63,21 @@ export class Topbar implements OnInit, OnDestroy {
         this.authService.redirectToLogin();
       }
     });
+  }
+
+  private makeBreadcrumbLabel(label: string) {
+    const segments = label.split('/').splice(1)
+      .map((segment, ind) =>
+      (ind ?
+        { label: segment } :
+        { icon: 'pi pi-home' }
+      )
+      );
+    const lastSegment = segments[segments.length - 1];
+    if (lastSegment.label && lastSegment.label.includes('-') && lastSegment.label.length >= 28) {
+      lastSegment.label = 'detail';
+    }
+    return segments;
   }
 
   ngOnDestroy(): void {

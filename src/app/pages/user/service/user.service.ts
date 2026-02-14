@@ -22,26 +22,14 @@ export class UserService {
     });
   }
 
+  getOwners(page: number = 1, pageSize: number = 10) {
+    return this.http.get<UsersResponse>(`/api/users/owners?page=${page}&pageSize=${pageSize}`, {
+      withCredentials: true
+    });
+  }
+
   getUserById(userId: string) {
     return this.http.get<User>(`/api/users/${userId}`, {
-      withCredentials: true
-    });
-  }
-
-  createStore(body: CreateStore) {
-    return this.http.post<Store>(`/api/store`, body, {
-      withCredentials: true
-    });
-  }
-
-  createWarehouse(body: CreateWarehouse) {
-    return this.http.post<{ warehouse: Warehouse, worker: any }>(`/api/warehouse`, body, {
-      withCredentials: true
-    });
-  }
-
-  getStores() {
-    return this.http.get<StoreResponse>(`/api/store`, {
       withCredentials: true
     });
   }

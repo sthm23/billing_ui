@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output, signal, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { ButtonClasses, ButtonModule, ButtonTemplates } from 'primeng/button';
-import { FileProgressEvent, FileRemoveEvent, FileSelectEvent, FileUpload, FileUploadContentTemplateContext, FileUploadErrorEvent, FileUploadEvent, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
+import { ButtonModule } from 'primeng/button';
+import { FileSelectEvent, FileUpload, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ProductService } from '../../../pages/product/service/product.service';
 import { CommonModule } from '@angular/common';
 import { FileUploadData, UploadImageRequest } from '../../../models/product.model';
+import { FileUploadService } from '../../../pages/service/file-upload.service';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
   @ViewChild('fileUploader') uploadElement!: FileUpload;
 
   messageService = inject(MessageService);
-  productService = inject(ProductService);
+  fileUploadService = inject(FileUploadService);
 
   ngOnInit() {
   }
@@ -66,7 +67,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
   customUpload(event: FileUploadHandlerEvent) {
     const reqData = this.makeRequestData(event.files);
-    this.productService.uploadProductImages({ files: reqData }).subscribe({
+    this.fileUploadService.uploadProductImages({ files: reqData }).subscribe({
       next: (res) => {
         const data = event.files.map((file, index) => {
           return {

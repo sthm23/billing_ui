@@ -8,6 +8,7 @@ import { TagModule } from 'primeng/tag';
 import { Product } from '../../../models/product.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../service/product.service';
+import { PhotoService } from '../../service/photo.service';
 
 @Component({
   selector: 'app-product-card',
@@ -16,6 +17,7 @@ import { ProductService } from '../service/product.service';
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
+  providers: [PhotoService]
 })
 export class ProductCard implements OnInit {
   images = signal<any[]>([]);
@@ -43,10 +45,16 @@ export class ProductCard implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private photoService: PhotoService,
     private productService: ProductService
   ) { }
 
   ngOnInit(): void {
+    // this.photoService.getImages().then((images) => {
+    //   this.images.set(images);
+    //   console.log(images);
+
+    // });
     this.route.paramMap.subscribe(params => {
       const productId = params.get('id');
       if (productId) {

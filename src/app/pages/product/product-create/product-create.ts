@@ -17,6 +17,9 @@ import { FileUploadComponent } from '../../../shared/components/file-upload/file
 import { ProductService } from '../service/product.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { CreateProduct, FileUploadData } from '../../../models/product.model';
+import { CategoryService } from '../../service/category.service';
+import { StoreService } from '../../organization/service/store';
+import { FileUploadService } from '../../service/file-upload.service';
 
 @Component({
   selector: 'app-product-create',
@@ -57,6 +60,9 @@ export class ProductCreate implements OnInit, OnDestroy {
 
   constructor(
     private productService: ProductService,
+    private categoryService: CategoryService,
+    private storeService: StoreService,
+    private fileUploadService: FileUploadService,
     private messageService: MessageService
   ) {
 
@@ -69,15 +75,15 @@ export class ProductCreate implements OnInit, OnDestroy {
 
   private fetchData() {
     this.appStore.startLoader();
-    this.productService.getBrandList().pipe(
+    this.categoryService.getBrandList().pipe(
       switchMap((brandsRes) => {
         this.brands.set(brandsRes.data);
-        return this.productService.getCategoryList()
+        return this.categoryService.getCategoryList()
       }),
       switchMap((categoryList) => {
         const categories: MultiSelectType[] = this.makeSelectTypes(categoryList) as MultiSelectType[];
         this.categories.set(categories);
-        return this.productService.getStoreList()
+        return this.storeService.getStores()
       }),
     ).subscribe({
       next: (stores) => {
@@ -142,7 +148,7 @@ export class ProductCreate implements OnInit, OnDestroy {
       };
 
       const uploadImages = data.images?.map(file => {
-        return this.productService.uploadImagesToS3(file.url, file.file);
+        return this.fileUploadService.uploadImagesToS3(file.url, file.file);
       }) as Observable<null>[];
       forkJoin(uploadImages)
         .pipe(

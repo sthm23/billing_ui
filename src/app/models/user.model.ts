@@ -30,7 +30,6 @@ export interface User {
 
   auth: AuthAccount | null
   staff: Staff | null
-  stores: Store[]
   role: UserRole
   // orders: Order[]
   refreshSessions?: RefreshSession[]
@@ -79,7 +78,7 @@ export interface Staff {
   isActive: Boolean
   user: User
   store: Store
-  warehouses: StaffWarehouse[]
+  warehouse: StaffWarehouse
   // stockMoves: StockMovement[]
   // orders: Order[]
 
@@ -87,10 +86,10 @@ export interface Staff {
 
 export interface StaffWarehouse {
   id: string
+  name: string
   staffId: string
-  warehouseId: string
-  staff: Staff
-  // warehouse: Warehouse
+  isActive: boolean
+  storeId: string
 }
 
 export interface UserCreateRequest {
