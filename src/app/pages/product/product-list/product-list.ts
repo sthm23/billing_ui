@@ -82,7 +82,7 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   getProductImg(product: Product): string {
-    return product.images.length > 0 ? product.images[0].url : 'assets/default-product.png';
+    return product.images.length > 0 ? product.images[0].url : '/no_image.svg';
   }
 
   goToProductView(product: Product) {

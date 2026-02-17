@@ -35,6 +35,8 @@ export class Topbar implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.breadcrumbItems = this.makeBreadcrumbLabel(this.router.routerState.snapshot.url)
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       takeUntil(this.destroyer$)

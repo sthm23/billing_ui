@@ -18,6 +18,8 @@ import { UserService } from '../service/user.service';
 import { AppStore } from '../../../store/app.store';
 import { SelectType } from '../../../models/app.models';
 import { StoreService } from '../../organization/service/store';
+import { AuthService } from '../../auth/service/auth';
+import { Store } from '../../../models/store.model';
 @Component({
   selector: 'app-user-create',
   imports: [
@@ -48,62 +50,78 @@ export class UserCreate implements OnInit, OnDestroy {
   });
 
   staff = new FormGroup({
-    storeId: new FormControl<SelectType | null>(null, [Validators.required]),//
+    storeId: new FormControl<Store | null>(null, [Validators.required]),//
     warehouseId: new FormControl<SelectType | null>(null, [Validators.required]),//
   });
 
   isShopHidden = false;
 
-  userRole: SelectItemGroup[] = [
-    {
-      label: 'Roles', items: [
-        { label: 'Owner', value: UserRole.OWNER },
-      ]
-    },
-    {
-      label: 'Staff', items: [
-        { label: 'Manager', value: StaffRole.MANAGER },
-        { label: 'Seller', value: StaffRole.SELLER },
-        { label: 'Warehouse', value: StaffRole.WAREHOUSE },
-        { label: 'Cashier', value: StaffRole.CASHIER },
-      ]
-    }
-  ];
+  userRole: SelectItemGroup[] = [];
 
-  storeList = signal<SelectType[]>([]);
+  storeList = signal<Store[]>([]);
   warehouses = signal<SelectType[]>([]);
 
   messageService = inject(MessageService);
   userService = inject(UserService);
   storeService = inject(StoreService);
+  authService = inject(AuthService);
   appStore = inject(AppStore);
   router = inject(Router);
   route = inject(ActivatedRoute);
 
   ngOnInit(): void {
+    const isAdmin = this.authService.isAdmin();
+    this.isShopHidden = !isAdmin;
+    this.userRole = this.makeUserRoleSelectItems(isAdmin);
+
     this.route.queryParams.subscribe(params => {
-      console.log(params);
+
       if (params.hasOwnProperty('storeId') && params.hasOwnProperty('warehouseId')) {
-        const storeId = params['storeId'].split('!!');
-        const warehouseId = params['warehouseId'].split('!!');
+        const store = params['storeId'].split('!!');
+        const warehouse = params['warehouseId'].split('!!');
+        this.staff.patchValue({
+          storeId: { id: store[0], name: store[1] } as any,
+          warehouseId: { id: warehouse[0], name: warehouse[1] },
+        })
+        this.storeList.set([{ id: store[0], name: store[1] } as any]);
+        this.warehouses.set([{ id: warehouse[0], name: warehouse[1] } as any]);
+        return;
+      }
 
-        if (storeId.length === 2) {
-          this.storeList.set([{ name: storeId[1], id: storeId[0], children: [] }]);
-          this.staff.controls.storeId.setValue({ code: storeId[0], name: storeId[1], child: [] } as any);
-        }
-        if (warehouseId.length === 2) {
-          this.warehouses.set([{ name: warehouseId[1], id: warehouseId[0], children: [] }]);
-          this.staff.controls.warehouseId.setValue({ code: warehouseId[0], name: warehouseId[1], child: [] } as any);
-        }
-
-        if (storeId && warehouseId) {
-          this.isShopHidden = true;
-        }
-      } else {
+      if (this.authService.isAdmin()) {
         this.fetchStoreInformation();
+        this.staff.controls.storeId.valueChanges.subscribe(store => {
+          this.warehouses.set([
+            {
+              name: store?.warehouse.name || '',
+              id: store?.warehouse.id || '',
+            }
+          ]);
+        })
+      } else {
+        const currentUser = this.authService.getCurrentUser()!;
+        if (currentUser.staff) {
+          this.storeList.set([{
+            name: currentUser.staff.store.name,
+            id: currentUser.staff.store.id,
+          } as any])
+          this.warehouses.set([{
+            name: currentUser.staff.warehouse.name,
+            id: currentUser.staff.warehouse.id,
+          }])
+          this.staff.patchValue({
+            storeId: { id: currentUser.staff.store.id, name: currentUser.staff.store.name } as any,
+            warehouseId: { id: currentUser.staff.warehouse.id, name: currentUser.staff.warehouse.name, },
+          })
+        }
       }
 
     });
+
+    this.toggleOwnerFields();
+  }
+
+  private toggleOwnerFields() {
     this.userForm.controls.role.valueChanges.subscribe((value) => {
       if (value?.value === UserRole.OWNER) {
         this.isShopHidden = false;
@@ -111,31 +129,33 @@ export class UserCreate implements OnInit, OnDestroy {
         this.isShopHidden = true;
       }
     });
-    this.staff.controls.storeId.valueChanges.subscribe((storeId: any) => {
-      if (storeId && storeId.code) {
-        const storeIdCode = storeId.code;
-        this.staff.controls.warehouseId.setValue(null);
-        this.warehouses.set(this.storeList().find(store => store.id === storeIdCode)?.children || []);
-      }
-    })
   }
 
-  fetchStoreInformation() {
-    this.storeService.getStores().subscribe({
-      next: (stores) => {
-        this.storeList.set(stores.data.map(store =>
-        ({
-          name: store.name, id: store.id,
-          child: store.warehouse?.map(wh =>
-            ({ name: wh.name, code: wh.id, child: [] })
-          )
-        })
-        ));
-      },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
-      }
-    });
+  fetchStoreInformation(storeId?: string) {
+    if (storeId && !this.authService.isAdmin()) {
+      this.storeService.getStoreById(storeId).subscribe({
+        next: (store) => {
+          this.storeList.set([{ ...store }]);
+          this.warehouses.set([{
+            name: store.warehouse.name,
+            id: store.warehouse.id,
+          }])
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+        }
+      });
+    } else {
+      this.storeService.getStores().subscribe({
+        next: (stores) => {
+          this.storeList.set(stores.data);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
+        }
+      });
+    }
+
   }
 
   submitForm() {
@@ -191,6 +211,37 @@ export class UserCreate implements OnInit, OnDestroy {
     console.log(this.userForm.value);
     this.userForm.reset();
     this.staff.reset();
+  }
+
+  private makeUserRoleSelectItems(isAdmin: boolean) {
+    if (isAdmin) {
+      return [
+        {
+          label: 'Roles', items: [
+            { label: 'Owner', value: UserRole.OWNER },
+          ],
+        },
+        {
+          label: 'Staff', items: [
+            { label: 'Manager', value: StaffRole.MANAGER },
+            { label: 'Seller', value: StaffRole.SELLER },
+            { label: 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: 'Cashier', value: StaffRole.CASHIER },
+          ]
+        }
+      ]
+    } else {
+      return [
+        {
+          label: 'Staff', items: [
+            { label: 'Manager', value: StaffRole.MANAGER },
+            { label: 'Seller', value: StaffRole.SELLER },
+            { label: 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: 'Cashier', value: StaffRole.CASHIER },
+          ]
+        }
+      ]
+    }
   }
 
   isValidField(field: keyof typeof this.userForm.controls): string {

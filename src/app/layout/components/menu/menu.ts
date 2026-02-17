@@ -3,6 +3,7 @@ import { MenuItems } from '../menu-item/menu-item';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../../pages/auth/service/auth';
 
 @Component({
   selector: 'app-menu',
@@ -12,6 +13,10 @@ import { MenuItem } from 'primeng/api';
 })
 export class Menu {
   model: MenuItem[] = [];
+
+  constructor(
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     this.model = [
@@ -35,6 +40,7 @@ export class Menu {
           {
             label: 'Organization',
             icon: 'pi pi-fw pi-sitemap',
+            visible: this.authService.isAdmin(),
             items: [
               {
                 label: 'Store List',

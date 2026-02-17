@@ -1,4 +1,5 @@
 import { BaseListResponse } from "./app.models"
+import { Category } from "./product.model"
 import { Admin, Staff, User } from "./user.model"
 
 export enum OrgLevel {
@@ -14,11 +15,10 @@ export interface Store {
   ownerId: string
   createdAt: string
   createdBy: string // adminId
-  creator: Admin
-  owner: User
-  staff: Staff[]
+  creator: User
+  warehouse: Warehouse
+  categories: { category: Category[], categoryId: string, storeId: string }[]
   // products:   Product[]
-  warehouse: Warehouse[]
   // orders:     Order[]
 }
 export interface StoreResponse extends BaseListResponse {
@@ -30,6 +30,7 @@ export interface CreateStore {
   ownerId: string
   categoryId: string
   warehouseName: string
+  brandIds: string[]
 }
 
 export interface CreateWarehouse {

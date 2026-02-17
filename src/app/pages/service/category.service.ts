@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Category, BrandResponse } from "../../models/product.model";
+import { Category, BrandResponse, CategoryResponse, Brand } from "../../models/product.model";
 
 
 @Injectable({
@@ -11,7 +11,21 @@ export class CategoryService {
   }
 
   getCategoryList(page = 1, pageSize = 10) {
-    return this.http.get<Category[]>(`/api/category?pageSize=${pageSize}&currentPage=${page}`, {
+    let url = `/api/category?pageSize=${pageSize}&currentPage=${page}`;
+    return this.http.get<Category[]>(url, {
+      withCredentials: true,
+    });
+  }
+
+  getStoreCategoryList(storeId: string) {
+    let url = `/api/category/${storeId}/categories`;
+    return this.http.get<Category[]>(url, {
+      withCredentials: true,
+    });
+  }
+
+  getStoreBrandList(storeId: string) {
+    return this.http.get<Brand[]>(`/api/category/brand/${storeId}`, {
       withCredentials: true,
     });
   }

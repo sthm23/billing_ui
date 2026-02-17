@@ -36,10 +36,10 @@ export class OrgList implements OnInit, OnDestroy {
   constructor(private router: Router) { }
 
   ngOnInit() {
-    this.fetchstores(this.first() / this.rows + 1, this.rows);
+    this.fetchStores(this.first() / this.rows + 1, this.rows);
   }
 
-  fetchstores(page = 1, pageSize = 10) {
+  fetchStores(page = 1, pageSize = 10) {
     this.appStore.startLoader();
     this.storeService.getStores(page, pageSize)
       .pipe(
@@ -61,7 +61,7 @@ export class OrgList implements OnInit, OnDestroy {
     this.dataTable.reset();
     this.first.set(event.first);
     this.rows = event.rows;
-    this.fetchstores(this.first() / this.rows + 1, this.rows);
+    this.fetchStores(this.first() / this.rows + 1, this.rows);
   }
 
   goToOrgSchema(store: Store) {

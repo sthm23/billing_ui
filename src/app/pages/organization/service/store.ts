@@ -28,4 +28,10 @@ export class StoreService {
       withCredentials: true
     });
   }
+
+  getStoreById(id: string) {
+    return this.http.get<Store>(`/api/store/${id}`, {
+      withCredentials: true
+    });
+  }
 }

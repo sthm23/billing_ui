@@ -35,19 +35,24 @@
             </div>
           </div>
 
-          <!-- <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="login">Login</label>
-              <input [class]="isValidField('login')" pInputText id="login" type="text" formControlName="login" />
+              <label for="brands">Brands</label>
+              <p-multiselect [options]="brandList()" formControlName="brands" optionLabel="name"
+                placeholder="Select brands" [maxSelectedLabels]="3" class="w-full md:w-80"
+                [class]="isValidField('brands')" />
+              <!-- <p-select id="brands" formControlName="brands" [options]="brandList()" optionLabel="name"
+                placeholder="Choose multiple brands" class="w-full" [class]="isValidField('brands')"></p-select> -->
+              <!-- <input [class]="isValidField('brands')" pInputText id="brands" type="text" formControlName="brands" /> -->
             </div>
-            <div class="flex flex-col gap-2 w-full">
+            <!-- <div class="flex flex-col gap-2 w-full">
               <label for="password">Password</label>
               <p-password [class]="isValidField('password')" id="password" [feedback]="false" [toggleMask]="true"
                 formControlName="password" />
-            </div>
+            </div> -->
 
           </div>
-          @if(isShopHidden) {
+          <!-- @if(isShopHidden) {
           <div class="flex flex-col md:flex-row gap-6" [formGroup]="staff">
             <div class="flex flex-wrap gap-2 w-full">
               <label for="storeId">Store</label>

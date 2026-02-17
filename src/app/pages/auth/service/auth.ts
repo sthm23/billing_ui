@@ -66,6 +66,19 @@ export class AuthService {
     return null;
   }
 
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return user?.role === 'ADMIN';
+  }
+
+  getUserStoreId(): string | null {
+    const user = this.getCurrentUser();
+    if (user?.staff && user.staff.store) {
+      return user.staff.store.id;
+    }
+    return null;
+  }
+
   getAccessToken(): string | null {
     const token = localStorage.getItem(LOCALE_STORAGE_KEYS.TOKEN);
     if (token) {

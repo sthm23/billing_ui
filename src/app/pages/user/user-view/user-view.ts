@@ -85,8 +85,9 @@ export class UserView implements OnInit {
     // if (!parent) return;
     if (node.data.level === OrgLevel.OWNER) {
       // create store
-      this.visible = true;
+      // this.visible = true;
       this.currentLevel = OrgLevel.OWNER;
+      this.createStore();
     } else if (node.data.level === OrgLevel.STORE) {
       // create warehouse
       this.visible = true;
@@ -132,16 +133,16 @@ export class UserView implements OnInit {
   }
 
   submitModal() {
-    if (this.createOrgForm.valid) {
-      const name = this.createOrgForm.value.name!;
-      if (this.currentLevel === OrgLevel.OWNER) {
-        // create store
-        this.createStore(name);
-      } else if (this.currentLevel === OrgLevel.STORE) {
-        //create warehouse
-        this.createWarehouse(name, this.currentStoreId!);
-      }
-    }
+    // if (this.createOrgForm.valid) {
+    //   const name = this.createOrgForm.value.name!;
+    //   if (this.currentLevel === OrgLevel.OWNER) {
+    //     // create store
+    //     this.createStore(name);
+    //   } else if (this.currentLevel === OrgLevel.STORE) {
+    //     //create warehouse
+    //     this.createWarehouse(name, this.currentStoreId!);
+    //   }
+    // }
 
   }
 
@@ -199,8 +200,8 @@ export class UserView implements OnInit {
     return parent;
   }
 
-  private createStore(name: string) {
-    this.router.navigate(['/pages/organization/create'], { queryParams: { name, ownerId: `${this.user()!.id}!!${this.user()!.fullName}` } });
+  private createStore() {
+    this.router.navigate(['/pages/organization/create']);
   }
 
   private createWarehouse(name: string, storeId: string) {

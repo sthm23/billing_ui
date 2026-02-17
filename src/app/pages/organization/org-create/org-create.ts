@@ -19,6 +19,8 @@ import { CategoryService } from '../../service/category.service';
 import { UserService } from '../../user/service/user.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { StoreService } from '../service/store';
+import { MultiSelectModule } from 'primeng/multiselect';
+
 
 @Component({
   selector: 'app-org-create',
@@ -34,7 +36,7 @@ import { StoreService } from '../service/store';
     RouterModule,
     InputMaskModule,
     PasswordModule,
-
+    MultiSelectModule,
     TreeSelectModule
   ],
   templateUrl: './org-create.html',
@@ -45,6 +47,7 @@ import { StoreService } from '../service/store';
 export class OrgCreate implements OnInit, OnDestroy {
   ownerList = signal<SelectType[]>([]);
   categoryList = signal<MultiSelectType[]>([]);
+  brandList = signal<SelectType[]>([]);
 
   storeForm = new FormGroup({
     name: new FormControl<string | null>(null, [Validators.required, Validators.minLength(4)]),
@@ -53,6 +56,8 @@ export class OrgCreate implements OnInit, OnDestroy {
     }),
     ownerId: new FormControl<SelectType | null>(null, [Validators.required]),
     categoryId: new FormControl<MultiSelectType | null>(null, [Validators.required]),
+    brands: new FormControl<SelectType[] | null>(null, [Validators.required]),
+    // categoryId: new FormControl<MultiSelectType | null>(null, [Validators.required]),
   })
 
   constructor(
@@ -66,6 +71,7 @@ export class OrgCreate implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchOwners();
     this.fetchCategories();
+    this.fetchBrands();
   }
 
   private fetchOwners() {
@@ -95,6 +101,22 @@ export class OrgCreate implements OnInit, OnDestroy {
     });
   }
 
+  private fetchBrands() {
+    this.categoryService.getBrandList().subscribe({
+      next: (res) => {
+        this.brandList.set(res.data.map((brand) => {
+          return {
+            name: brand.name,
+            id: brand.id
+          }
+        }));
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch brands' });
+      }
+    });
+  }
+
   submitForm() {
     console.log(this.storeForm.value);
 
@@ -105,6 +127,7 @@ export class OrgCreate implements OnInit, OnDestroy {
         ownerId: data.ownerId?.id!,
         categoryId: data.categoryId?.key!,
         warehouseName: data.wareHouse?.name!,
+        brandIds: data.brands?.map(brand => brand.id) || []
       }
 
       this.storeService.createStore(payload).subscribe({
