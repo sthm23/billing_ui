@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 import { RouterModule } from '@angular/router';
-import { BehaviorSubject, forkJoin, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, switchMap } from 'rxjs';
 import { Loader } from '../../../shared/components/loader/loader';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AppStore } from '../../../store/app.store';
@@ -21,13 +21,8 @@ import { CategoryService } from '../../service/category.service';
 import { StoreService } from '../../organization/service/store';
 import { FileUploadService } from '../../service/file-upload.service';
 import { AuthService } from '../../auth/service/auth';
-// import { UserRole } from '../../../models/user.model';
 import { Store } from '../../../models/store.model';
-import { StepperModule } from 'primeng/stepper';
-import { BlockUIModule } from 'primeng/blockui';
-import { TagModule } from 'primeng/tag';
-import { PanelModule } from 'primeng/panel';
-import { ToggleButtonModule } from 'primeng/togglebutton';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-product-create',
@@ -44,9 +39,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     InputNumberModule,
     FileUploadComponent,
     TreeSelectModule,
-    StepperModule, TagModule,
-    BlockUIModule, PanelModule,
-    ToggleButtonModule, FormsModule
+    MultiSelectModule
   ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
@@ -57,6 +50,7 @@ export class ProductCreate implements OnInit, OnDestroy {
   categories = signal<MultiSelectType[]>([])
   brands = signal<SelectType[]>([])
   stores = signal<Store[]>([])
+  attributeOptions = signal<SelectType[]>([])
 
   uploadedFilesCancel$ = new BehaviorSubject<boolean>(false);
   appStore = inject(AppStore);
@@ -67,6 +61,7 @@ export class ProductCreate implements OnInit, OnDestroy {
     category: new FormControl<MultiSelectType | null>(null, [Validators.required]), //+
     brand: new FormControl<SelectType | null>(null),
     store: new FormControl<SelectType | null>(null, [Validators.required]), //+
+    attributes: new FormControl<SelectType[] | null>(null) //+
   })
 
   constructor(
@@ -96,13 +91,15 @@ export class ProductCreate implements OnInit, OnDestroy {
       forkJoin({
         brands: this.categoryService.getStoreBrandList(storeId),
         store: this.storeService.getStoreById(storeId),
-        categories: this.categoryService.getStoreCategoryList(storeId)
+        categories: this.categoryService.getStoreCategoryList(storeId),
+        attributes: this.categoryService.getStoreAttributeList(storeId)
       }).subscribe({
-        next: ({ brands, store, categories }) => {
+        next: ({ brands, store, categories, attributes }) => {
           this.brands.set(brands);
           this.stores.set([store]);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
           this.categories.set(categoryData);
+          this.attributeOptions.set(attributes);
           this.appStore.stopLoader();
         },
         error: (err) => {
@@ -118,13 +115,15 @@ export class ProductCreate implements OnInit, OnDestroy {
       forkJoin({
         brands: this.categoryService.getBrandList(),
         stores: this.storeService.getStores(),
-        categories: this.categoryService.getCategoryList()
+        categories: this.categoryService.getCategoryList(),
+        attributes: this.categoryService.getAttributeList()
       }).subscribe({
-        next: ({ brands, stores, categories }) => {
-          this.brands.set(brands.data);
+        next: ({ brands, stores, categories, attributes }) => {
+          this.brands.set(brands);
           this.stores.set(stores.data);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
           this.categories.set(categoryData);
+          this.attributeOptions.set(attributes);
           this.appStore.stopLoader();
         },
         error: (err) => {
@@ -138,30 +137,6 @@ export class ProductCreate implements OnInit, OnDestroy {
       })
     }
   }
-
-  private makeSelectTypes(data: SelectType[]): MultiSelectType[] {
-    const result = [];
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i];
-      if (item.children && item.children.length) {
-        result.push({
-          key: item.id,
-          label: item.name,
-          icon: 'pi pi-fw pi-folder',
-          children: this.makeSelectTypes(item.children)
-        });
-      } else {
-        result.push({
-          key: item.id,
-          label: item.name,
-          icon: 'pi pi-fw pi-clipboard',
-        });
-      }
-    }
-    return result as MultiSelectType[];
-  }
-
-
 
   clearForm() {
     this.productForm.reset()
@@ -184,6 +159,7 @@ export class ProductCreate implements OnInit, OnDestroy {
         images,
         brandId: data.brand?.id,
         storeId: data.store?.id!,
+        attributeIds: data.attributes?.map(a => a.id) || []
       };
 
       if (images.length === 0) {
@@ -229,6 +205,29 @@ export class ProductCreate implements OnInit, OnDestroy {
       detail: 'Product created successfully!',
     });
     this.clearForm();
+  }
+
+
+  private makeSelectTypes(data: SelectType[]): MultiSelectType[] {
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      if (item.children && item.children.length) {
+        result.push({
+          key: item.id,
+          label: item.name,
+          icon: 'pi pi-fw pi-folder',
+          children: this.makeSelectTypes(item.children)
+        });
+      } else {
+        result.push({
+          key: item.id,
+          label: item.name,
+          icon: 'pi pi-fw pi-clipboard',
+        });
+      }
+    }
+    return result as MultiSelectType[];
   }
 
   ngOnDestroy(): void {

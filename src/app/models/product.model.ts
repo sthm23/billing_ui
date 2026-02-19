@@ -44,6 +44,7 @@ export interface CreateProduct {
   images?: string[] | null
   categoryId?: string // categoryId
   brandId?: string // brandId
+  attributeIds: string[]
 }
 export interface Category {
   id: string
@@ -80,4 +81,15 @@ export interface FileUploadData {
   file: File;
   url?: UploadImageRequest;
   size: number;
+}
+
+export enum AttributeType {
+  BOOLEAN = 'BOOLEAN',
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+}
+export interface Attribute {
+  id: string,
+  name: string,
+  type: AttributeType
 }

@@ -31,6 +31,7 @@ export interface CreateStore {
   categoryId: string
   warehouseName: string
   brandIds: string[]
+  attributeIds: string[]
 }
 
 export interface CreateWarehouse {

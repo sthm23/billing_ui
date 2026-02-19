@@ -20,6 +20,7 @@ import { UserService } from '../../user/service/user.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { StoreService } from '../service/store';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -48,6 +49,7 @@ export class OrgCreate implements OnInit, OnDestroy {
   ownerList = signal<SelectType[]>([]);
   categoryList = signal<MultiSelectType[]>([]);
   brandList = signal<SelectType[]>([]);
+  attributeList = signal<SelectType[]>([]);
 
   storeForm = new FormGroup({
     name: new FormControl<string | null>(null, [Validators.required, Validators.minLength(4)]),
@@ -57,7 +59,7 @@ export class OrgCreate implements OnInit, OnDestroy {
     ownerId: new FormControl<SelectType | null>(null, [Validators.required]),
     categoryId: new FormControl<MultiSelectType | null>(null, [Validators.required]),
     brands: new FormControl<SelectType[] | null>(null, [Validators.required]),
-    // categoryId: new FormControl<MultiSelectType | null>(null, [Validators.required]),
+    attributeIds: new FormControl<SelectType[] | null>(null, [Validators.required]),
   })
 
   constructor(
@@ -69,52 +71,39 @@ export class OrgCreate implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.fetchOwners();
-    this.fetchCategories();
-    this.fetchBrands();
+    this.fetchData();
   }
 
-  private fetchOwners() {
-    this.userService.getOwners(1, 10).subscribe({
-      next: (res) => {
-        this.ownerList.set(res.data.map((owner) => {
-          return {
-            name: owner.fullName,
-            id: owner.id
-          }
-        }));
+  private fetchData() {
+    forkJoin({
+      owners: this.userService.getOwners(1, 10),
+      brands: this.categoryService.getBrandList(),
+      categories: this.categoryService.getCategoryList(),
+      attributes: this.categoryService.getAttributeList()
+    }).subscribe({
+      next: ({ owners, brands, categories, attributes }) => {
+        this.ownerList.set(owners.data.map((owner) => ({
+          name: owner.fullName,
+          id: owner.id
+        })));
+        const data = this.makeSelectTypes(categories)
+        this.categoryList.set(data);
+
+        this.brandList.set(brands.map((brand) => ({
+          name: brand.name,
+          id: brand.id
+        })));
+        this.categoryList.set(this.makeSelectTypes(categories));
+        this.attributeList.set(attributes.map((attr) => ({
+          name: attr.name,
+          id: attr.id
+        })));
+
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch owners' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch data' });
       }
     })
-  }
-  private fetchCategories() {
-    this.categoryService.getCategoryList().subscribe({
-      next: (res) => {
-        const data = this.makeSelectTypes(res)
-        this.categoryList.set(data);
-      },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch categories' });
-      }
-    });
-  }
-
-  private fetchBrands() {
-    this.categoryService.getBrandList().subscribe({
-      next: (res) => {
-        this.brandList.set(res.data.map((brand) => {
-          return {
-            name: brand.name,
-            id: brand.id
-          }
-        }));
-      },
-      error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch brands' });
-      }
-    });
   }
 
   submitForm() {
@@ -127,7 +116,8 @@ export class OrgCreate implements OnInit, OnDestroy {
         ownerId: data.ownerId?.id!,
         categoryId: data.categoryId?.key!,
         warehouseName: data.wareHouse?.name!,
-        brandIds: data.brands?.map(brand => brand.id) || []
+        brandIds: data.brands?.map(brand => brand.id) || [],
+        attributeIds: data.attributeIds?.map(attr => attr.id) || []
       }
 
       this.storeService.createStore(payload).subscribe({
