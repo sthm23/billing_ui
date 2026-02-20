@@ -17,7 +17,7 @@ export interface Product extends BaseProduct {
 
 export interface ProductDetail extends BaseProduct {
   variants: ProductVariant[]
-  attributes: ProductAttributeValue[]
+  attributes: Attribute[]
 }
 
 export interface ProductVariant {
@@ -34,7 +34,10 @@ export interface ProductVariant {
   // attributes:     VariantAttributeValue[]
 }
 
-export interface ProductAttributeValue { }
+export interface ProductAttribute {
+  attributeId: string
+  productId: string
+}
 export interface ProductResponse extends BaseListResponse {
   data: Product[]
 }
@@ -92,4 +95,10 @@ export interface Attribute {
   id: string,
   name: string,
   type: AttributeType
+}
+export interface AttributeItem {
+  id: string,
+  attributeId: string,
+  attributeName: string,
+  value: string
 }

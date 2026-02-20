@@ -1,14 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BrandResponse, Category, CategoryResponse, CreateProduct, UploadImageResponse, Product, ProductResponse, UploadImageRequest } from '../../../models/product.model';
-import { StoreResponse } from '../../../models/store.model';
+import { ProductResponse, CreateProduct, Product, ProductDetail } from '../../../models/product.model';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-
   constructor(
     private http: HttpClient
   ) { }
@@ -26,7 +24,7 @@ export class ProductService {
   }
 
   getProductById(productId: string) {
-    return this.http.get<Product>(`/api/product/${productId}`, {
+    return this.http.get<ProductDetail>(`/api/product/${productId}`, {
       withCredentials: true,
     });
   }

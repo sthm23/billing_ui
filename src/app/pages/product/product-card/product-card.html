@@ -1,6 +1,7 @@
 @let product = productCard();
-
-<div class="card flex flex-wrap gap-4 justify-content-center">
+@let attributeList = attributes();
+@if(product && attributeList.length) {
+<div class="card flex flex-wrap gap-4 justify-content-center" [formGroup]="attributeForm">
 
   <div class="card">
     <div class="h-48 w-48 overflow-hidden">
@@ -11,8 +12,6 @@
       <p class="card-text">{{ 'No description available' }}</p>
       <ul class="list-group list-group-flush">
         <li class="list-group-item">Category: {{ product.category }}</li>
-        <li class="list-group-item">Price: -</li>
-        <li class="list-group-item">Stock: -</li>
       </ul>
 
       <div class="flex gap-2 mt-4">
@@ -28,6 +27,46 @@
     </div>
   </div>
 
-  <div class="card w-full">second part</div>
+  <div class="card w-full">
+    <div class="p-6 flex flex-col gap-6 w-full">
+      <div class="flex flex-col md:flex-row gap-6">
+        @for (attr of attributeList; track $index) {
+        <div class="flex flex-col flex-wrap gap-3 w-full" [formGroupName]="attr.id">
+          <label for="attributes">{{attr.name}}</label>
+          <p-multiselect id="attributes" placeholder="Select attributes" [loading]="!(attr.items && attr.items.length)"
+            [options]="attr.items" optionLabel="value" [maxSelectedLabels]="3" formControlName="value" />
+        </div>
+        <!-- @if(getAttributeControl(attr.id).length){
+        @for (item of getAttributeControl(attr.id); track $index) {
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex flex-col flex-wrap gap-3 w-full">
+            <label for="retailPrice">{{item.value}} retail price</label>
+            <input pInputText id="retailPrice" type="text" />
+          </div>
+          <div class="flex flex-col flex-wrap gap-3 w-full">
+            <label for="unitCost">{{item.value}} unit cost</label>
+            <input pInputText id="unitCost" type="text" />
+          </div>
+        </div>
+        }
+        } -->
+        }
+        <div class="flex flex-col flex-wrap gap-3 w-full">
+          <label for="retailPrice">Retail price</label>
+          <input pInputText id="retailPrice" type="text" />
+        </div>
+        <div class="flex flex-col flex-wrap gap-3 w-full">
+          <label for="unitCost">Unit cost</label>
+          <input pInputText id="unitCost" type="text" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-end gap-2 w-full">
+    <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
+    <p-button label="Submit" (onClick)="submit()"></p-button>
+  </div>
 
 </div>
+}

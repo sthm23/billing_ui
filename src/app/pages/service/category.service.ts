@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Category, BrandResponse, Attribute, Brand } from "../../models/product.model";
+import { Category, BrandResponse, Attribute, Brand, AttributeItem } from "../../models/product.model";
 
 
 @Injectable({
@@ -44,6 +44,12 @@ export class CategoryService {
 
   getStoreAttributeList(storeId: string) {
     return this.http.get<Attribute[]>(`/api/category/attributes/store/${storeId}`, {
+      withCredentials: true,
+    });
+  }
+
+  getAttributeItems(attributeIds: string) {
+    return this.http.get<AttributeItem[]>(`/api/category/attributes/items?attributeIds=${attributeIds}`, {
       withCredentials: true,
     });
   }
