@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProductResponse, CreateProduct, Product, ProductDetail } from '../../../models/product.model';
+import { ProductResponse, CreateProduct, Product, ProductDetail, CreateProductVariantPayload } from '../../../models/product.model';
 
 
 @Injectable({
@@ -25,6 +25,12 @@ export class ProductService {
 
   getProductById(productId: string) {
     return this.http.get<ProductDetail>(`/api/product/${productId}`, {
+      withCredentials: true,
+    });
+  }
+
+  createProductVariants(body: CreateProductVariantPayload) {
+    return this.http.post<Product>(`/api/product/variants`, body, {
       withCredentials: true,
     });
   }

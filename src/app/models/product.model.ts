@@ -102,3 +102,23 @@ export interface AttributeItem {
   attributeName: string,
   value: string
 }
+
+
+export interface AttributeValue {
+  attributeValueId: string;
+  value: string;
+}
+export interface ProductVariantPayload {
+  barCode?: string;
+  retailPrice: number;
+  costPrice: number;
+  quantity: number;
+  attributes: AttributeValue[];
+}
+export interface CreateProductVariantPayload {
+  storeId: string;
+  warehouseId: string;
+  productId: string;
+  category: string;
+  variants: ProductVariantPayload[];
+}
