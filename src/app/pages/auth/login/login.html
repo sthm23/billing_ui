@@ -13,7 +13,7 @@
         <h2 class="text-center">Welcome back</h2>
         <p class="text-center"> Login with your Apple or Google account </p>
         <div class="card-content">
-          <form [formGroup]="loginForm">
+          <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="flex flex-col">
               <p-button class="mt-4" label="Login with Apple" icon="pi pi-apple" type="button" variant="outlined"
                 fluid />
@@ -39,7 +39,7 @@
               <input formControlName="password" class="mt-2" pInputText id="password" type="password" required />
             </div>
             <div class="flex flex-col gap-2 mt-4">
-              <p-button (click)="login()" label="Login" class="w-full" styleClass="w-full" fluid />
+              <p-button (click)="login()" type="submit" label="Login" class="w-full" styleClass="w-full" fluid />
 
               <p class="text-center">
                 Don&apos;t have an account? <a routerLink="/auth/sign-up">Sign up</a>

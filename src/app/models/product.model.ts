@@ -12,7 +12,7 @@ export interface BaseProduct {
 }
 
 export interface Product extends BaseProduct {
-  variants: number
+  variants: { id: string, price: number, quantity: number }[]
 }
 
 export interface ProductDetail extends BaseProduct {
@@ -28,10 +28,10 @@ export interface ProductVariant {
   price: number
   storeId: string // это для быстрого поиска уникального SKU в пределах магазина
   product: Product
-  // inventory: Inventory[]
+  quantity: number
   // orderItems:     OrderItem[]
   // stockMovements: StockMovement[]
-  // attributes:     VariantAttributeValue[]
+  attributes: AttributeItem[]
 }
 
 export interface ProductAttribute {
@@ -47,7 +47,9 @@ export interface CreateProduct {
   images?: string[] | null
   categoryId?: string // categoryId
   brandId?: string // brandId
-  attributeIds: string[]
+  attributeIds: string[],
+  tagIds: string[],
+  description?: string
 }
 export interface Category {
   id: string
@@ -103,7 +105,11 @@ export interface AttributeItem {
   value: string
 }
 
-
+export interface Tag {
+  id: string
+  name: string
+  values: string[]
+}
 export interface AttributeValue {
   attributeValueId: string;
   value: string;
@@ -121,4 +127,11 @@ export interface CreateProductVariantPayload {
   productId: string;
   category: string;
   variants: ProductVariantPayload[];
+}
+
+export interface Inventory {
+  id: string
+  quantity: number
+  variantId: string
+  warehouseId: string
 }

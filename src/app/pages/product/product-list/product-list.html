@@ -13,7 +13,7 @@
         <th style="width:5%">Action</th>
       </tr>
     </ng-template>
-    <ng-template #body let-product>
+    <ng-template pTemplate="body" let-product>
       <tr>
         <td>{{ product.name }}</td>
         <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
@@ -21,9 +21,14 @@
         </td>
         <td>{{ product.brand }}</td>
         <td>{{ product.category }}</td>
-        <td> <p-badge [value]="product.variants" [severity]="getSeverity(product.variants)" /></td>
+        <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
         <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
-        <td><p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true" (onClick)="goToProductView(product)" />
+        <td #action>
+          <div>
+            <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
+              icon="pi pi-ellipsis-v" />
+            <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
+          </div>
         </td>
       </tr>
     </ng-template>

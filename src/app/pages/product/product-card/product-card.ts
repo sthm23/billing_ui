@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail } from '../../../models/product.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,14 +7,18 @@ import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
 import { delay, Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryService } from '../../service/category.service';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
 import { FluidModule } from 'primeng/fluid';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../auth/service/auth';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { BadgeModule } from 'primeng/badge';
+import { Menu, MenuModule } from 'primeng/menu';
+import { Table, TableModule } from 'primeng/table';
+import { AppStore } from '../../../store/app.store';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -42,11 +46,16 @@ type VariantForm = {
     ButtonModule,
     ImageModule,
     ReactiveFormsModule,
-    MultiSelectModule,
+    // MultiSelectModule,
     InputTextModule,
     FluidModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
+
+    TableModule,
+    FormsModule,
+    BadgeModule,
+    MenuModule
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -55,6 +64,37 @@ type VariantForm = {
 export class ProductCard implements OnInit, OnDestroy {
   productCard = signal<ProductDetail | null>(null);
   attributes = signal<AttrItemList[]>([]);
+
+
+
+
+  selectedProduct!: Product;
+  actionBtns: MenuItem[] = [
+    {
+      label: 'View', icon: 'pi pi-eye',
+      command: () => {
+        setTimeout(() => {
+          this.goToProductView(this.selectedProduct);
+        }, 350)
+      }
+    },
+    {
+      label: 'Edit', icon: 'pi pi-pencil', command: () => {
+        setTimeout(() => {
+          this.goToAddItems(this.selectedProduct);
+        }, 350)
+      }
+    },
+    // { label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteProduct(this.selectedProduct) },
+  ];
+  products: Product[] = []
+  first = signal(0);
+  rows = 10;
+  total = signal(0);
+
+  @ViewChild('dt') dataTable!: Table;
+
+  public appStore = inject(AppStore);
 
   // 1) attributes - выбранные значения по каждому атрибуту (color, size, ...)
   // 2) variants - строки (комбинации) с quantity/price/salePrice
@@ -80,6 +120,7 @@ export class ProductCard implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private authService: AuthService,
     private messageService: MessageService,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -91,13 +132,6 @@ export class ProductCard implements OnInit, OnDestroy {
         this.router.navigate(['/pages/product/list']);
       }
     })
-
-    // один сабскрайб на все изменения выбора атрибутов
-    this.attrGroup.valueChanges
-      .pipe(takeUntil(this.destroyer$))
-      .subscribe(() => {
-        this.rebuildVariantsFromSelection();
-      });
   }
 
 
@@ -111,10 +145,6 @@ export class ProductCard implements OnInit, OnDestroy {
 
           const attributeList = product.attributes.map(attr => ({ ...attr, items: [] } as AttrItemList));
           this.attributes.set(attributeList);
-
-          // создаём контролы выбора (по одному multiselect на атрибут)
-          this.makeAttributeSelectionControls(product.attributes);
-
 
           const attributeIds = product.attributes.map(attr => attr.id);
 
@@ -146,108 +176,6 @@ export class ProductCard implements OnInit, OnDestroy {
 
   getImageUrl(product: ProductDetail): string {
     return product.images.length ? product.images[0].url : '/no_image.svg';
-  }
-
-  // === 1) создаём multiselect-контролы по атрибутам ===
-  private makeAttributeSelectionControls(attributes: Attribute[]) {
-    // очистка на случай повторной загрузки
-    const existingKeys = Object.keys(this.attrGroup.controls) as any[];
-
-    existingKeys.forEach(k => (this.attrGroup as any).removeControl(k));
-    this.variantsArray.clear();
-
-    attributes.forEach(attr => {
-      this.attrGroup.addControl(
-        attr.id,
-        new FormControl<AttributeItem[]>([], { nonNullable: true })
-      );
-    });
-  }
-
-  // === 2) строим variants на основе выбранных item’ов ===
-  private rebuildVariantsFromSelection() {
-    const attrs = this.attributes();
-
-    // соберём выбранные items по каждому атрибуту
-    const selectedByAttr = attrs.map(a => {
-      const selected = this.attrGroup.controls[a.id]?.value ?? [];
-      return {
-        attributeId: a.id,
-        attributeName: a.name,
-        selectedItems: selected
-      };
-    });
-
-    // если хочешь создавать варианты ТОЛЬКО когда выбрано по всем атрибутам:
-    const allPicked = selectedByAttr.every(x => x.selectedItems.length > 0);
-    if (!allPicked) {
-      this.variantsArray.clear();
-      return;
-    }
-
-    // декартово произведение выбранных item’ов
-    const combos = this.cartesian(selectedByAttr.map(x =>
-      x.selectedItems.map((item) => ({
-        attributeId: x.attributeId,
-        attributeName: x.attributeName,
-        itemId: item.id,
-        itemName: item.value
-      } as VariantAttr))
-    ));
-
-    // синхронизируем FormArray (сохраняя введённые числа по key)
-    this.syncVariantsArray(combos);
-  }
-
-  private syncVariantsArray(combos: VariantAttr[][]) {
-    const existing = new Map<string, FormGroup<VariantForm>>();
-    this.variantsArray.controls.forEach(ctrl => existing.set(ctrl.controls.key.value, ctrl));
-
-    const nextControls: FormGroup<VariantForm>[] = [];
-
-    for (const attrs of combos) {
-      const key = this.buildVariantKey(attrs);
-
-      const prev = existing.get(key);
-      if (prev) {
-        // обновим attrs (на случай если имена изменились), но оставим quantity/price/salePrice
-        prev.controls.attrs.setValue(attrs);
-        nextControls.push(prev);
-      } else {
-        nextControls.push(this.createVariantGroup(key, attrs));
-      }
-    }
-
-    // перезаполняем массив в нужном порядке
-    this.variantsArray.clear();
-    nextControls.forEach(c => this.variantsArray.push(c));
-  }
-
-  private createVariantGroup(key: string, attrs: VariantAttr[]) {
-    return new FormGroup<VariantForm>({
-      key: new FormControl<string>(key, { nonNullable: true }),
-      attrs: new FormControl<VariantAttr[]>(attrs, { nonNullable: true }),
-      quantity: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      price: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      salePrice: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      barCode: new FormControl<string | null>(null)
-    });
-  }
-
-  private buildVariantKey(attrs: VariantAttr[]): string {
-    // стабильный ключ, чтобы сохранять введённые значения
-    // например: "color=black|size=xl"
-    return attrs
-      .map(a => `${a.attributeId}=${a.itemId}`)
-      .sort()
-      .join('|');
-  }
-
-  private cartesian<T>(arrays: T[][]): T[][] {
-    return arrays.reduce<T[][]>(
-      (acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),
-      [[]]
-    );
   }
 
 
@@ -296,15 +224,73 @@ export class ProductCard implements OnInit, OnDestroy {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create product variants' });
           }
         });
-
     }
-
-
   }
-
 
   ngOnDestroy(): void {
     this.destroyer$.next();
     this.destroyer$.complete();
+  }
+
+
+
+
+
+
+  fetchProducts(page = 1, pageSize = 10) {
+    this.appStore.startLoader();
+    this.productService.getProducts(page, pageSize)
+      .pipe(
+        delay(1500)
+      ).subscribe({
+        next: (response) => {
+          this.appStore.stopLoader();
+          this.products = response.data;
+          this.total.set(response.total);
+        },
+        error: (err) => {
+          this.appStore.stopLoader();
+          console.error('Error fetching products:', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch products' });
+        }
+      });
+  }
+
+  pageChange(event: any) {
+    this.dataTable.reset();
+    this.first.set(event.first);
+    this.rows = event.rows;
+    this.fetchProducts(this.first() / this.rows + 1, this.rows);
+  }
+
+  getSeverity(variants: number) {
+    if (variants > 10) {
+      return 'success';
+    } else if (variants > 5) {
+      return 'warn';
+    } else {
+      return 'danger';
+    }
+  }
+
+  getProductImg(product: Product): string {
+    return product.images.length > 0 ? product.images[0].url : '/no_image.svg';
+  }
+
+  goToProductView(product: Product) {
+    this.router.navigate(['/pages/product', product.id]);
+  }
+
+  goToAddItems(product: Product) {
+    this.router.navigate(['/pages/product', product.id, 'add-items']);
+  }
+
+  productQuantity(product: Product): number {
+    return product.variants.reduce((total, variant) => total + variant.quantity, 0);
+  }
+
+  toggleAction(event: Event, menu: Menu, product: Product) {
+    this.selectedProduct = product;
+    menu.toggle(event);
   }
 }

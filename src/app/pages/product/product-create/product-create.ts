@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, forkJoin, Observable, switchMap } from 'rxjs';
 import { Loader } from '../../../shared/components/loader/loader';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -23,6 +23,7 @@ import { FileUploadService } from '../../service/file-upload.service';
 import { AuthService } from '../../auth/service/auth';
 import { Store } from '../../../models/store.model';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-product-create',
@@ -39,7 +40,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     InputNumberModule,
     FileUploadComponent,
     TreeSelectModule,
-    MultiSelectModule
+    MultiSelectModule,
+    TextareaModule
   ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
@@ -49,6 +51,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 export class ProductCreate implements OnInit, OnDestroy {
   categories = signal<MultiSelectType[]>([])
   brands = signal<SelectType[]>([])
+  tags = signal<SelectType[]>([])
   stores = signal<Store[]>([])
   attributeOptions = signal<SelectType[]>([])
 
@@ -56,12 +59,14 @@ export class ProductCreate implements OnInit, OnDestroy {
   appStore = inject(AppStore);
 
   productForm = new FormGroup({
-    name: new FormControl<string | null>(null, [Validators.required]),//+
-    images: new FormControl<any[] | null>(null),//+
-    category: new FormControl<MultiSelectType | null>(null, [Validators.required]), //+
+    name: new FormControl<string | null>(null, [Validators.required]),
+    description: new FormControl<string | null>(null),
+    images: new FormControl<any[] | null>(null),
+    category: new FormControl<MultiSelectType | null>(null, [Validators.required]),
     brand: new FormControl<SelectType | null>(null),
-    store: new FormControl<SelectType | null>(null, [Validators.required]), //+
-    attributes: new FormControl<SelectType[] | null>(null) //+
+    store: new FormControl<SelectType | null>(null, [Validators.required]),
+    attributes: new FormControl<SelectType[] | null>(null),
+    tags: new FormControl<SelectType[] | null>(null)
   })
 
   constructor(
@@ -70,6 +75,7 @@ export class ProductCreate implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private storeService: StoreService,
     private fileUploadService: FileUploadService,
+    private router: Router,
     private messageService: MessageService
   ) {
 
@@ -92,9 +98,11 @@ export class ProductCreate implements OnInit, OnDestroy {
         brands: this.categoryService.getStoreBrandList(storeId),
         store: this.storeService.getStoreById(storeId),
         categories: this.categoryService.getStoreCategoryList(storeId),
-        attributes: this.categoryService.getStoreAttributeList(storeId)
+        attributes: this.categoryService.getStoreAttributeList(storeId),
+        tags: this.categoryService.getTagList()
       }).subscribe({
-        next: ({ brands, store, categories, attributes }) => {
+        next: ({ brands, store, categories, attributes, tags }) => {
+          this.tags.set(tags);
           this.brands.set(brands);
           this.stores.set([store]);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
@@ -116,14 +124,16 @@ export class ProductCreate implements OnInit, OnDestroy {
         brands: this.categoryService.getBrandList(),
         stores: this.storeService.getStores(),
         categories: this.categoryService.getCategoryList(),
-        attributes: this.categoryService.getAttributeList()
+        attributes: this.categoryService.getAttributeList(),
+        tags: this.categoryService.getTagList()
       }).subscribe({
-        next: ({ brands, stores, categories, attributes }) => {
+        next: ({ brands, stores, categories, attributes, tags }) => {
           this.brands.set(brands);
           this.stores.set(stores.data);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
           this.categories.set(categoryData);
           this.attributeOptions.set(attributes);
+          this.tags.set(tags);
           this.appStore.stopLoader();
         },
         error: (err) => {
@@ -159,7 +169,9 @@ export class ProductCreate implements OnInit, OnDestroy {
         images,
         brandId: data.brand?.id,
         storeId: data.store?.id!,
-        attributeIds: data.attributes?.map(a => a.id) || []
+        attributeIds: data.attributes?.map(a => a.id) || [],
+        tagIds: data.tags?.map(t => t.id) || [],
+        description: data.description || undefined
       };
 
       if (images.length === 0) {
@@ -205,6 +217,7 @@ export class ProductCreate implements OnInit, OnDestroy {
       detail: 'Product created successfully!',
     });
     this.clearForm();
+    if (res?.id) this.router.navigate(['/pages/product', res.id, 'variant']);
   }
 
 

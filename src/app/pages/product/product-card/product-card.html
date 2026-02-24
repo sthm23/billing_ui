@@ -1,6 +1,5 @@
 @let product = productCard();
 @let attributeList = attributes();
-@let variants = variantsArray.controls;
 <p-toast />
 <p-fluid>
   @if (product && attributeList.length) {
@@ -36,80 +35,43 @@
     </div>
 
     <!-- RIGHT: attributes + variants -->
-    <div class="card w-full p-1!">
-      <div class="p-6 flex flex-col gap-6 w-full">
-
-        <!-- Attribute selectors -->
-        <div class="flex flex-col gap-3" formGroupName="attributes">
-          <div class="flex flex-col md:flex-row gap-6">
-            @for (attr of attributeList; track attr.id) {
-            <div class="flex flex-col flex-wrap gap-3 w-full">
-              <label [for]="'attr-' + attr.id">{{ attr.name }}</label>
-              <p-multiselect [inputId]="'attr-' + attr.id" placeholder="Select values"
-                [loading]="!(attr.items && attr.items.length)" [options]="attr.items" optionLabel="value"
-                [maxSelectedLabels]="3" [formControlName]="attr.id" />
-            </div>
-            }
-          </div>
-        </div>
-
-        <!-- Variants -->
-        @if (variants.length) {
-        <div class="flex flex-col gap-3" formArrayName="variants">
-          <h4 class="m-0">Variants</h4>
-
-          @for (variant of variants; track variant.controls.key.value; let i = $index) {
-          <div class="card m-0!" [formGroupName]="i">
-            <div class="flex flex-column gap-3 flex-wrap md:flex-row">
-
-              <!-- attrs preview -->
-              <div class="text-sm">
-                <strong>Variant:</strong>
-                <span class="ml-2">
-                  @for (attrItem of variant.controls.attrs.value; track attrItem.attributeId + ':' + attrItem.itemId) {
-                  <div class="mr-3">
-                    {{ attrItem.attributeName }}: {{ attrItem.itemName }}
-                  </div>
-                  }
-                </span>
+    <div class="p-4">
+      <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }"
+        [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows"
+        (onPage)="pageChange($event)">
+        <ng-template #header>
+          <tr>
+            <th style="width:12%">Name</th>
+            <th style="width:12%">Img</th>
+            <th style="width:13%">Brand</th>
+            <th style="width:10%">Category</th>
+            <th style="width:10%">In Stock</th>
+            <th style="width:15%">Created At</th>
+            <th style="width:5%">Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td>{{ product.name }}</td>
+            <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
+                class="shadow-lg object-cover h-[40px]" />
+            </td>
+            <td>{{ product.brand }}</td>
+            <td>{{ product.category }}</td>
+            <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
+            <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
+            <td #action>
+              <div>
+                <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
+                  icon="pi pi-ellipsis-v" />
+                <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
               </div>
-
-              <!-- inputs -->
-              <div class="flex flex-col md:flex-row gap-4">
-
-                <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'quantity-' + i">Quantity</label>
-                  <p-inputnumber [inputId]="'quantity-' + i" formControlName="quantity" />
-                </div>
-
-                <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'barcode-' + i">Barcode</label>
-                  <input pInputText [id]="'barcode-' + i" formControlName="barCode" />
-                </div>
-
-                <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'price-' + i">Price</label>
-                  <p-inputnumber [inputId]="'price-' + i" formControlName="price" />
-                </div>
-
-                <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'salePrice-' + i">Sale price</label>
-                  <p-inputnumber [inputId]="'salePrice-' + i" formControlName="salePrice" />
-                </div>
-              </div>
-
-            </div>
-          </div>
-          }
-        </div>
-        } @else {
-        <div class="text-sm text-500 text-color-secondary">
-          Select at least one value for each attribute to generate variants.
-        </div>
-        }
-
-      </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
+
 
     <!-- actions -->
     <div class="flex flex-wrap justify-end gap-2 w-full">

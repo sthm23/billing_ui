@@ -24,6 +24,14 @@
               <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
                 [class]="productForm.controls.brand.touched && productForm.controls.brand.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
+          </div>
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="tags">Tags</label>
+              <p-multiselect id="tags" formControlName="tags" placeholder="Select tags" [options]="tags()"
+                optionLabel="name" [maxSelectedLabels]="3"
+                [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" />
+            </div>
             <div class="flex flex-wrap gap-2 w-full">
               <label for="attributes">Attribute</label>
               <p-multiselect id="attributes" formControlName="attributes" placeholder="Select attributes"
@@ -35,6 +43,15 @@
               <label for="name">Name</label>
               <input pInputText id="name" type="text" formControlName="name"
                 [class]="productForm.controls.name.touched && productForm.controls.name.invalid ? 'ng-dirty ng-invalid' : ''" />
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+
+              <label for="description">Descriptions</label>
+              <textarea id="description" formControlName="description" rows="5" cols="30" pTextarea
+                [autoResize]="true"></textarea>
             </div>
           </div>
 
@@ -50,8 +67,8 @@
       </div>
 
       <div class="flex flex-wrap justify-end gap-2 w-full">
-        <p-button label="Bekor qilish" severity="secondary" (onClick)="clearForm()"></p-button>
-        <p-button label="Tasdiqlash" (onClick)="submit()"></p-button>
+        <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
+        <p-button label="Submit" (onClick)="submit()"></p-button>
       </div>
     </p-fluid>
   </app-loader>

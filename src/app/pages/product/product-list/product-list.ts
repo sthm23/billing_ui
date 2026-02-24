@@ -5,12 +5,13 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';
 import { BadgeModule } from 'primeng/badge';
 import { Router } from '@angular/router';
+import { Menu, MenuModule } from 'primeng/menu';
 
 @Component({
   selector: 'app-product-list',
@@ -20,7 +21,8 @@ import { Router } from '@angular/router';
     FormsModule,
     ButtonModule,
     ToastModule,
-    BadgeModule
+    BadgeModule,
+    MenuModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
@@ -28,6 +30,25 @@ import { Router } from '@angular/router';
   providers: [MessageService]
 })
 export class ProductList implements OnInit, OnDestroy {
+  selectedProduct!: Product;
+  actionBtns: MenuItem[] = [
+    {
+      label: 'View', icon: 'pi pi-eye',
+      command: () => {
+        setTimeout(() => {
+          this.goToProductView(this.selectedProduct);
+        }, 350)
+      }
+    },
+    {
+      label: 'Edit', icon: 'pi pi-pencil', command: () => {
+        setTimeout(() => {
+          this.goToEditProduct(this.selectedProduct);
+        }, 350)
+      }
+    },
+    // { label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteProduct(this.selectedProduct) },
+  ];
   products: Product[] = []
   first = signal(0);
   rows = 10;
@@ -87,6 +108,19 @@ export class ProductList implements OnInit, OnDestroy {
 
   goToProductView(product: Product) {
     this.router.navigate(['/pages/product', product.id]);
+  }
+
+  goToEditProduct(product: Product) {
+    this.router.navigate(['/pages/product/edit', product.id]);
+  }
+
+  productQuantity(product: Product): number {
+    return product.variants.reduce((total, variant) => total + variant.quantity, 0);
+  }
+
+  toggleAction(event: Event, menu: Menu, product: Product) {
+    this.selectedProduct = product;
+    menu.toggle(event);
   }
 
   ngOnDestroy() {
