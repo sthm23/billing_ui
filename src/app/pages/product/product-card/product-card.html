@@ -3,82 +3,147 @@
 <p-toast />
 <p-fluid>
   @if (product && attributeList.length) {
-  <div class="card flex flex-wrap justify-content-center" [formGroup]="form">
-
-    <!-- LEFT: product info -->
-    <div class="card flex flex-1 flex-wrap w-full md:w-auto">
-      <div class="h-48 w-48 overflow-hidden">
-        <p-image [src]="getImageUrl(product)" [alt]="product.name" class="object-cover w-full h-full"
-          [preview]="true" />
-      </div>
-
-      <div class="card-body">
-        <h4>{{ product.name }}</h4>
-        <p class="card-text">{{ 'No description available' }}</p>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">Category: {{ product.category }}</li>
-          <li class="list-group-item">
-            <h6>Attributes</h6>
-            @for (attribute of attributeList; track attribute.id) {
-            <div>
-              <div>{{attribute.name}}</div>
-              @for (item of attrGroup.controls[attribute.id].value; track $index; let i = $index; let last = $last) {
-              <span class="ml-4 text-sm text-500 text-color-secondary">
-                {{ item.value }}{{ !last ? ',' : '' }}
-              </span>
-              }
-            </div>
-            }
-          </li>
-        </ul>
-      </div>
+  <div class="flex flex-col justify-content-center p-4" [formGroup]="form">
+    <div class="flex-1">
+      <p-toolbar>
+        <ng-template #start>
+          <p-button icon="pi pi-plus" class="mr-2" text severity="secondary" />
+          <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
+          <p-button icon="pi pi-upload" text severity="secondary" />
+        </ng-template>
+        <ng-template #center>
+          <p-iconfield iconPosition="left">
+            <p-inputicon class="pi pi-search" />
+            <input type="text" pInputText placeholder="Search" />
+          </p-iconfield>
+        </ng-template>
+        <ng-template #end>
+          <p-button label="Save" />
+        </ng-template>
+      </p-toolbar>
     </div>
 
-    <!-- RIGHT: attributes + variants -->
-    <div class="p-4">
-      <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }"
-        [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows"
-        (onPage)="pageChange($event)">
-        <ng-template #header>
-          <tr>
-            <th style="width:12%">Name</th>
-            <th style="width:12%">Img</th>
-            <th style="width:13%">Brand</th>
-            <th style="width:10%">Category</th>
-            <th style="width:10%">In Stock</th>
-            <th style="width:15%">Created At</th>
-            <th style="width:5%">Action</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product>
-          <tr>
-            <td>{{ product.name }}</td>
-            <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
-                class="shadow-lg object-cover h-[40px]" />
-            </td>
-            <td>{{ product.brand }}</td>
-            <td>{{ product.category }}</td>
-            <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
-            <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
-            <td #action>
-              <div>
-                <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
-                  icon="pi pi-ellipsis-v" />
-                <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
+    <div class="flex-1 flex flex-wrap">
+
+      <div class="flex gap-4 justify-content-center">
+        <aside class="sidebar w-[20%]">
+          <div class="p-4">
+            <div class="flex flex-wrap gap-2 justify-content-center">
+              <p-carousel [value]="product.images" [numVisible]="1" [numScroll]="1" orientation="horizontal"
+                [showNavigators]="false" height="250px" contentClass="flex items-center">
+                <ng-template let-item #item>
+                  <img [src]="item.url" [alt]="product.name" width="200" class="shadow-lg object-cover" />
+                </ng-template>
+              </p-carousel>
+
+              <div class="flex flex-col gap-2">
+
+                <div class="flex flex-col gap-6">
+                  <div class="flex flex-wrap gap-3 w-full">
+                    <label for="name">Product name</label>
+                    <p-inputgroup>
+                      <input pInputText placeholder="Name" [disabled]="!toggleInput" />
+                      <p-inputgroup-addon>
+                        @if(!toggleInput) {
+                        <p-button icon="pi pi-pencil" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }@else {
+                        <p-button icon="pi pi-lock" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }
+                      </p-inputgroup-addon>
+                    </p-inputgroup>
+                  </div>
+                  <div class="flex flex-wrap gap-3 w-full">
+                    <label for="name">Product category</label>
+                    <p-inputgroup>
+                      <input pInputText placeholder="Category" [disabled]="!toggleInput" />
+                      <p-inputgroup-addon>
+                        @if(!toggleInput) {
+                        <p-button icon="pi pi-pencil" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }@else {
+                        <p-button icon="pi pi-lock" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }
+                      </p-inputgroup-addon>
+                    </p-inputgroup>
+                  </div>
+                  <div class="flex flex-wrap gap-3 w-full">
+                    <label for="name">Product brand</label>
+                    <p-inputgroup>
+                      <input pInputText placeholder="Brand" [disabled]="!toggleInput" />
+                      <p-inputgroup-addon>
+                        @if(!toggleInput) {
+                        <p-button icon="pi pi-pencil" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }@else {
+                        <p-button icon="pi pi-lock" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }
+                      </p-inputgroup-addon>
+                    </p-inputgroup>
+                  </div>
+                </div>
+
+                <!-- <h3>{{ product.name }}</h3> -->
+                <p>{{ product.brand }}</p>
+                <p>{{ product.category }}</p>
+                <p>{{ product.createdAt | date:'dd-MM-yyyy' }}</p>
               </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+            </div>
+          </div>
+        </aside>
+
+        <p-divider [layout]="'vertical'" class="hidden sm:block!" />
+
+        <main class="main">
+          <div class="p-4">
+            <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }"
+              [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows"
+              (onPage)="pageChange($event)">
+              <ng-template #header>
+                <tr>
+                  <th style="width:12%">Name</th>
+                  <th style="width:12%">Img</th>
+                  <th style="width:13%">Brand</th>
+                  <th style="width:10%">Category</th>
+                  <th style="width:10%">In Stock</th>
+                  <th style="width:15%">Created At</th>
+                  <th style="width:5%">Action</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-product>
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
+                      class="shadow-lg object-cover h-[40px]" />
+                  </td>
+                  <td>{{ product.brand }}</td>
+                  <td>{{ product.category }}</td>
+                  <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" />
+                  </td>
+                  <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
+                  <td #action>
+                    <div>
+                      <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
+                        icon="pi pi-ellipsis-v" />
+                      <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </main>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
+        <p-button label="Submit" (onClick)="submit()"></p-button>
+      </div>
+
     </div>
-
-
-    <!-- actions -->
-    <div class="flex flex-wrap justify-end gap-2 w-full">
-      <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
-      <p-button label="Submit" (onClick)="submit()"></p-button>
-    </div>
-
   </div>
   }
 </p-fluid>

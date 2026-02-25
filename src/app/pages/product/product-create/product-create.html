@@ -28,9 +28,20 @@
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
               <label for="tags">Tags</label>
-              <p-multiselect id="tags" formControlName="tags" placeholder="Select tags" [options]="tags()"
+              <p-multiselect id="tags" optionGroupLabel="name" optionLabel="value" optionGroupChildren="values"
+                [options]="tags()" [group]="true" formControlName="tags" placeholder="Select tags" scrollHeight="250px"
+                display="chip" class="w-full md:w-80">
+                <ng-template let-group #group>
+                  <div class="flex items-center">
+                    <!-- <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" /> -->
+                    <span>{{ group.name }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+
+              <!-- <p-multiselect id="tags" formControlName="tags" placeholder="Select tags" [options]="tags()"
                 optionLabel="name" [maxSelectedLabels]="3"
-                [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" />
+                [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" /> -->
             </div>
             <div class="flex flex-wrap gap-2 w-full">
               <label for="attributes">Attribute</label>

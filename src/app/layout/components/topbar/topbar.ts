@@ -71,10 +71,11 @@ export class Topbar implements OnInit, OnDestroy {
     const segments = label.split('/').splice(1)
       .map((segment, ind) =>
       (ind ?
-        { label: segment } :
+        { label: segment.length > 20 && segment.length < (ind + 1) ? 'create' : segment } :
         { icon: 'pi pi-home' }
       )
       );
+
     const lastSegment = segments[segments.length - 1];
     if (lastSegment.label && lastSegment.label.includes('-') && lastSegment.label.length >= 28) {
       lastSegment.label = 'detail';

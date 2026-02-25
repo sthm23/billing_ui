@@ -4,24 +4,28 @@
     [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
     <ng-template #header>
       <tr>
-        <th style="width:12%">Name</th>
         <th style="width:12%">Img</th>
+        <th style="width:12%">Name</th>
         <th style="width:13%">Brand</th>
         <th style="width:10%">Category</th>
         <th style="width:10%">In Stock</th>
+        <th style="width:15%">Price Range</th>
         <th style="width:15%">Created At</th>
         <th style="width:5%">Action</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-product>
       <tr>
-        <td>{{ product.name }}</td>
-        <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
+
+        <td>
+          <p-image [src]="getProductImg(product)" [alt]="product.name" width="50"
             class="shadow-lg object-cover h-[40px]" />
         </td>
+        <td>{{ product.name }}</td>
         <td>{{ product.brand }}</td>
         <td>{{ product.category }}</td>
         <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
+        <td>{{ product.priceRange.min | currency: " " : 'code' : '0.0'}}</td>
         <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
         <td #action>
           <div>

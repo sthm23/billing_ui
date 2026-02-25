@@ -11,6 +11,6 @@ export default [
   { path: 'list', component: ProductList },
   { path: 'create', component: ProductCreate },
   { path: 'edit/:id', component: EditProduct },
-  { path: ':id', component: ProductCard },
+  { path: 'view/:id', component: ProductCard },
   { path: ':id/variant', component: ProductVariant },
 ] as Routes;

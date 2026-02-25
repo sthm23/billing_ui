@@ -7,7 +7,13 @@ export interface BaseProduct {
   category: string
   brand: string
   isArchived: boolean
+  description: string | null
   createdAt: string
+  priceRange: {
+    min: string
+    max: string
+  }
+  tags: ProductTag[]
   images: { url: string, id: string, isMain: boolean }[]
 }
 
@@ -34,10 +40,6 @@ export interface ProductVariant {
   attributes: AttributeItem[]
 }
 
-export interface ProductAttribute {
-  attributeId: string
-  productId: string
-}
 export interface ProductResponse extends BaseListResponse {
   data: Product[]
 }
@@ -105,10 +107,22 @@ export interface AttributeItem {
   value: string
 }
 
-export interface Tag {
+export interface ProductTag {
+  id: string
+  value: string
+  tagId: string
+  tagName: string
+}
+
+export interface TagValue {
+  id: string
+  tagId: string
+  value: string
+}
+export interface TagList {
   id: string
   name: string
-  values: string[]
+  values: TagValue[]
 }
 export interface AttributeValue {
   attributeValueId: string;

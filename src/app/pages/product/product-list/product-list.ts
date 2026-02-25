@@ -12,6 +12,7 @@ import { Product } from '../../../models/product.model';
 import { BadgeModule } from 'primeng/badge';
 import { Router } from '@angular/router';
 import { Menu, MenuModule } from 'primeng/menu';
+import { ImageModule } from 'primeng/image';
 
 @Component({
   selector: 'app-product-list',
@@ -22,7 +23,8 @@ import { Menu, MenuModule } from 'primeng/menu';
     ButtonModule,
     ToastModule,
     BadgeModule,
-    MenuModule
+    MenuModule,
+    ImageModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
@@ -107,7 +109,7 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   goToProductView(product: Product) {
-    this.router.navigate(['/pages/product', product.id]);
+    this.router.navigate(['/pages/product/view', product.id]);
   }
 
   goToEditProduct(product: Product) {

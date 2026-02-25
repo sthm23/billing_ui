@@ -8,7 +8,7 @@ import { ImageModule } from 'primeng/image';
 import { delay, Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryService } from '../../service/category.service';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { CarouselModule } from 'primeng/carousel';
 import { InputTextModule } from 'primeng/inputtext';
 import { FluidModule } from 'primeng/fluid';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -19,6 +19,12 @@ import { BadgeModule } from 'primeng/badge';
 import { Menu, MenuModule } from 'primeng/menu';
 import { Table, TableModule } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
+import { DividerModule } from 'primeng/divider';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { ToolbarModule } from 'primeng/toolbar';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -46,16 +52,19 @@ type VariantForm = {
     ButtonModule,
     ImageModule,
     ReactiveFormsModule,
-    // MultiSelectModule,
+    CarouselModule,
     InputTextModule,
     FluidModule,
     InputNumberModule,
     ToastModule,
-
+    DividerModule,
     TableModule,
     FormsModule,
     BadgeModule,
-    MenuModule
+    MenuModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    IconFieldModule, InputIconModule, ToolbarModule,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -65,6 +74,7 @@ export class ProductCard implements OnInit, OnDestroy {
   productCard = signal<ProductDetail | null>(null);
   attributes = signal<AttrItemList[]>([]);
 
+  toggleInput = false
 
 
 
@@ -186,45 +196,6 @@ export class ProductCard implements OnInit, OnDestroy {
   submit() {
     // итог: variants содержит комбинации + quantity/price/salePrice
     console.log(this.form.value);
-
-    if (this.form.valid) {
-      const product = this.productCard()!;
-      const currentUser = this.authService.getCurrentUser()!;
-      // пример "удобной" структуры для API:
-      const payload = this.variantsArray.controls.map(v => ({
-        // key: v.controls.key.value,
-        attributes: v.controls.attrs.value.map(a => ({
-          // attributeId: a.attributeId,
-          attributeValueId: a.itemId,
-          value: a.itemName
-        })),
-        quantity: v.controls.quantity.value!,
-        costPrice: v.controls.price.value!,
-        retailPrice: v.controls.salePrice.value!,
-        barCode: v.controls.barCode.value || undefined
-      }));
-
-      const createProductVariantPayload: CreateProductVariantPayload = {
-        storeId: currentUser?.staff?.store.id || '',
-        warehouseId: currentUser?.staff?.warehouse.id || '',
-        productId: product.id,
-        category: product.category,
-        variants: payload
-      }
-
-      console.log('req payload', createProductVariantPayload);
-      this.productService.createProductVariants(createProductVariantPayload)
-        .subscribe({
-          next: (res) => {
-            console.log('Variants created successfully:', res);
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product variants created successfully' });
-          },
-          error: (err) => {
-            console.error('Error creating variants:', err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create product variants' });
-          }
-        });
-    }
   }
 
   ngOnDestroy(): void {

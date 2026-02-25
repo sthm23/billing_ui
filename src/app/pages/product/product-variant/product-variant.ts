@@ -15,6 +15,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../auth/service/auth';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -46,7 +48,9 @@ type VariantForm = {
     InputTextModule,
     FluidModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
+    TagModule,
+    DividerModule
   ],
   templateUrl: './product-variant.html',
   styleUrl: './product-variant.css',
@@ -137,9 +141,9 @@ export class ProductVariant implements OnInit, OnDestroy {
           });
           this.attributes.set(updList);
           // ВАЖНО: после загрузки items можно восстановить выбор + значения variants
-          if (this.productCard()?.variants?.length) {
-            this.prefillFormFromExistingVariants(this.productCard()!, items);
-          }
+          // if (this.productCard()?.variants?.length) {
+          //   this.prefillFormFromExistingVariants(this.productCard()!, items);
+          // }
         },
         error: (err) => {
           console.error('Error fetching product:', err);
@@ -261,8 +265,6 @@ export class ProductVariant implements OnInit, OnDestroy {
 
   submit() {
     // итог: variants содержит комбинации + quantity/price/salePrice
-    console.log(this.form.value);
-
     if (this.form.valid) {
       const product = this.productCard()!;
       const currentUser = this.authService.getCurrentUser()!;
@@ -288,12 +290,12 @@ export class ProductVariant implements OnInit, OnDestroy {
         variants: payload
       }
 
-      console.log('req payload', createProductVariantPayload);
       this.productService.createProductVariants(createProductVariantPayload)
         .subscribe({
           next: (res) => {
-            console.log('Variants created successfully:', res);
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product variants created successfully' });
+            this.clearForm();
+            this.router.navigate(['/pages/product/view', this.productCard()?.id]);
           },
           error: (err) => {
             console.error('Error creating variants:', err);
@@ -301,98 +303,100 @@ export class ProductVariant implements OnInit, OnDestroy {
           }
         });
 
+    } else {
+      this.form.markAllAsTouched();
     }
 
 
   }
 
-  /**
-   * Заполняет form из product.variants:
-   * 1) выставляет выбранные AttributeItem'ы в multiselect'ы
-   * 2) генерирует variants (FormArray) как декартово произведение
-   * 3) проставляет quantity/price/salePrice/barCode по совпадающему key
-   */
-  private prefillFormFromExistingVariants(product: ProductDetail, allItems: AttributeItem[]) {
-    const variants = product.variants ?? [];
-    if (!variants.length) return;
+  // /**
+  //  * Заполняет form из product.variants:
+  //  * 1) выставляет выбранные AttributeItem'ы в multiselect'ы
+  //  * 2) генерирует variants (FormArray) как декартово произведение
+  //  * 3) проставляет quantity/price/salePrice/barCode по совпадающему key
+  //  */
+  // private prefillFormFromExistingVariants(product: ProductDetail, allItems: AttributeItem[]) {
+  //   const variants = product.variants ?? [];
+  //   if (!variants.length) return;
 
-    // itemId -> item, чтобы знать attributeId для каждого выбранного значения
-    const itemById = new Map<string, AttributeItem>();
-    allItems.forEach(it => itemById.set(it.id, it));
+  //   // itemId -> item, чтобы знать attributeId для каждого выбранного значения
+  //   const itemById = new Map<string, AttributeItem>();
+  //   allItems.forEach(it => itemById.set(it.id, it));
 
-    // 1) собрать выбранные items по каждому attributeId на основе variants
-    const selectedByAttrId = new Map<string, AttributeItem[]>();
+  //   // 1) собрать выбранные items по каждому attributeId на основе variants
+  //   const selectedByAttrId = new Map<string, AttributeItem[]>();
 
-    for (const v of variants) {
-      const vAttrs = v.attributes ?? [];
-      for (const a of vAttrs) {
-        // поддержка разных возможных названий поля id значения
-        const valueId: string | undefined =
-          a.id ?? a.attributeId;
+  //   for (const v of variants) {
+  //     const vAttrs = v.attributes ?? [];
+  //     for (const a of vAttrs) {
+  //       // поддержка разных возможных названий поля id значения
+  //       const valueId: string | undefined =
+  //         a.id ?? a.attributeId;
 
-        if (!valueId) continue;
+  //       if (!valueId) continue;
 
-        const item = itemById.get(valueId);
-        if (!item) continue;
+  //       const item = itemById.get(valueId);
+  //       if (!item) continue;
 
-        const list = selectedByAttrId.get(item.attributeId) ?? [];
-        if (!list.some(x => x.id === item.id)) list.push(item);
-        selectedByAttrId.set(item.attributeId, list);
-      }
-    }
+  //       const list = selectedByAttrId.get(item.attributeId) ?? [];
+  //       if (!list.some(x => x.id === item.id)) list.push(item);
+  //       selectedByAttrId.set(item.attributeId, list);
+  //     }
+  //   }
 
-    // 2) выставить multiselect значения без триггера rebuild на каждом setValue
-    for (const [attrId, control] of Object.entries(this.attrGroup.controls)) {
-      const selected = selectedByAttrId.get(attrId) ?? [];
-      control.setValue(selected, { emitEvent: false } as any);
-    }
+  //   // 2) выставить multiselect значения без триггера rebuild на каждом setValue
+  //   for (const [attrId, control] of Object.entries(this.attrGroup.controls)) {
+  //     const selected = selectedByAttrId.get(attrId) ?? [];
+  //     control.setValue(selected, { emitEvent: false } as any);
+  //   }
 
-    // 3) сгенерировать строки variants (комбинации)
-    this.rebuildVariantsFromSelection();
+  //   // 3) сгенерировать строки variants (комбинации)
+  //   this.rebuildVariantsFromSelection();
 
-    // 4) заполнить quantity/price/salePrice/barCode по key
-    const formByKey = new Map<string, FormGroup<VariantForm>>();
-    this.variantsArray.controls.forEach(ctrl => formByKey.set(ctrl.controls.key.value, ctrl));
+  //   // 4) заполнить quantity/price/salePrice/barCode по key
+  //   const formByKey = new Map<string, FormGroup<VariantForm>>();
+  //   this.variantsArray.controls.forEach(ctrl => formByKey.set(ctrl.controls.key.value, ctrl));
 
-    const attrNameById = new Map<string, string>();
-    product.attributes?.forEach(a => attrNameById.set(a.id, a.name));
+  //   const attrNameById = new Map<string, string>();
+  //   product.attributes?.forEach(a => attrNameById.set(a.id, a.name));
 
-    for (const v of variants) {
-      const vAttrs = v?.attributes ?? [];
+  //   for (const v of variants) {
+  //     const vAttrs = v?.attributes ?? [];
 
-      const attrs: VariantAttr[] = [];
-      for (const a of vAttrs) {
-        const valueId: string | undefined =
-          a?.id ?? a?.attributeId;
+  //     const attrs: VariantAttr[] = [];
+  //     for (const a of vAttrs) {
+  //       const valueId: string | undefined =
+  //         a?.id ?? a?.attributeId;
 
-        if (!valueId) continue;
+  //       if (!valueId) continue;
 
-        const item = itemById.get(valueId);
-        if (!item) continue;
+  //       const item = itemById.get(valueId);
+  //       if (!item) continue;
 
-        attrs.push({
-          attributeId: item.attributeId,
-          attributeName: attrNameById.get(item.attributeId) ?? '',
-          itemId: item.id,
-          itemName: item.value ?? ''
-        });
-      }
+  //       attrs.push({
+  //         attributeId: item.attributeId,
+  //         attributeName: attrNameById.get(item.attributeId) ?? '',
+  //         itemId: item.id,
+  //         itemName: item.value ?? ''
+  //       });
+  //     }
 
-      if (!attrs.length) continue;
+  //     if (!attrs.length) continue;
 
-      const key = this.buildVariantKey(attrs);
-      const fg = formByKey.get(key);
-      if (!fg) continue;
+  //     const key = this.buildVariantKey(attrs);
+  //     const fg = formByKey.get(key);
+  //     if (!fg) continue;
 
-      // поддержка разных возможных названий полей в product.variants
-      fg.controls.quantity.setValue(v?.quantity ?? null);
-      // fg.controls.price.setValue(v?.costPrice ?? v?.price ?? null);
-      fg.controls.salePrice.setValue(v?.price ?? null);
-      fg.controls.barCode.setValue(v?.barCode ?? null);
-    }
+  //     // поддержка разных возможных названий полей в product.variants
+  //     fg.controls.quantity.setValue(v?.quantity ?? null);
+  //     // fg.controls.price.setValue(v?.costPrice ?? v?.price ?? null);
+  //     fg.controls.salePrice.setValue(v?.price ?? null);
+  //     fg.controls.barCode.setValue(v?.barCode ?? null);
+  //   }
 
-    this.cdRef.detectChanges();
-  }
+  //   this.cdRef.detectChanges();
+  // }
 
   ngOnDestroy(): void {
     this.destroyer$.next();
