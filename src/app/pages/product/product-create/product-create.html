@@ -33,15 +33,11 @@
                 display="chip" class="w-full md:w-80">
                 <ng-template let-group #group>
                   <div class="flex items-center">
-                    <!-- <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + group.value" style="width: 20px" /> -->
                     <span>{{ group.name }}</span>
                   </div>
                 </ng-template>
               </p-multiselect>
 
-              <!-- <p-multiselect id="tags" formControlName="tags" placeholder="Select tags" [options]="tags()"
-                optionLabel="name" [maxSelectedLabels]="3"
-                [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" /> -->
             </div>
             <div class="flex flex-wrap gap-2 w-full">
               <label for="attributes">Attribute</label>

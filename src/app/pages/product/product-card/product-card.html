@@ -3,13 +3,11 @@
 <p-toast />
 <p-fluid>
   @if (product && attributeList.length) {
-  <div class="flex flex-col justify-content-center p-4" [formGroup]="form">
+  <div class="flex flex-col justify-content-center p-4">
     <div class="flex-1">
       <p-toolbar>
         <ng-template #start>
-          <p-button icon="pi pi-plus" class="mr-2" text severity="secondary" />
-          <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
-          <p-button icon="pi pi-upload" text severity="secondary" />
+          <p-button icon="pi pi-arrow-left" class="mr-2" text severity="secondary" (onClick)="goBack()" />
         </ng-template>
         <ng-template #center>
           <p-iconfield iconPosition="left">
@@ -25,7 +23,7 @@
 
     <div class="flex-1 flex flex-wrap">
 
-      <div class="flex gap-4 justify-content-center">
+      <div class="flex gap-4  justify-content-center">
         <aside class="sidebar w-[20%]">
           <div class="p-4">
             <div class="flex flex-wrap gap-2 justify-content-center">
@@ -40,7 +38,7 @@
 
                 <div class="flex flex-col gap-6">
                   <div class="flex flex-wrap gap-3 w-full">
-                    <label for="name">Product name</label>
+                    <label for="name">Name</label>
                     <p-inputgroup>
                       <input pInputText placeholder="Name" [disabled]="!toggleInput" />
                       <p-inputgroup-addon>
@@ -55,9 +53,10 @@
                     </p-inputgroup>
                   </div>
                   <div class="flex flex-wrap gap-3 w-full">
-                    <label for="name">Product category</label>
+                    <label for="name">Category</label>
                     <p-inputgroup>
-                      <input pInputText placeholder="Category" [disabled]="!toggleInput" />
+                      <p-treeselect id="category" class="w-full" [options]="categories()"
+                        placeholder="Select last child category" />
                       <p-inputgroup-addon>
                         @if(!toggleInput) {
                         <p-button icon="pi pi-pencil" severity="secondary" variant="text"
@@ -70,9 +69,32 @@
                     </p-inputgroup>
                   </div>
                   <div class="flex flex-wrap gap-3 w-full">
-                    <label for="name">Product brand</label>
+                    <label for="name">Brand</label>
                     <p-inputgroup>
-                      <input pInputText placeholder="Brand" [disabled]="!toggleInput" />
+                      <p-select id="brand" [options]="brands()" optionLabel="name" />
+                      <p-inputgroup-addon>
+                        @if(!toggleInput) {
+                        <p-button icon="pi pi-pencil" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }@else {
+                        <p-button icon="pi pi-lock" severity="secondary" variant="text"
+                          (onClick)="toggleInput = !toggleInput" />
+                        }
+                      </p-inputgroup-addon>
+                    </p-inputgroup>
+                  </div>
+                  <div class="flex flex-wrap gap-3 w-full">
+                    <label for="name">Tags</label>
+                    <p-inputgroup>
+                      <p-multiselect id="tags" optionGroupLabel="name" optionLabel="value" optionGroupChildren="values"
+                        [options]="tags()" [group]="true" placeholder="Select tags" scrollHeight="250px" display="chip"
+                        class="w-full md:w-80">
+                        <ng-template let-group #group>
+                          <div class="flex items-center">
+                            <span>{{ group.name }}</span>
+                          </div>
+                        </ng-template>
+                      </p-multiselect>
                       <p-inputgroup-addon>
                         @if(!toggleInput) {
                         <p-button icon="pi pi-pencil" severity="secondary" variant="text"
@@ -85,10 +107,6 @@
                     </p-inputgroup>
                   </div>
                 </div>
-
-                <!-- <h3>{{ product.name }}</h3> -->
-                <p>{{ product.brand }}</p>
-                <p>{{ product.category }}</p>
                 <p>{{ product.createdAt | date:'dd-MM-yyyy' }}</p>
               </div>
             </div>
@@ -97,53 +115,122 @@
 
         <p-divider [layout]="'vertical'" class="hidden sm:block!" />
 
-        <main class="main">
+        <main>
           <div class="p-4">
-            <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }"
-              [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows"
-              (onPage)="pageChange($event)">
+            <p-table [value]="product.variants" dataKey="id" showGridlines [lazy]="true"
+              [loading]="appStore.isLoading()" [tableStyle]="{ 'min-width': '50rem' }" [expandedRowKeys]="expandedRows">
+              <ng-template #caption>
+                <div class="flex justify-end gap-2">
+                  <p-button label="Add variants" icon="pi pi-plus" [outlined]="true" />
+                </div>
+              </ng-template>
               <ng-template #header>
                 <tr>
-                  <th style="width:12%">Name</th>
-                  <th style="width:12%">Img</th>
-                  <th style="width:13%">Brand</th>
-                  <th style="width:10%">Category</th>
-                  <th style="width:10%">In Stock</th>
-                  <th style="width:15%">Created At</th>
-                  <th style="width:5%">Action</th>
+                  <th style="width: 5rem"></th>
+                  <th pResizableColumn>Bar code</th>
+                  <th pResizableColumn>SKU</th>
+                  <th pResizableColumn>Attribute</th>
+                  <th pResizableColumn>Retail price</th>
+                  <th pResizableColumn>Quantity</th>
+                  <th style="width: 5rem"></th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-product>
+              <ng-template #body let-variant let-expanded="expanded">
                 <tr>
-                  <td>{{ product.name }}</td>
-                  <td><img [src]="getProductImg(product)" [alt]="product.name" width="50"
-                      class="shadow-lg object-cover h-[40px]" />
+                  <td>
+                    <p-button type="button" pRipple [pRowToggler]="variant" [text]="true" severity="secondary"
+                      [rounded]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
                   </td>
-                  <td>{{ product.brand }}</td>
-                  <td>{{ product.category }}</td>
-                  <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" />
+                  <td>{{ variant.barCode }}</td>
+                  <td>
+                    {{ variant.sku }}
                   </td>
-                  <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
-                  <td #action>
-                    <div>
-                      <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
-                        icon="pi pi-ellipsis-v" />
-                      <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
+                  <td>{{ variant.attributes[0].value }} - {{variant.attributes[1].value}} </td>
+                  <td> {{ variant.price | currency: ' ' : "code": "0.0" }}</td>
+                  <td>
+                    <p-tag [value]="variant.quantity" [severity]="getSeverity(variant.quantity)" />
+                  </td>
+                  <td>
+                    <p-button type="button" icon="pi pi-pencil" [outlined]="true" />
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template #expandedrow let-variant>
+                <tr>
+                  <td colspan="7">
+                    <div class="p-4">
+                      <h5>Stock movement for {{ variant.attributes[0].value }} - {{variant.attributes[1].value}} </h5>
+                      <p-table [value]="variant.stockMovements" dataKey="id">
+                        <ng-template #header>
+                <tr>
+                  <th pSortableColumn="createdAt">
+                    <div class="flex items-center gap-2">
+                      Created At
+                      <p-sortIcon field="createdAt" />
                     </div>
+                  </th>
+                  <th pSortableColumn="type">
+                    <div class="flex items-center gap-2">
+                      Type
+                      <p-sortIcon field="type" />
+                    </div>
+                  </th>
+                  <th pSortableColumn="reason">
+                    <div class="flex items-center gap-2">
+                      Reason
+                      <p-sortIcon field="reason" />
+                    </div>
+                  </th>
+                  <th pSortableColumn="createdBy">
+                    <div class="flex items-center gap-2">
+                      Created by
+                      <p-sortIcon field="createdBy" />
+                    </div>
+                  </th>
+                  <th pSortableColumn="quantity">
+                    <div class="flex items-center gap-2">
+                      Quantity
+                      <p-sortIcon field="quantity" />
+                    </div>
+                  </th>
+                  <th pSortableColumn="price">
+                    <div class="flex items-center gap-2">
+                      Price
+                      <p-sortIcon field="price" />
+                    </div>
+                  </th>
+                  <th style="width: 4rem"></th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-stockMovement>
+                <tr>
+                  <td>{{ stockMovement.createdAt | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ stockMovement.type }}</td>
+                  <td>{{ stockMovement.reason }}</td>
+                  <td>{{ stockMovement.createdBy.user.fullName }}</td>
+                  <td>{{ stockMovement.quantity }}</td>
+                  <td>{{ stockMovement.unitCost | currency: ' ' : 'code': '0.0' }}</td>
+                  <td>
+                    <p-button type="button" icon="pi pi-plus" [outlined]="true" />
                   </td>
+                </tr>
+              </ng-template>
+              <ng-template #emptymessage>
+                <tr>
+                  <td colspan="6">There are no order for this product yet.</td>
                 </tr>
               </ng-template>
             </p-table>
           </div>
-        </main>
+          </td>
+          </tr>
+          </ng-template>
+          </p-table>
       </div>
-
-      <div class="flex flex-wrap justify-end gap-2 w-full">
-        <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
-        <p-button label="Submit" (onClick)="submit()"></p-button>
-      </div>
-
+      </main>
     </div>
+
+  </div>
   </div>
   }
 </p-fluid>

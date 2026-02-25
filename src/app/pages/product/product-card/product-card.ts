@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail } from '../../../models/product.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
 import { delay, Subject, switchMap, takeUntil } from 'rxjs';
@@ -17,7 +17,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { Menu, MenuModule } from 'primeng/menu';
-import { Table, TableModule } from 'primeng/table';
+import { Table, TableModule, TableRowCollapseEvent } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { DividerModule } from 'primeng/divider';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -25,6 +25,12 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { ToolbarModule } from 'primeng/toolbar';
+import { TagModule } from 'primeng/tag';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
+import { TreeSelectModule } from 'primeng/treeselect';
+import { MultiSelectType, SelectType } from '../../../models/app.models';
+
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -64,7 +70,14 @@ type VariantForm = {
     MenuModule,
     InputGroupModule,
     InputGroupAddonModule,
-    IconFieldModule, InputIconModule, ToolbarModule,
+    TagModule,
+    IconFieldModule,
+    InputIconModule,
+    ToolbarModule,
+    SelectModule,
+    RouterModule,
+    TreeSelectModule,
+    MultiSelectModule,
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -73,53 +86,16 @@ type VariantForm = {
 export class ProductCard implements OnInit, OnDestroy {
   productCard = signal<ProductDetail | null>(null);
   attributes = signal<AttrItemList[]>([]);
+  categories = signal<MultiSelectType[]>([])
+  brands = signal<SelectType[]>([])
+  tags = signal<SelectType[]>([])
 
   toggleInput = false
-
-
-
-  selectedProduct!: Product;
-  actionBtns: MenuItem[] = [
-    {
-      label: 'View', icon: 'pi pi-eye',
-      command: () => {
-        setTimeout(() => {
-          this.goToProductView(this.selectedProduct);
-        }, 350)
-      }
-    },
-    {
-      label: 'Edit', icon: 'pi pi-pencil', command: () => {
-        setTimeout(() => {
-          this.goToAddItems(this.selectedProduct);
-        }, 350)
-      }
-    },
-    // { label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteProduct(this.selectedProduct) },
-  ];
-  products: Product[] = []
-  first = signal(0);
-  rows = 10;
-  total = signal(0);
+  expandedRows: any = {};
 
   @ViewChild('dt') dataTable!: Table;
 
   public appStore = inject(AppStore);
-
-  // 1) attributes - выбранные значения по каждому атрибуту (color, size, ...)
-  // 2) variants - строки (комбинации) с quantity/price/salePrice
-  form = new FormGroup({
-    attributes: new FormGroup<AttrSelectionControls>({} as AttrSelectionControls),
-    variants: new FormArray<FormGroup<VariantForm>>([])
-  });
-
-  get attrGroup() {
-    return this.form.controls.attributes;
-  }
-
-  get variantsArray() {
-    return this.form.controls.variants;
-  }
 
   destroyer$ = new Subject<void>();
 
@@ -188,50 +164,12 @@ export class ProductCard implements OnInit, OnDestroy {
     return product.images.length ? product.images[0].url : '/no_image.svg';
   }
 
-
   clearForm() {
-    Object.values(this.attrGroup.controls).forEach((c) => c.setValue([]));
+
   }
 
   submit() {
-    // итог: variants содержит комбинации + quantity/price/salePrice
-    console.log(this.form.value);
-  }
 
-  ngOnDestroy(): void {
-    this.destroyer$.next();
-    this.destroyer$.complete();
-  }
-
-
-
-
-
-
-  fetchProducts(page = 1, pageSize = 10) {
-    this.appStore.startLoader();
-    this.productService.getProducts(page, pageSize)
-      .pipe(
-        delay(1500)
-      ).subscribe({
-        next: (response) => {
-          this.appStore.stopLoader();
-          this.products = response.data;
-          this.total.set(response.total);
-        },
-        error: (err) => {
-          this.appStore.stopLoader();
-          console.error('Error fetching products:', err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch products' });
-        }
-      });
-  }
-
-  pageChange(event: any) {
-    this.dataTable.reset();
-    this.first.set(event.first);
-    this.rows = event.rows;
-    this.fetchProducts(this.first() / this.rows + 1, this.rows);
   }
 
   getSeverity(variants: number) {
@@ -244,24 +182,13 @@ export class ProductCard implements OnInit, OnDestroy {
     }
   }
 
-  getProductImg(product: Product): string {
-    return product.images.length > 0 ? product.images[0].url : '/no_image.svg';
+  goBack() {
+    this.router.navigate(['/pages/product/list']);
   }
 
-  goToProductView(product: Product) {
-    this.router.navigate(['/pages/product', product.id]);
-  }
 
-  goToAddItems(product: Product) {
-    this.router.navigate(['/pages/product', product.id, 'add-items']);
-  }
-
-  productQuantity(product: Product): number {
-    return product.variants.reduce((total, variant) => total + variant.quantity, 0);
-  }
-
-  toggleAction(event: Event, menu: Menu, product: Product) {
-    this.selectedProduct = product;
-    menu.toggle(event);
+  ngOnDestroy(): void {
+    this.destroyer$.next();
+    this.destroyer$.complete();
   }
 }

@@ -36,9 +36,32 @@ export interface ProductVariant {
   product: Product
   quantity: number
   // orderItems:     OrderItem[]
-  // stockMovements: StockMovement[]
+  stockMovements: StockMovement[]
   attributes: AttributeItem[]
 }
+
+export interface StockMovement {
+  id: string
+  type: 'IN' | 'OUT'
+  reason: 'PURCHASE' | 'SALE' | 'ADJUSTMENT'
+  warehouseId: string
+  quantity: number
+  unitCost: string
+  createdAt: string
+  createdBy: {
+    role: 'OWNER' | 'STAFF'
+    isActive: boolean
+    user: {
+      id: string
+      fullName: string
+      phone: string
+      role: 'OWNER' | 'STAFF'
+      type: 'OWNER' | 'STAFF'
+      createdAt: string
+    }
+  }
+}
+
 
 export interface ProductResponse extends BaseListResponse {
   data: Product[]
