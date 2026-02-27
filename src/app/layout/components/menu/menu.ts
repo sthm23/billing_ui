@@ -103,6 +103,17 @@ export class Menu {
             ]
           },
           {
+            label: 'Order',
+            icon: 'pi pi-fw pi-shopping-cart',
+            items: [
+              {
+                label: 'List',
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/pages/order/list']
+              }
+            ]
+          },
+          {
             label: 'Not Found',
             icon: 'pi pi-fw pi-exclamation-circle',
             routerLink: ['/pages/notfound']

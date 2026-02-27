@@ -1,0 +1,35 @@
+<p-toast />
+
+<div class="card">
+  <div class="p-4">
+    <h2 class="text-2xl font-bold mb-4">Orders</h2>
+    <button pButton type="button" label="Create Order" (click)="createOrder()"></button>
+  </div>
+  <div class="p-4">
+    <p-table [value]="orders()" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Store</th>
+          <th>Warehouse</th>
+          <th>Channel</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-order>
+        <tr>
+          <td>{{ order.store.name }}</td>
+          <td>{{ order.warehouse.name }}</td>
+          <td>{{ order.channel }}</td>
+          <td><p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag></td>
+          <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
+          <td>
+            <p-button (click)="toggleAction($event, menu, order)" [rounded]="true" [outlined]="true"
+              icon="pi pi-ellipsis-v" />
+            <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
