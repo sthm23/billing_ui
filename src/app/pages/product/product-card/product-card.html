@@ -7,7 +7,7 @@
     <div class="flex-1">
       <p-toolbar>
         <ng-template #start>
-          <p-button icon="pi pi-arrow-left" class="mr-2" text severity="secondary" (onClick)="goBack()" />
+          <p-button label="back" icon="pi pi-arrow-left" class="mr-2" text severity="secondary" (onClick)="goBack()" />
         </ng-template>
         <ng-template #center>
           <p-iconfield iconPosition="left">
@@ -121,7 +121,8 @@
               [loading]="appStore.isLoading()" [tableStyle]="{ 'min-width': '50rem' }" [expandedRowKeys]="expandedRows">
               <ng-template #caption>
                 <div class="flex justify-end gap-2">
-                  <p-button label="Add variants" icon="pi pi-plus" [outlined]="true" />
+                  <p-button label="Add variants" icon="pi pi-plus" [outlined]="true" (onClick)="showDialog()" />
+                  <app-dialog [(visible)]="visibleAddVariants" />
                 </div>
               </ng-template>
               <ng-template #header>

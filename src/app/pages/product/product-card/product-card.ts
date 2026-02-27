@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail } from '../../../models/product.model';
+import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant } from '../../../models/product.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
@@ -30,7 +30,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { MultiSelectType, SelectType } from '../../../models/app.models';
-
+import { DialogComponent } from '../../../shared/components/dialog/dialog';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -78,6 +78,7 @@ type VariantForm = {
     RouterModule,
     TreeSelectModule,
     MultiSelectModule,
+    DialogComponent
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -91,6 +92,7 @@ export class ProductCard implements OnInit, OnDestroy {
   tags = signal<SelectType[]>([])
 
   toggleInput = false
+  visibleAddVariants = false
   expandedRows: any = {};
 
   @ViewChild('dt') dataTable!: Table;
@@ -168,8 +170,12 @@ export class ProductCard implements OnInit, OnDestroy {
 
   }
 
-  submit() {
+  showDialog() {
+    this.visibleAddVariants = true;
+  }
 
+  addVariants(variants: ProductVariant[]) {
+    this.visibleAddVariants = false;
   }
 
   getSeverity(variants: number) {

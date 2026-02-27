@@ -299,7 +299,7 @@ export class ProductVariant implements OnInit, OnDestroy {
           },
           error: (err) => {
             console.error('Error creating variants:', err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create product variants' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create product variants' });
           }
         });
 
