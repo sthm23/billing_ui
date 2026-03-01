@@ -9,7 +9,7 @@
       </svg>
     </p-button>
     <p-divider layout="vertical" class="m-2" />
-    <p-breadcrumb class="max-w-full" [model]="breadcrumbItems">
+    <p-breadcrumb class="max-w-full hidden sm:block" [model]="breadcrumbItems">
       <ng-template #item let-item>
         @if(item.icon) {
         <span [ngClass]="[item.icon, 'text-color']"></span>

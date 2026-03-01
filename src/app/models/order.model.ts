@@ -62,11 +62,20 @@ export interface Order {
   itemsCount: number
   paymentsCount: number
 }
-
+export interface OrderDetail2 extends Order {
+  totalSale: number
+  items: OrderItemCard[]
+}
 export interface OrderDetail extends Order {
   items: OrderItemPayload[]
 }
-
+export interface OrderItemCard {
+  id: string
+  variantId: string
+  quantity: number
+  price: number
+  sale: number
+}
 export interface OrderItemPayload {
   variantId: string
   quantity: number

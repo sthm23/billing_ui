@@ -34,25 +34,25 @@ export class OrderList implements OnInit {
       label: 'View', icon: 'pi pi-eye',
       command: () => {
         setTimeout(() => {
-          this.goToOrderView(this.selectedOrder()!);
+          // this.goToOrderView(this.selectedOrder()!);
         }, 350)
       }
     },
     {
       label: 'Edit', icon: 'pi pi-pencil', command: () => {
         setTimeout(() => {
-          this.goToEditOrder(this.selectedOrder()!);
+          // this.goToEditOrder(this.selectedOrder()!);
         }, 350)
       }
     },
     {
       label: 'Delete', icon: 'pi pi-trash', command: () => {
-        this.deleteOrder(this.selectedOrder()!)
+        // this.deleteOrder(this.selectedOrder()!)
       }
     },
   ];
   orders = signal<Order[]>([])
-  selectedOrder = signal<Order | null>(null);
+  selectedOrder: Order | null = null;
   constructor(
     private orderService: OrderService,
     private authService: AuthService,
@@ -112,7 +112,7 @@ export class OrderList implements OnInit {
   }
 
   toggleAction(event: Event, menu: Menu, order: Order) {
-    this.selectedOrder.set(order);
+    // this.selectedOrder.set(order);
     menu.toggle(event);
   }
 
@@ -146,5 +146,11 @@ export class OrderList implements OnInit {
   deleteOrder(order: Order) {
     console.log(order);
 
+  }
+
+  selectOrder(order: Order) {
+    // console.log(order);
+    this.router.navigate(['/pages/order', order.id])
+    // this.selectedOrder = order;
   }
 }

@@ -6,7 +6,8 @@
     <button pButton type="button" label="Create Order" (click)="createOrder()"></button>
   </div>
   <div class="p-4">
-    <p-table [value]="orders()" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
+    <p-table [value]="orders()" [paginator]="true" [rows]="10" selectionMode="single"
+      (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id">
       <ng-template pTemplate="header">
         <tr>
           <th>Store</th>
@@ -18,7 +19,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-order>
-        <tr>
+        <tr [pSelectableRow]="order">
           <td>{{ order.store.name }}</td>
           <td>{{ order.warehouse.name }}</td>
           <td>{{ order.channel }}</td>
