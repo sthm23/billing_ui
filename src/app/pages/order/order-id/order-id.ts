@@ -1,12 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { Order, OrderChannel, OrderDetail2, OrderStatus } from '../../../models/order.model';
+import { OrderChannel, OrderDetail2, OrderStatus } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { OrderItem } from '../../../shared/components/order-item/order-item';
 import { InputText } from "primeng/inputtext";
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 @Component({
   selector: 'app-order-id',
@@ -15,7 +17,9 @@ import { CurrencyPipe } from '@angular/common';
     OrderItem,
     InputText,
     ButtonModule,
-    CurrencyPipe
+    CurrencyPipe,
+    InputGroupModule,
+    InputGroupAddonModule
   ],
   templateUrl: './order-id.html',
   styleUrl: './order-id.css',
