@@ -62,16 +62,14 @@ export interface Order {
   itemsCount: number
   paymentsCount: number
 }
-export interface OrderDetail2 extends Order {
-  totalSale: number
-  items: OrderItemCard[]
-}
+
 export interface OrderDetail extends Order {
   items: OrderItemPayload[]
 }
 export interface OrderItemCard {
   id: string
-  variantId: string
+  name: string
+  stock: number
   quantity: number
   price: number
   sale: number
@@ -79,12 +77,13 @@ export interface OrderItemCard {
 export interface OrderItemPayload {
   variantId: string
   quantity: number
-  priceAtSale: number
+  retailPrice: number
+  sale: number
   costAtSale: number
 }
 export interface CreateOrderItemPayload {
   orderId: string
-  customerId?: string
+  customerId: string | null
   items: OrderItemPayload[]
 }
 export interface CreateOrderPayload {

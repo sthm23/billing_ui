@@ -62,7 +62,9 @@ export interface StockMovement {
   }
 }
 
-
+export interface SearchProductResponse extends BaseListResponse {
+  data: ProductVariant[]
+}
 export interface ProductResponse extends BaseListResponse {
   data: Product[]
 }

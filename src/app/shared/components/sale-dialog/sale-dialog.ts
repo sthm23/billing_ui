@@ -14,6 +14,8 @@ export interface SaleDialogOutput {
   visible: boolean;
   price: number;
   sale: number;
+  saleType: SaleType;
+  prevSale: number;
 }
 
 @Component({
@@ -40,7 +42,9 @@ export class SaleDialog {
   ]
   value: SaleType = 'PRICE';
 
-  salePrice: number = 0;
+  currentSale: number = 0;
+  prevSale: number = 0;
+
   newPrice: number = 0;
   salePricePercentage: number = 0;
   error: string | null = null;
@@ -54,16 +58,33 @@ export class SaleDialog {
   constructor() { }
 
   closeModal(event: boolean) {
-    this.visibleChange.emit({ visible: event, price: 0, sale: 0 });
+    this.visibleChange.emit({ visible: event, price: 0, sale: 0, saleType: this.value, prevSale: this.prevSale });
   }
 
   save() {
     if (this.newPrice > 0) {
-      this.visibleChange.emit({
-        visible: false,
-        price: this.newPrice,
-        sale: this.salePrice
-      });
+      if (this.value === 'PRICE') {
+
+        this.visibleChange.emit({
+          visible: false,
+          price: this.newPrice,
+          sale: this.currentSale,
+          prevSale: this.prevSale,
+          saleType: this.value
+        });
+        this.prevSale = this.currentSale;
+      } else {
+        const currentSale = this.price - this.newPrice
+        this.visibleChange.emit({
+          visible: false,
+          price: this.newPrice,
+          sale: currentSale,
+          prevSale: this.prevSale,
+          saleType: this.value
+        });
+        this.prevSale = currentSale;
+      }
+
     } else {
       this.error = 'New price must be greater than 0';
     }
@@ -71,12 +92,12 @@ export class SaleDialog {
 
   handleSale() {
     if (this.value === 'PRICE') {
-      this.newPrice = this.price - this.salePrice;
-      const discount = (this.salePrice / this.price) * 100;;
+      this.newPrice = this.price - this.currentSale;
+      const discount = (this.currentSale / this.price) * 100;;
       this.salePricePercentage = Number.parseFloat(discount.toFixed(2));
     } else {
-      this.newPrice = Math.round(this.price - (this.price * (this.salePrice / 100)));
-      this.salePricePercentage = this.salePrice;
+      this.newPrice = Math.round(this.price - (this.price * (this.currentSale / 100)));
+      this.salePricePercentage = this.currentSale;
     }
   }
 }

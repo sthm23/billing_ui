@@ -1,66 +1,54 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { OrderChannel, OrderDetail2, OrderStatus } from '../../../models/order.model';
+import { CreateOrderItemPayload, OrderDetail, OrderItemCard, OrderItemPayload } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
-import { OrderItem } from '../../../shared/components/order-item/order-item';
-import { InputText } from "primeng/inputtext";
+import { OrderItem, OrderItemAmountChange } from '../../../shared/components/order-item/order-item';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { ProductService } from '../../product/service/product.service';
+import { ProductVariant } from '../../../models/product.model';
+import { AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/types/autocomplete';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { FormsModule } from "@angular/forms";
+import { FluidModule } from 'primeng/fluid';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+
+
 
 @Component({
   selector: 'app-order-id',
   imports: [
     DividerModule,
     OrderItem,
-    InputText,
     ButtonModule,
     CurrencyPipe,
-    InputGroupModule,
-    InputGroupAddonModule
+    AutoCompleteModule,
+    FluidModule,
+    FormsModule,
+    ToastModule
   ],
   templateUrl: './order-id.html',
   styleUrl: './order-id.css',
+  providers: [MessageService]
 })
 export class OrderId implements OnInit {
-  currentOrder = signal<OrderDetail2 | null>({
-    id: '',
-    channel: OrderChannel.POS,
-    status: OrderStatus.CREATED,
-    totalAmount: 520000,
-    totalSale: 200000,
-    createdAt: '',
-    items: [
-      {
-        quantity: 2,
-        variantId: 'variant-123',
-        price: 100000,
-        id: 'order-item-123',
-        sale: 0
-      },
-      {
-        id: 'order-item-1323',
-        quantity: 32,
-        variantId: 'variant-1323',
-        price: 210000,
-        sale: 0
-      },
-      {
-        quantity: 12,
-        variantId: 'variant-1223',
-        price: 110000,
-        sale: 0,
-        id: 'order-item-1223',
-      }
-    ]
-  } as any);
+  searchResults = signal<ProductVariant[]>([]);
+  searchValue = '';
+
+  totalAmount = signal<number>(0);
+  saleAmount = signal<number>(0);
+  orderItems = signal<OrderItemCard[]>([]);
+
+  currentOrder = signal<OrderDetail | null>(null);
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private orderService: OrderService,
+    private productService: ProductService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit() {
@@ -76,12 +64,195 @@ export class OrderId implements OnInit {
   private loadOrder(orderId: string) {
     this.orderService.getOrderById(orderId).subscribe({
       next: (res) => {
-        // this.currentOrder.set(res);
+        this.currentOrder.set(res);
       },
       error: (err) => {
         console.error(err);
         this.router.navigate(['/pages/order/list']);
       }
     });
+  }
+
+  search(event: AutoCompleteCompleteEvent) {
+    const text = event.query
+    if (text && text.length > 3) {
+      this.productService.searchProducts(text).subscribe({
+        next: (res) => {
+          const searchResults = res.data.map(variant => {
+            return {
+              ...variant,
+              name: `${variant.sku} - ${variant.barCode}`
+            };
+          }).filter(variant => variant.name.toLowerCase().includes(text.toLowerCase()));
+
+          this.searchResults.set(searchResults);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      })
+    }
+  }
+
+  selectSearchOption(option: AutoCompleteSelectEvent) {
+    const variant = option.value as ProductVariant & { name: string };
+    const orderItem: OrderItemCard = {
+      stock: variant.quantity,
+      quantity: 1,
+      name: variant.name,
+      price: variant.price,
+      id: variant.id,
+      sale: 0
+    }
+    const added = this.handleAddItem(orderItem);
+    if (added) {
+      this.handleAmountChange({
+        type: 'increment',
+        price: variant.price,
+        quantity: orderItem.quantity,
+        sale: orderItem.sale
+      }, orderItem.id);
+    } else {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Item already added' });
+    }
+    this.searchValue = '';
+    this.searchResults.set([]);
+  }
+
+  removeItem(event: OrderItemAmountChange, itemId: string) {
+    const item = this.orderItems().find(item => item.id === itemId);
+    if (item) {
+      this.handleAmountChange({
+        type: event.type,
+        price: event.price * event.quantity,
+        quantity: event.quantity,
+        sale: event.sale * event.quantity
+      }, itemId);
+    }
+    this.orderItems.update(items => items.filter(item => item.id !== itemId));
+  }
+
+  handleAddItem(orderItem: OrderItemCard) {
+    const items = this.orderItems();
+    if (items.some(item => item.id === orderItem.id)) {
+      return false;
+    }
+    this.orderItems.update(items => [...items, orderItem]);
+    return true;
+  }
+
+  handleAmountChange({ price, quantity, type, sale = 0, prevSale }: OrderItemAmountChange, itemId: string) {
+    if (type === 'decrement') {
+      this.totalAmount.update((total) => total - price);
+      this.saleAmount.update((amountSale) => amountSale - sale);
+
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, quantity };
+        }
+        return item;
+      }));
+
+    } else if (type === 'increment') {
+      this.totalAmount.update((total) => +total + +price);
+      this.saleAmount.update((amountSale) => amountSale + sale);
+
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, quantity };
+        }
+        return item;
+      }));
+
+    } else if (prevSale) {
+      this.saleAmount.update((amountSale) => amountSale + (sale * quantity) - (prevSale * quantity));
+
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, sale };
+        }
+        return item;
+      }));
+    } else {
+      this.saleAmount.update((amountSale) => amountSale + (sale * quantity));
+
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, sale };
+        }
+        return item;
+      }));
+    }
+  }
+
+  holdOrder() {
+    const order = this.currentOrder();
+    if (!order) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No order to hold' });
+      return;
+    }
+
+    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
+      variantId: item.id,
+      quantity: item.quantity,
+      retailPrice: +item.price,
+      sale: item.sale,
+      costAtSale: 0
+    }));
+    if (orderItems.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
+      return;
+    }
+    const payload: CreateOrderItemPayload = {
+      orderId: order.id,
+      customerId: null,
+      items: orderItems
+    }
+    console.log('Order to hold:', payload);
+    // this.orderService.holdOrder().subscribe({
+    //   next: (res) => {
+    //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order held successfully' });
+    //     this.loadOrder(this.currentOrder().id);
+    //   },
+    //   error: (err) => {
+    //     console.error(err);
+    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to hold order' });
+    //   }
+    // });
+  }
+
+  goToPayment() {
+    const order = this.currentOrder();
+    if (!order) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No order to process' });
+      return;
+    }
+    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
+      variantId: item.id,
+      quantity: item.quantity,
+      retailPrice: +item.price,
+      sale: item.sale,
+      costAtSale: 0
+    }));
+    if (orderItems.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
+      return;
+    }
+    const payload: CreateOrderItemPayload = {
+      orderId: order.id,
+      customerId: null,
+      items: orderItems
+    }
+    this.orderService.createOrderItems(payload).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Proceed to payment' });
+        this.router.navigate(['/pages/order/payment', order.id]);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to proceed to payment' });
+      },
+    });
+    console.log('Order to payment:', payload);
   }
 }

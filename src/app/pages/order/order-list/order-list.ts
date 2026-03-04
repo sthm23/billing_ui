@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { OrderService } from '../services/order-service';
 import { CreateOrderPayload, Order, OrderChannel, OrderStatus } from '../../../models/order.model';
 import { AuthService } from '../../auth/service/auth';
@@ -53,6 +53,9 @@ export class OrderList implements OnInit {
   ];
   orders = signal<Order[]>([])
   selectedOrder: Order | null = null;
+
+  @ViewChild('menu') menu!: Menu;
+
   constructor(
     private orderService: OrderService,
     private authService: AuthService,
@@ -112,7 +115,6 @@ export class OrderList implements OnInit {
   }
 
   toggleAction(event: Event, menu: Menu, order: Order) {
-    // this.selectedOrder.set(order);
     menu.toggle(event);
   }
 
@@ -149,8 +151,13 @@ export class OrderList implements OnInit {
   }
 
   selectOrder(order: Order) {
-    // console.log(order);
-    this.router.navigate(['/pages/order', order.id])
-    // this.selectedOrder = order;
+    if (this.menu.overlayVisible) {
+      setTimeout(() => {
+        this.menu.toggle({} as Event);
+        this.router.navigate(['/pages/order', order.id])
+      }, 350)
+    } else {
+      this.router.navigate(['/pages/order', order.id])
+    }
   }
 }

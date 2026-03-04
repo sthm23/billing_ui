@@ -1,18 +1,29 @@
 @if(orderItem) {
 <p-fluid>
   <div class="card p-6!">
-    <div class="flex flex-col gap-4 align-center justify-between sm:flex-row">
+    <div class="flex flex-col items-center gap-4 justify-between sm:flex-row">
       <div class="flex-1 flex flex-col gap-2">
-        <app-counter (countChange)="orderItem.quantity = $event"></app-counter>
+        <app-counter [maxValue]="orderItem.stock" (countChange)="handleCounter($event)"
+          [initialCount]="orderItem.quantity" />
       </div>
       <div class="flex-6">
-        <p>{{orderItem.variantId}}</p>
+        <p>{{orderItem.name}}</p>
       </div>
       <div class="flex-3 flex items-center gap-2 justify-end ">
-        <app-sale-dialog [(visible)]="isPriceChangeDialogVisible" [price]="orderItem.price"
-          (visibleChange)="handleSale($event)" />
+        <app-sale-dialog [(visible)]="isPriceChangeDialogVisible" [price]="price()" [sale]="sale()"
+          (visibleChange)="handlePrice($event)" />
 
-        <div>{{orderItem.price | currency: ' ' : 'code' : '0.0'}}</div>
+        <div>
+          <div [class.sale]="sale() > 0">{{price() | currency: ' ' : 'code' : '0.0'}} UZS</div>
+          @if(sale() > 0) {
+          <div class="text-(--p-button-text-danger-color)">
+            - {{ sale() | currency: " ": "code": "0.0" }} UZS
+          </div>
+          <div>
+            <p-tag [value]="((price() - sale()) | currency: ' ' : 'code' : '0.0') + ' UZS'" />
+          </div>
+          }
+        </div>
         <p-button icon="pi pi-pencil" severity="secondary" outlined type="button"
           (click)="isPriceChangeDialogVisible = true" />
 

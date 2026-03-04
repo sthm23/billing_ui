@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { ButtonModule } from "primeng/button";
 
 @Component({
@@ -7,22 +7,31 @@ import { ButtonModule } from "primeng/button";
   templateUrl: './counter.html',
   styleUrl: './counter.css',
 })
-export class Counter {
+export class Counter implements OnChanges {
   count = signal(0);
 
   @Input() maxValue: number | null = null;
 
-  @Output() countChange = new EventEmitter<number>();
+  @Input() initialCount: number = 0;
+
+  @Output() countChange = new EventEmitter<{ count: number, type: 'increment' | 'decrement' }>();
+
+  ngOnChanges(changes: SimpleChanges) {
+    const initialCountChange = changes['initialCount'];
+    if (initialCountChange && initialCountChange.currentValue) {
+      this.count.set(initialCountChange.currentValue);
+    }
+  }
 
   increment() {
     if (this.maxValue !== null && this.count() >= this.maxValue) return;
     this.count.update(n => n + 1);
-    this.countChange.emit(this.count());
+    this.countChange.emit({ count: this.count(), type: 'increment' });
   }
 
   decrement() {
     if (this.count() === 0) return;
     this.count.update(n => n - 1);
-    this.countChange.emit(this.count());
+    this.countChange.emit({ count: this.count(), type: 'decrement' });
   }
 }

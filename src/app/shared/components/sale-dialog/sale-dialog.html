@@ -7,7 +7,7 @@
   </div>
   <div class="flex items-center gap-4">
     <p-inputgroup>
-      <p-inputnumber placeholder="Price" [(ngModel)]="salePrice" (ngModelChange)="handleSale()" [invalid]="error" />
+      <p-inputnumber placeholder="Price" [(ngModel)]="currentSale" (ngModelChange)="handleSale()" [invalid]="error" />
       <p-inputgroup-addon>{{value === 'PRICE' ? 'UZS' : '%'}}</p-inputgroup-addon>
     </p-inputgroup>
 
@@ -17,13 +17,13 @@
   }
   <div class="flex items-center gap-4 mb-4 mt-4">
     <div>
-      @if(salePrice > 0) {
+      @if(currentSale > 0) {
       <p-tag [value]="salePricePercentage + '%'" severity="danger"></p-tag>
       }
     </div>
     <div class="flex flex-row items-center gap-3">
       <small>Price:</small>
-      <h5 [ngClass]="{'text-decoration': salePrice}">{{price | currency: ' ' : 'code' : '0.0'}}</h5>
+      <h5 [ngClass]="{'text-decoration': currentSale}">{{price | currency: ' ' : 'code' : '0.0'}}</h5>
       @if(newPrice) {
       <small>New price:</small>
       <h5>{{newPrice | currency: ' ' : 'code' : '0.0'}}
