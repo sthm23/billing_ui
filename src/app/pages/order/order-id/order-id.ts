@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
 import { CreateOrderItemPayload, OrderDetail, OrderItemCard, OrderItemPayload } from '../../../models/order.model';
@@ -14,6 +14,7 @@ import { FormsModule } from "@angular/forms";
 import { FluidModule } from 'primeng/fluid';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-dialog/sale-dialog';
 
 
 
@@ -27,7 +28,8 @@ import { ToastModule } from 'primeng/toast';
     AutoCompleteModule,
     FluidModule,
     FormsModule,
-    ToastModule
+    ToastModule,
+    SaleDialog
   ],
   templateUrl: './order-id.html',
   styleUrl: './order-id.css',
@@ -43,13 +45,21 @@ export class OrderId implements OnInit {
 
   currentOrder = signal<OrderDetail | null>(null);
 
+  saleDialogVisible = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private orderService: OrderService,
     private productService: ProductService,
     private messageService: MessageService
-  ) { }
+  ) {
+    effect(() => {
+      this.totalAmount.set(this.orderItems().reduce((total, item) => total + (item.price * item.quantity), 0));
+      this.saleAmount.set(this.orderItems().reduce((total, item) => total + (item.sale * item.quantity), 0));
+      [this.orderItems()]
+    }, { allowSignalWrites: true });
+  }
 
   ngOnInit() {
     const orderId = this.route.snapshot.paramMap.get('id');
@@ -101,6 +111,7 @@ export class OrderId implements OnInit {
       quantity: 1,
       name: variant.name,
       price: variant.price,
+      costAtSale: +variant.stockMovements.filter(movement => movement.type === 'IN')[0]?.unitCost || 0,
       id: variant.id,
       sale: 0
     }
@@ -141,11 +152,8 @@ export class OrderId implements OnInit {
     return true;
   }
 
-  handleAmountChange({ price, quantity, type, sale = 0, prevSale }: OrderItemAmountChange, itemId: string) {
-    if (type === 'decrement') {
-      this.totalAmount.update((total) => total - price);
-      this.saleAmount.update((amountSale) => amountSale - sale);
-
+  handleAmountChange({ quantity, type, sale = 0 }: OrderItemAmountChange, itemId: string) {
+    if (type === 'decrement' || type === 'increment') {
       this.orderItems.update(items => items.map(item => {
         if (item.id === itemId) {
           return { ...item, quantity };
@@ -153,29 +161,7 @@ export class OrderId implements OnInit {
         return item;
       }));
 
-    } else if (type === 'increment') {
-      this.totalAmount.update((total) => +total + +price);
-      this.saleAmount.update((amountSale) => amountSale + sale);
-
-      this.orderItems.update(items => items.map(item => {
-        if (item.id === itemId) {
-          return { ...item, quantity };
-        }
-        return item;
-      }));
-
-    } else if (prevSale) {
-      this.saleAmount.update((amountSale) => amountSale + (sale * quantity) - (prevSale * quantity));
-
-      this.orderItems.update(items => items.map(item => {
-        if (item.id === itemId) {
-          return { ...item, sale };
-        }
-        return item;
-      }));
     } else {
-      this.saleAmount.update((amountSale) => amountSale + (sale * quantity));
-
       this.orderItems.update(items => items.map(item => {
         if (item.id === itemId) {
           return { ...item, sale };
@@ -186,64 +172,35 @@ export class OrderId implements OnInit {
   }
 
   holdOrder() {
-    const order = this.currentOrder();
-    if (!order) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No order to hold' });
+    const result$ = this.saveOrderItems();
+    if (!result$) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save order items' });
       return;
     }
-
-    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
-      variantId: item.id,
-      quantity: item.quantity,
-      retailPrice: +item.price,
-      sale: item.sale,
-      costAtSale: 0
-    }));
-    if (orderItems.length === 0) {
-      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
-      return;
-    }
-    const payload: CreateOrderItemPayload = {
-      orderId: order.id,
-      customerId: null,
-      items: orderItems
-    }
-    console.log('Order to hold:', payload);
-    // this.orderService.holdOrder().subscribe({
-    //   next: (res) => {
-    //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order held successfully' });
-    //     this.loadOrder(this.currentOrder().id);
-    //   },
-    //   error: (err) => {
-    //     console.error(err);
-    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to hold order' });
-    //   }
-    // });
+    result$.subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Proceed to payment' });
+        this.router.navigate(['/pages/order/list']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to proceed to payment' });
+      },
+    });
   }
 
   goToPayment() {
     const order = this.currentOrder();
     if (!order) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No order to process' });
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Order not found' });
       return;
     }
-    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
-      variantId: item.id,
-      quantity: item.quantity,
-      retailPrice: +item.price,
-      sale: item.sale,
-      costAtSale: 0
-    }));
-    if (orderItems.length === 0) {
-      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
+    const result$ = this.saveOrderItems();
+    if (!result$) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save order items' });
       return;
     }
-    const payload: CreateOrderItemPayload = {
-      orderId: order.id,
-      customerId: null,
-      items: orderItems
-    }
-    this.orderService.createOrderItems(payload).subscribe({
+    result$.subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Proceed to payment' });
         this.router.navigate(['/pages/order/payment', order.id]);
@@ -253,6 +210,57 @@ export class OrderId implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to proceed to payment' });
       },
     });
-    console.log('Order to payment:', payload);
+  }
+
+  setPriceSale() {
+    this.saleDialogVisible = true;
+  }
+
+  private saveOrderItems() {
+    const order = this.currentOrder();
+    if (!order) {
+      return;
+    }
+    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
+      variantId: item.id,
+      quantity: item.quantity,
+      retailPrice: +item.price,
+      sale: item.sale,
+      costAtSale: item.costAtSale
+    }));
+    if (orderItems.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
+      return;
+    }
+    const payload: CreateOrderItemPayload = {
+      orderId: order.id,
+      customerId: null,
+      items: orderItems
+    }
+    return this.orderService.createOrderItems(payload);
+  }
+
+  handleSaleDialogChange(event: SaleDialogOutput) {
+    this.saleDialogVisible = event.visible;
+    if (event.price > 0 && event.sale > 0 && event.prevSale === 0) {
+      const currentOrderItems = this.orderItems();
+      const updatedItems = currentOrderItems.map(item => {
+        return {
+          ...item,
+          sale: (event.sale / currentOrderItems.length) / item.quantity
+        };
+      });
+      this.orderItems.set(updatedItems);
+
+    } else if (event.price > 0 && event.sale > 0 && event.prevSale > 0) {
+      const currentOrderItems = this.orderItems();
+      const updatedItems = currentOrderItems.map(item => {
+        return {
+          ...item,
+          sale: (event.sale / currentOrderItems.length) / item.quantity
+        };
+      });
+      this.orderItems.set(updatedItems);
+    }
   }
 }

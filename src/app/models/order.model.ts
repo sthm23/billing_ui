@@ -72,6 +72,7 @@ export interface OrderItemCard {
   stock: number
   quantity: number
   price: number
+  costAtSale: number
   sale: number
 }
 export interface OrderItemPayload {
