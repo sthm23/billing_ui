@@ -151,13 +151,23 @@ export class OrderList implements OnInit {
   }
 
   selectOrder(order: Order) {
+
     if (this.menu.overlayVisible) {
       setTimeout(() => {
         this.menu.toggle({} as Event);
         this.router.navigate(['/pages/order', order.id])
       }, 350)
     } else {
-      this.router.navigate(['/pages/order', order.id])
+      if (order.status === OrderStatus.COMPLETED) {
+        //edit mode
+      } else if (order.status === OrderStatus.CANCELLED) {
+        //view mode
+      } else if (order.status === OrderStatus.HOLD || order.status === OrderStatus.DEBT) {
+        //edit mode
+        this.router.navigate(['/pages/order/payment', order.id])
+      } else {
+        this.router.navigate(['/pages/order', order.id])
+      }
     }
   }
 }

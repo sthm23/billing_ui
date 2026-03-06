@@ -115,3 +115,7 @@ export interface UserErrorResponse {
   error: string
 }
 
+export interface CreateCustomer {
+  fullName: string
+  phone: string
+}

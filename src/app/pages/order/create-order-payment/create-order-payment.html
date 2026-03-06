@@ -1,1 +1,147 @@
-<p>create-order-payment works!</p>
+@let order = this.currentOrder();
+<app-dialog [(visible)]="customerDialogVisible" [title]="'Add customer'"
+  [subtitle]="'Search for an existing customer or create a new one.'" [(data)]="customerData"
+  (dataChange)="handleCustomerCreate($event)" />
+<p-toast />
+@if(order) {
+<div class="flex flex-col gap-4">
+  <div class="flex items-center gap-4">
+    <p-button icon="pi pi-arrow-left" text (click)="backOrderList()" />
+    <h4 class="m-0!">Payment</h4>
+  </div>
+  <div class="flex flex-col gap-2">
+    <span class="text-sm text-gray-500">Order # {{ order.id }}</span>
+    <p class="text-sm text-gray-500">Created at: {{ order.createdAt | date: 'medium' }}</p>
+  </div>
+  <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap">
+    <div class="card mb-0! flex-4" [formGroup]="paymentForm">
+      <div class="mb-2 flex flex-col gap-2">
+
+        <label for="customer">Customer</label>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-user"></i>
+          </p-inputgroup-addon>
+          <p-autocomplete class="mr-4!" placeholder="Search customer..." inputId="customer" optionLabel="name"
+            [suggestions]="userSearchResult()" (completeMethod)="search($event)" fluid />
+          <p-button type="button" (click)="customerDialogVisible = true">
+            <i class="pi pi-plus"></i>
+            <span class="hidden sm:block">Add customer</span>
+          </p-button>
+
+
+        </p-inputgroup>
+
+      </div>
+      <div>
+        <div class="text-gray-600">
+          <p>Payment method:</p>
+          <p-selectbutton [options]="paymentOptions" formControlName="paymentMethod" [multiple]="true"
+            optionLabel="label" optionValue="value">
+            <ng-template #item let-item>
+              <i [class]="item.icon"></i>
+              <span>{{item.label}}</span>
+            </ng-template>
+          </p-selectbutton>
+          <span class="block text-sm text-gray-500">You can select multiple payment methods for split
+            payment.</span>
+          <div class="flex flex-wrap items-center gap-4" formGroupName="method">
+            <div class="flex-auto flex flex-col gap-2 mt-4">
+              <label class="mb-2 font-bold block" for="CASH">Cash</label>
+              <p-inputnumber inputId="CASH" formControlName="CASH" />
+            </div>
+            <div class="flex-auto flex flex-col gap-2 mt-4">
+              <label class="mb-2 font-bold block" for="CARD">Card</label>
+              <p-inputnumber inputId="CARD" formControlName="CARD" />
+            </div>
+            <div class="flex-auto flex flex-col gap-2 mt-4">
+              <label class="mb-2 font-bold block" for="DEBT">Debt</label>
+              <p-inputnumber inputId="DEBT" formControlName="DEBT" />
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end mt-4">
+        <p-button label="Submit" (onClick)="submit()" />
+      </div>
+    </div>
+
+    <div class="flex-3 card flex flex-col justify-start gap-2">
+      <div class="flex flex-col justify-between gap-2 mt-4">
+        <div class="flex flex-col justify-between gap-1">
+          <div>Total amount:</div>
+          <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
+        </div>
+        <div class="flex flex-col justify-between gap-1">
+          <div>Sale:</div>
+          <p class="text-xl text-(--p-button-text-danger-color)">
+            {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
+          </p>
+        </div>
+      </div>
+      <p-divider class="mt-2" />
+      @if(order.payments && order.payments.length > 0) {
+      <p-accordion value="0" class="mb-4">
+        <p-accordion-panel [value]="0">
+          <p-accordion-header class="pt-0!">
+            <div class="flex flex-wrap items-center gap-2 w-full">
+              <span class="text-xl font-bold mb-0!">Payments</span>
+              <span class="ml-auto mr-2 text-(--p-green-600) text-xl font-bold mb-0!">
+                +{{paymentAmounts() | currency: " ": "code":"0.0"}} UZS
+              </span>
+              <p-badge [value]="order.payments.length" severity="secondary" class="mr-2" />
+            </div>
+          </p-accordion-header>
+          <p-accordion-content>
+            @for (item of order.payments; track item.id; let i = $index) {
+            <p class="m-0">
+              <span class="font-bold">
+                <span class="text-(--p-green-600)">+{{ item.amount | currency: " ": "code":"0.0"}}UZS</span>
+                {{ item.createdAt| date:'dd/MM/yyyy' }}
+                <p-badge [value]="item.type" severity="secondary" />
+              </span>
+            </p>
+            }
+          </p-accordion-content>
+        </p-accordion-panel>
+
+      </p-accordion>
+      }
+      <div class="flex flex-col items-end sm:items-start">
+        <div>Total: </div>
+        <div class="flex items-center gap-2">
+          <p class="text-xl font-bold mb-0!">{{ (totalAmount() - saleAmount() - paymentAmounts()) | currency: " ":
+            "code":
+            "0.0"}} UZS
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card flex justify-center gap-4 flex-wrap m-0!">
+    <div class="flex flex-col">
+      @for (item of orderItems(); track item.id) {
+      <div class="border-b p-4">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <div>
+              <div class="font-semibold">{{item.variant.sku}}</div>
+              <div class="text-sm text-gray-500">Price: {{ item.retailPrice| currency: " ": "code": "0.0" }} UZS</div>
+            </div>
+          </div>
+          <div class="ml-auto flex flex-wrap items-center gap-4">
+            <span>{{ item.quantity }} x {{ (item.retailPrice - item.sale) | currency: " ": "code": "0.0" }} UZS</span>
+            <span>=</span>
+            <span>{{ (item.quantity * (item.retailPrice - item.sale)) | currency: " ": "code": "0.0" }} UZS</span>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+}

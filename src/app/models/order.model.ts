@@ -16,6 +16,7 @@ export enum OrderStatus {
   CREATED = 'CREATED',
   COMPLETED = 'COMPLETED',
   DEBT = 'DEBT',
+  HOLD = 'HOLD',
   CANCELLED = 'CANCELLED'
 }
 
@@ -64,7 +65,35 @@ export interface Order {
 }
 
 export interface OrderDetail extends Order {
-  items: OrderItemPayload[]
+  payments: OrderPayment[]
+  items: OrderDetailItem[]
+}
+
+export interface OrderPayment {
+  amount: number
+  createdAt: string
+  createdBy: string
+  id: string
+  orderId: string
+  paidAt: string | null
+  type: PaymentType
+}
+export interface OrderDetailItem {
+  costAtSale: number
+  id: string
+  orderId: string
+  quantity: 2
+  retailPrice: number
+  sale: number
+  variant: {
+    id: string,
+    barCode: string
+    price: number
+    productId: string
+    sku: string
+    storeId: string
+  }
+  variantId: string
 }
 export interface OrderItemCard {
   id: string
@@ -75,6 +104,8 @@ export interface OrderItemCard {
   costAtSale: number
   sale: number
 }
+
+
 export interface OrderItemPayload {
   variantId: string
   quantity: number
