@@ -6,7 +6,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FluidModule } from 'primeng/fluid';
 import { FormsModule } from '@angular/forms';
 import { Counter } from '../counter/counter';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgClass } from '@angular/common';
 import { SaleDialog, SaleDialogOutput } from '../sale-dialog/sale-dialog';
 import { TagModule } from 'primeng/tag';
 
@@ -22,7 +22,8 @@ export interface OrderItemAmountChange { price: number, quantity: number, sale: 
     FormsModule,
     CurrencyPipe,
     SaleDialog,
-    TagModule
+    TagModule,
+    NgClass
   ],
   templateUrl: './order-item.html',
   styleUrl: './order-item.css',

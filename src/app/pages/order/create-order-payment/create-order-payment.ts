@@ -15,7 +15,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { Subject, takeUntil } from 'rxjs';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { FluidModule } from 'primeng/fluid';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
@@ -57,9 +57,9 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   orderItems = signal<OrderDetailItem[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
-  customer = signal<{ name: string, id: string } | null>(null);
+  customer = signal<{ label: string, name: string, id: string, phone: string } | null>(null);
 
-  userSearchResult = signal<{ name: string, id: string }[]>([]);
+  userSearchResult = signal<{ name: string, id: string, phone: string }[]>([]);
 
   customerDialogVisible = false;
   customerData: DialogData = { name: '', phone: '' };
@@ -112,8 +112,8 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         this.currentOrder.set(res);
         this.orderItems.set(res.items);
         this.totalAmount.set(res.items.reduce((total, item) => total + (item.retailPrice * item.quantity), 0));
-        if (res.customer && res.customer.id) {
-          this.customer.set({ name: res.customer.fullName, id: res.customer.id });
+        if (res.customer && res.customer.id && res.customer.user) {
+          this.customer.set({ label: res.customer.user.fullName + ' ' + res.customer.user.phone, name: res.customer.user.fullName, id: res.customer.id, phone: res.customer.user.phone });
         }
         this.saleAmount.set(res.items.reduce((total, item) => total + (item.sale * item.quantity), 0));
         if (res.payments && res.payments.length > 0) {
@@ -128,9 +128,12 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   }
 
   handleCustomerCreate(data: DialogData) {
-    this.userService.createCustomer({ fullName: data.name, phone: data.phone }).subscribe({
+    const phone = '+998' + data.phone?.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '').trim()
+    this.userService.createCustomer({ fullName: data.name, phone }).subscribe({
       next: (res) => {
-        this.customer.set({ name: res.fullName, id: res.id });
+        const phoneTemplate = this.formatPhoneNumber(res.phone);
+
+        this.customer.set({ label: res.fullName + ' ' + phoneTemplate, name: res.fullName, id: res.customer.id, phone: phoneTemplate });
         this.customerDialogVisible = false;
       },
       error: (err) => {
@@ -138,6 +141,15 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       }
     });
   }
+
+  private formatPhoneNumber(phone: string): string {
+    const code = phone?.slice(4, 6);
+    const prefix = phone?.slice(6, 9);
+    const firstPart = phone?.slice(9, 11);
+    const secondPart = phone?.slice(11, 13);
+    return `+998 (${code}) ${prefix}-${firstPart}-${secondPart}`;
+  }
+
 
   submit() {
     console.log(this.paymentForm.value);
@@ -149,8 +161,10 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         return;
       }
       const { paymentMethod, method } = this.paymentForm.value;
+      const customer = this.customer();
       const paymentData: CreateOrderPaymentPayload = {
         orderId: order.id,
+        customerId: customer ? customer.id : null,
         payments: []
       }
 
@@ -193,12 +207,18 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       })
     }
   }
-
+  selectSearchOption(option: AutoCompleteSelectEvent) {
+    const selectedUser = option.value;
+    const customerList = this.userSearchResult();
+    const matchedUser = customerList.find(user => user.id === selectedUser.id);
+    const phoneTemplate = this.formatPhoneNumber(matchedUser!.phone);
+    this.customer.set({ label: matchedUser?.name + ' ' + phoneTemplate, name: matchedUser?.name || selectedUser.name, id: selectedUser.id, phone: phoneTemplate });
+  }
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query;
     this.userService.searchCustomers(query).subscribe({
       next: (res) => {
-        const users = res.data.map(user => ({ name: user.fullName, id: user.id }));
+        const users = res.data.map(user => ({ ...user.user, id: user.id })).map(user => ({ label: user.fullName + ' ' + user.phone, name: user.fullName, id: user.id, phone: user.phone }));
         this.userSearchResult.set(users);
       },
       error: (err) => {

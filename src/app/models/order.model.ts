@@ -49,11 +49,13 @@ export interface Order {
   },
   customer: {
     id: string
-    fullName: string
-    phone: string
-    role: UserRole,
-    type: UserType,
-    createdAt: string
+    user: {
+      fullName: string
+      phone: string
+      role: UserRole,
+      type: UserType,
+      createdAt: string
+    }
   },
   channel: OrderChannel,
   status: OrderStatus,
@@ -92,10 +94,12 @@ export interface OrderDetailItem {
     productId: string
     sku: string
     storeId: string
+    quantity: number
   }
   variantId: string
 }
 export interface OrderItemCard {
+  itemId?: string
   id: string
   name: string
   stock: number
@@ -121,7 +125,7 @@ export interface CreateOrderItemPayload {
 export interface CreateOrderPayload {
   storeId: string;
   warehouseId: string
-  customerId: string
+  customerId?: string
   channel: OrderChannel
 }
 
@@ -132,5 +136,6 @@ export interface OrderPaymentPayload {
 }
 export interface CreateOrderPaymentPayload {
   orderId: string
+  customerId: string | null
   payments: OrderPaymentPayload[]
 }

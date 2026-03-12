@@ -58,7 +58,7 @@ export class OrderId implements OnInit {
       this.totalAmount.set(this.orderItems().reduce((total, item) => total + (item.price * item.quantity), 0));
       this.saleAmount.set(this.orderItems().reduce((total, item) => total + (item.sale * item.quantity), 0));
       [this.orderItems()]
-    }, { allowSignalWrites: true });
+    });
   }
 
   ngOnInit() {
@@ -75,6 +75,19 @@ export class OrderId implements OnInit {
     this.orderService.getOrderById(orderId).subscribe({
       next: (res) => {
         this.currentOrder.set(res);
+        if (res.items && res.items.length > 0) {
+          const items = res.items.map(item => ({
+            itemId: item.id,
+            id: item.variantId,
+            name: `${item.variant.sku} - ${item.variant.barCode}`,
+            stock: +item.variant.quantity,
+            price: +item.retailPrice - item.sale,
+            quantity: +item.quantity,
+            sale: +item.sale,
+            costAtSale: +item.costAtSale
+          }));
+          this.orderItems.set(items)
+        }
       },
       error: (err) => {
         console.error(err);
@@ -222,6 +235,7 @@ export class OrderId implements OnInit {
       return;
     }
     const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
+      itemId: item.itemId || undefined,
       variantId: item.id,
       quantity: item.quantity,
       retailPrice: +item.price,
@@ -262,5 +276,14 @@ export class OrderId implements OnInit {
       });
       this.orderItems.set(updatedItems);
     }
+  }
+
+  backToList() {
+    this.router.navigate(['/pages/order/list']);
+  }
+
+  resetDiscount() {
+    const items = this.orderItems().map(item => ({ ...item, sale: 0 }));
+    this.orderItems.set(items);
   }
 }

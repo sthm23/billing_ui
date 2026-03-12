@@ -100,7 +100,6 @@ export class OrderList implements OnInit {
       storeId: currentUser.staff.storeId,
       warehouseId: currentUser.staff.warehouse.id,
       channel: OrderChannel.POS,
-      customerId: currentUser.id
     }
     this.orderService.createOrder(payload).subscribe({
       next: (res) => {
@@ -162,9 +161,11 @@ export class OrderList implements OnInit {
         //edit mode
       } else if (order.status === OrderStatus.CANCELLED) {
         //view mode
-      } else if (order.status === OrderStatus.HOLD || order.status === OrderStatus.DEBT) {
-        //edit mode
+      } else if (order.status === OrderStatus.DEBT) {
         this.router.navigate(['/pages/order/payment', order.id])
+      } else if (order.status === OrderStatus.HOLD) {
+        //edit mode
+        this.router.navigate(['/pages/order', order.id])
       } else {
         this.router.navigate(['/pages/order', order.id])
       }

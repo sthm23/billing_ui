@@ -31,6 +31,9 @@ export interface User {
   auth: AuthAccount | null
   staff: Staff | null
   role: UserRole
+  customer: {
+    id: string
+  }
   // orders: Order[]
   refreshSessions?: RefreshSession[]
 }
@@ -68,7 +71,12 @@ export interface RefreshSession {
   user: User
 }
 
-
+export interface Customer {
+  id: string
+  userId: string
+  user: User
+  stores: Store[]
+}
 
 export interface Staff {
   id: string

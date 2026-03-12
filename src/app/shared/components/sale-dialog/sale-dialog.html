@@ -23,7 +23,7 @@
     </div>
     <div class="flex flex-row items-center gap-3">
       <small>Price:</small>
-      <h5 [ngClass]="{'text-decoration': currentSale}">{{price | currency: ' ' : 'code' : '0.0'}}</h5>
+      <h5 [ngClass]="{'sale': currentSale > 0 }">{{price | currency: ' ' : 'code' : '0.0'}}</h5>
       @if(newPrice) {
       <small>New price:</small>
       <h5>{{newPrice | currency: ' ' : 'code' : '0.0'}}

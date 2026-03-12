@@ -19,7 +19,8 @@ export class Counter implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const initialCountChange = changes['initialCount'];
     if (initialCountChange && initialCountChange.currentValue) {
-      this.count.set(initialCountChange.currentValue);
+      const value = this.maxValue ? initialCountChange.currentValue : 0
+      this.count.set(value);
     }
   }
 

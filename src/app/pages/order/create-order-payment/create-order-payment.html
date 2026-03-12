@@ -18,12 +18,24 @@
       <div class="mb-2 flex flex-col gap-2">
 
         <label for="customer">Customer</label>
+        @let customer = this.customer();
+        @if(customer) {
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <div>
+              <div class="font-semibold">{{customer.name}}</div>
+              <div class="text-sm text-gray-500">{{customer.phone}}</div>
+            </div>
+          </div>
+        </div>
+        }@else {
         <p-inputgroup>
           <p-inputgroup-addon>
             <i class="pi pi-user"></i>
           </p-inputgroup-addon>
-          <p-autocomplete class="mr-4!" placeholder="Search customer..." inputId="customer" optionLabel="name"
-            [suggestions]="userSearchResult()" (completeMethod)="search($event)" fluid />
+          <p-autocomplete class="mr-4!" placeholder="Search customer..." inputId="customer" optionLabel="label"
+            [suggestions]="userSearchResult()" (completeMethod)="search($event)" (onSelect)="selectSearchOption($event)"
+            fluid />
           <p-button type="button" (click)="customerDialogVisible = true">
             <i class="pi pi-plus"></i>
             <span class="hidden sm:block">Add customer</span>
@@ -31,7 +43,7 @@
 
 
         </p-inputgroup>
-
+        }
       </div>
       <div>
         <div class="text-gray-600">
@@ -97,6 +109,7 @@
             @for (item of order.payments; track item.id; let i = $index) {
             <p class="m-0">
               <span class="font-bold">
+                <span>{{i+1}}. </span>
                 <span class="text-(--p-green-600)">+{{ item.amount | currency: " ": "code":"0.0"}}UZS</span>
                 {{ item.createdAt| date:'dd/MM/yyyy' }}
                 <p-badge [value]="item.type" severity="secondary" />

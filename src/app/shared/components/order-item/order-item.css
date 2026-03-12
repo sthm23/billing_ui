@@ -2,3 +2,6 @@
 .sale {
   text-decoration: line-through;
 }
+.empty {
+  border-color: var(--p-button-text-danger-color) !important;
+}

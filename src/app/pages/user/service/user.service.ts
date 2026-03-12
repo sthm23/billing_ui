@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { User, UserCreateRequest, UsersResponse, CreateCustomer } from "../../../models/user.model";
+import { User, UserCreateRequest, UsersResponse, CreateCustomer, Customer } from "../../../models/user.model";
 
 
 @Injectable({
@@ -34,13 +34,13 @@ export class UserService {
   }
 
   createCustomer(userData: CreateCustomer) {
-    return this.http.post<User>('/api/users', userData, {
+    return this.http.post<User>('/api/users/customers', userData, {
       withCredentials: true
     });
   }
 
   searchCustomers(text: string) {
-    return this.http.get<{ data: User[] }>('/api/users/customers', {
+    return this.http.get<{ data: Customer[] }>('/api/users/customers', {
       withCredentials: true
     })
   }
