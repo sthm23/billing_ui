@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant } from '../../../models/product.model';
+import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant, TagList } from '../../../models/product.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
-import { delay, Subject, switchMap, takeUntil } from 'rxjs';
+import { delay, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryService } from '../../service/category.service';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { CarouselModule } from 'primeng/carousel';
@@ -31,6 +31,8 @@ import { SelectModule } from 'primeng/select';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { MultiSelectType, SelectType } from '../../../models/app.models';
 import { DialogComponent } from '../../../shared/components/dialog/dialog';
+import { TextareaModule } from 'primeng/textarea';
+import { ChipModule } from 'primeng/chip';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -78,7 +80,9 @@ type VariantForm = {
     RouterModule,
     TreeSelectModule,
     MultiSelectModule,
-    DialogComponent
+    DialogComponent,
+    ChipModule,
+    TextareaModule
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -91,9 +95,23 @@ export class ProductCard implements OnInit, OnDestroy {
   brands = signal<SelectType[]>([])
   tags = signal<SelectType[]>([])
 
-  toggleInput = false
   visibleAddVariants = false
   expandedRows: any = {};
+
+  productAttributes = new Map<string, AttrItemList>();
+  productTags = new Map<string, TagList>();
+  editMode = false;
+
+  productForm = new FormGroup({
+    name: new FormControl<string | null>(null, [Validators.required]),
+    description: new FormControl<string | null>(null),
+    images: new FormControl<any[] | null>(null),
+    category: new FormControl<MultiSelectType | null>(null, [Validators.required]),
+    brand: new FormControl<SelectType | null>(null),
+    store: new FormControl<string | null>(null, [Validators.required]),
+    attributes: new FormControl<SelectType[] | null>(null),
+    tags: new FormControl<SelectType[] | null>(null)
+  })
 
   @ViewChild('dt') dataTable!: Table;
 
@@ -129,6 +147,42 @@ export class ProductCard implements OnInit, OnDestroy {
         switchMap((product: ProductDetail) => {
           if (!product) throw new Error('Product not found');
 
+          this.productForm.patchValue({
+            name: product.name,
+            description: product.description,
+            category: product.category ? { label: product.category, key: product.category } : null,
+            brand: product.brand ? { name: product.brand, id: product.brand } : null,
+            store: product.storeId,
+            attributes: product.attributes.map(attr => ({ name: attr.name, id: attr.id })),
+            tags: product.tags.map(tag => ({ name: tag.tagName, id: tag.id, label: tag.value }))
+          })
+
+          const attrMap = new Map<string, AttrItemList>();
+          product.attributes.forEach(attr => attrMap.set(attr.id, { ...attr, items: [] }));
+          product.variants.forEach(variant => {
+            variant.attributes.forEach(attrItem => {
+              const attr = attrMap.get(attrItem.attributeId);
+              if (attr) {
+                const map = new Map(attr.items.map(i => [i.id, i]));
+                map.set(attrItem.id, attrItem);
+                const obj = { ...attr, items: Array.from(map.values()) };
+                attrMap.set(attrItem.attributeId, obj);
+              }
+            });
+          });
+
+          this.productAttributes = attrMap;
+          const tagMap = new Map<string, TagList>();
+          product.tags.forEach(tag => {
+            if (!tagMap.has(tag.tagId)) {
+              tagMap.set(tag.tagId, { id: tag.tagId, name: tag.tagName, values: [] });
+            }
+            const tagObj = tagMap.get(tag.tagId)!;
+            if (!tagObj.values.find(v => v.id === tag.id)) {
+              tagObj.values.push({ id: tag.id, tagId: tag.tagId, value: tag.value });
+            }
+          });
+          this.productTags = tagMap;
           this.productCard.set(product);
 
           const attributeList = product.attributes.map(attr => ({ ...attr, items: [] } as AttrItemList));
@@ -136,23 +190,24 @@ export class ProductCard implements OnInit, OnDestroy {
 
           const attributeIds = product.attributes.map(attr => attr.id);
 
-          return this.categoryService.getAttributeItems(attributeIds.join(','));
+          // return this.categoryService.getAttributeItems(attributeIds.join(','));
+          return of(null).pipe(delay(1000)); // имитация запроса, удалить после реализации получения атрибутов
         }),
       )
       .subscribe({
         next: (items) => {
           // наполняем items для каждого атрибута
-          const map = new Map<string, AttributeItem[]>();
-          items.forEach(item => {
-            const existing = map.get(item.attributeId) || [];
-            map.set(item.attributeId, [...existing, item]);
-          });
+          // const map = new Map<string, AttributeItem[]>();
+          // items.forEach(item => {
+          //   const existing = map.get(item.attributeId) || [];
+          //   map.set(item.attributeId, [...existing, item]);
+          // });
 
-          const updList = this.attributes().map(attr => {
-            const attrItems = map.get(attr.id) || [];
-            return { ...attr, items: attrItems } as AttrItemList;
-          });
-          this.attributes.set(updList);
+          // const updList = this.attributes().map(attr => {
+          //   const attrItems = map.get(attr.id) || [];
+          //   return { ...attr, items: attrItems } as AttrItemList;
+          // });
+          // this.attributes.set(updList);
 
         },
         error: (err) => {
@@ -164,14 +219,6 @@ export class ProductCard implements OnInit, OnDestroy {
 
   getImageUrl(product: ProductDetail): string {
     return product.images.length ? product.images[0].url : '/no_image.svg';
-  }
-
-  clearForm() {
-
-  }
-
-  showDialog() {
-    this.visibleAddVariants = true;
   }
 
   addVariants(variants: ProductVariant[]) {

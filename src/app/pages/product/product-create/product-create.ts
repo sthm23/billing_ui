@@ -243,6 +243,10 @@ export class ProductCreate implements OnInit, OnDestroy {
     return result as MultiSelectType[];
   }
 
+  goToList() {
+    this.router.navigate(['pages/product/list'])
+  }
+
   ngOnDestroy(): void {
     this.appStore.stopLoader();
   }

@@ -247,5 +247,9 @@ export class UserCreate implements OnInit, OnDestroy {
   isValidField(field: keyof typeof this.userForm.controls): string {
     return this.userForm.controls[field].touched && this.userForm.controls[field].invalid ? 'ng-dirty ng-invalid' : ''
   }
+
+  goToList() {
+    this.router.navigate(['pages/user/list'])
+  }
   ngOnDestroy(): void { }
 }

@@ -12,6 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CurrencyPipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
 import { Menu, MenuModule } from 'primeng/menu';
+import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-order-list',
@@ -68,7 +69,9 @@ export class OrderList implements OnInit {
   }
 
   private loadOrders() {
-    this.orderService.getOrders().subscribe({
+    this.orderService.getOrders().pipe(
+      delay(500) // Simulate network delay
+    ).subscribe({
       next: (res) => {
         this.orders.set(res.data)
       },

@@ -11,6 +11,7 @@ export interface TableColumn {
 export type SelectType = {
   id: string,
   name: string,
+  label?: string
   children?: SelectType[]
 }
 

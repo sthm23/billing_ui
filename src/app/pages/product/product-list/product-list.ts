@@ -5,14 +5,14 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
-import { MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';
 import { BadgeModule } from 'primeng/badge';
 import { Router } from '@angular/router';
-import { Menu, MenuModule } from 'primeng/menu';
 import { ImageModule } from 'primeng/image';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-product-list',
@@ -23,35 +23,17 @@ import { ImageModule } from 'primeng/image';
     ButtonModule,
     ToastModule,
     BadgeModule,
-    MenuModule,
-    ImageModule
+    ImageModule,
+    ConfirmDialogModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
 export class ProductList implements OnInit, OnDestroy {
   selectedProduct!: Product;
-  actionBtns: MenuItem[] = [
-    {
-      label: 'View', icon: 'pi pi-eye',
-      command: () => {
-        setTimeout(() => {
-          this.goToProductView(this.selectedProduct);
-        }, 350)
-      }
-    },
-    {
-      label: 'Edit', icon: 'pi pi-pencil', command: () => {
-        setTimeout(() => {
-          this.goToEditProduct(this.selectedProduct);
-        }, 350)
-      }
-    },
-    // { label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteProduct(this.selectedProduct) },
-  ];
-  products: Product[] = []
+  products = signal<Product[]>([]);
   first = signal(0);
   rows = 10;
   total = signal(0);
@@ -61,6 +43,8 @@ export class ProductList implements OnInit, OnDestroy {
   private productService = inject(ProductService)
   public appStore = inject(AppStore);
   public messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
+
 
   constructor(private router: Router) { }
 
@@ -76,7 +60,7 @@ export class ProductList implements OnInit, OnDestroy {
       ).subscribe({
         next: (response) => {
           this.appStore.stopLoader();
-          this.products = response.data;
+          this.products.set(response.data);
           this.total.set(response.total);
         },
         error: (err) => {
@@ -108,21 +92,57 @@ export class ProductList implements OnInit, OnDestroy {
     return product.images.length > 0 ? product.images[0].url : '/no_image.svg';
   }
 
-  goToProductView(product: Product) {
-    this.router.navigate(['/pages/product/view', product.id]);
-  }
-
-  goToEditProduct(product: Product) {
-    this.router.navigate(['/pages/product/edit', product.id]);
-  }
-
   productQuantity(product: Product): number {
     return product.variants.reduce((total, variant) => total + variant.quantity, 0);
   }
 
-  toggleAction(event: Event, menu: Menu, product: Product) {
-    this.selectedProduct = product;
-    menu.toggle(event);
+  archive(event: Event, product: Product) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to delete this record?',
+      header: 'Danger Zone',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Delete',
+        severity: 'danger'
+      },
+
+      accept: () => {
+        this.appStore.startLoader();
+        this.productService.archiveProduct(product.id).subscribe({
+          next: () => {
+            this.appStore.stopLoader();
+            this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Product archived successfully' });
+            this.fetchProducts(this.first() / this.rows + 1, this.rows);
+          },
+          error: (err) => {
+            this.appStore.stopLoader();
+            console.error('Error archiving product:', err);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to archive product' });
+          }
+        });
+
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+      }
+    });
+
+
+  }
+
+  selectProduct(product: Product) {
+    this.router.navigate(['/pages/product/view', product.id]);
+  }
+
+  goToCreateProduct() {
+    this.router.navigate(['/pages/product/create']);
   }
 
   ngOnDestroy() {

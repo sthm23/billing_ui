@@ -2,12 +2,13 @@
 
 <div class="card">
   <div class="p-4">
-    <h2 class="text-2xl font-bold mb-4">Orders</h2>
-    <button pButton type="button" label="Create Order" (click)="createOrder()"></button>
-  </div>
-  <div class="p-4">
     <p-table [value]="orders()" [paginator]="true" [rows]="10" selectionMode="single"
       (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id">
+      <ng-template #caption>
+        <div class="flex justify-end gap-2">
+          <p-button type="button" label="Create Order" icon="pi pi-plus" (click)="createOrder()" />
+        </div>
+      </ng-template>
       <ng-template pTemplate="header">
         <tr>
           <th>Store</th>

@@ -1,6 +1,11 @@
 <div class="card min-h-[80vh]">
   <p-table #dt [lazy]="true" [value]="users" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
     [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
+    <ng-template #caption>
+      <div class="flex justify-end gap-2">
+        <p-button label="Create user" icon="pi pi-plus" (onClick)="createUser()" />
+      </div>
+    </ng-template>
     <ng-template #header>
       <tr>
         <th style="width:25%">Name</th>

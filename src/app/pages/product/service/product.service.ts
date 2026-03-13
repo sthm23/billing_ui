@@ -42,4 +42,10 @@ export class ProductService {
       withCredentials: true,
     });
   }
+
+  archiveProduct(productId: string) {
+    return this.http.delete(`/api/product/${productId}`, {
+      withCredentials: true,
+    });
+  }
 }

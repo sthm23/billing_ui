@@ -1,7 +1,14 @@
 <p-toast />
+<p-confirmdialog />
 <div class="p-4">
-  <p-table #dt [lazy]="true" [value]="products" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
-    [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
+  <p-table [lazy]="true" [loading]="appStore.isLoading()" [value]="products()" [tableStyle]="{ 'min-width': '50rem' }"
+    selectionMode="single" [metaKeySelection]="true" dataKey="id" [paginator]="true"
+    (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
+    <ng-template #caption>
+      <div class="flex justify-end gap-2">
+        <p-button label="Create product" icon="pi pi-plus" (onClick)="goToCreateProduct()" />
+      </div>
+    </ng-template>
     <ng-template #header>
       <tr>
         <th style="width:12%">Img</th>
@@ -15,7 +22,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-product>
-      <tr>
+      <tr [pSelectableRow]="product">
 
         <td>
           <p-image [src]="getProductImg(product)" [alt]="product.name" width="50"
@@ -27,12 +34,8 @@
         <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
         <td>{{ product.priceRange.min | currency: " " : 'code' : '0.0'}}</td>
         <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
-        <td #action>
-          <div>
-            <p-button (click)="toggleAction($event, menu, product)" [rounded]="true" [outlined]="true"
-              icon="pi pi-ellipsis-v" />
-            <p-menu #menu [model]="actionBtns" [popup]="true" appendTo="body" />
-          </div>
+        <td>
+          <p-button (click)="archive($event, product)" [outlined]="true" severity="danger" icon="pi pi-trash" />
         </td>
       </tr>
     </ng-template>

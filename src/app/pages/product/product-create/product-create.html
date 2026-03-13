@@ -1,6 +1,9 @@
 <p-toast />
 <div class="card" [formGroup]="productForm">
-  <div class="font-semibold text-xl">Tovarlar yaratish</div>
+  <div class="flex items-center gap-4 flex-1">
+    <p-button text icon="pi pi-arrow-left" (onClick)="goToList()" />
+    <h4 class="m-0!">Tovarlar yaratish</h4>
+  </div>
 
   <app-loader [loading]="false">
     <p-fluid>
