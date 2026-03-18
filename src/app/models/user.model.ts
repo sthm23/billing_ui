@@ -31,10 +31,8 @@ export interface User {
   auth: AuthAccount | null
   staff: Staff | null
   role: UserRole
-  customer: {
-    id: string
-  }
-  // orders: Order[]
+  customer: Customer | null
+  // staffOrders: Order[] | null
   refreshSessions?: RefreshSession[]
 }
 
@@ -113,6 +111,10 @@ export interface UserCreateRequest {
 }
 
 export interface UsersResponse extends BaseListResponse {
+  data: User[]
+}
+
+export interface CustomersResponse extends BaseListResponse {
   data: User[]
 }
 

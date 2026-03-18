@@ -22,7 +22,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 
 
-type PaymentMethod = 'CASH' | 'CARD' | 'DEBT';
+type PaymentMethod = 'CASH' | 'CARD';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
 
 @Component({
@@ -67,7 +67,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   paymentOptions = [
     { label: 'Cash', value: 'CASH', icon: 'pi pi-money-bill' },
     { label: 'Card', value: 'CARD', icon: 'pi pi-credit-card' },
-    { label: 'Debt', value: 'DEBT', icon: 'pi pi-wallet' },
   ];
 
   paymentForm = new FormGroup({
@@ -75,7 +74,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     method: new FormGroup<PaymentMethodGroup>({
       CASH: new FormControl<number>({ value: 0, disabled: false }, { nonNullable: true }),
       CARD: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
-      DEBT: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
     }),
   });
 
@@ -89,13 +87,18 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
+    const validMethods: PaymentMethod[] = ['CASH', 'CARD'];
     this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
-      const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
-
-      methods.includes('CASH') ? methodControls.get('CASH')!.enable({ onlySelf: true }) : methodControls.get('CASH')!.disable({ onlySelf: true });
-      methods.includes('CARD') ? methodControls.get('CARD')!.enable({ onlySelf: true }) : methodControls.get('CARD')!.disable({ onlySelf: true });
-      methods.includes('DEBT') ? methodControls.get('DEBT')!.enable({ onlySelf: true }) : methodControls.get('DEBT')!.disable({ onlySelf: true });
+      validMethods.forEach(method => {
+        methodControls.get(method)!.disable({ onlySelf: true });
+      })
+      methods.forEach(method => {
+        methodControls.get(method as keyof PaymentMethodGroup)!.enable({ onlySelf: true });
+      })
     });
+
+
     const orderId = this.route.snapshot.paramMap.get('id');
     if (orderId) {
       this.loadOrder(orderId);
@@ -113,7 +116,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         this.orderItems.set(res.items);
         this.totalAmount.set(res.items.reduce((total, item) => total + (item.retailPrice * item.quantity), 0));
         if (res.customer && res.customer.id && res.customer.user) {
-          this.customer.set({ label: res.customer.user.fullName + ' ' + res.customer.user.phone, name: res.customer.user.fullName, id: res.customer.id, phone: res.customer.user.phone });
+          this.customer.set({ label: res.customer.user.fullName + ' ' + this.formatPhoneNumber(res.customer.user.phone), name: res.customer.user.fullName, id: res.customer.id, phone: this.formatPhoneNumber(res.customer.user.phone) });
         }
         this.saleAmount.set(res.items.reduce((total, item) => total + (item.sale * item.quantity), 0));
         if (res.payments && res.payments.length > 0) {
@@ -133,7 +136,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       next: (res) => {
         const phoneTemplate = this.formatPhoneNumber(res.phone);
 
-        this.customer.set({ label: res.fullName + ' ' + phoneTemplate, name: res.fullName, id: res.customer.id, phone: phoneTemplate });
+        this.customer.set({ label: res.fullName + ' ' + phoneTemplate, name: res.fullName, id: res.customer!.id, phone: phoneTemplate });
         this.customerDialogVisible = false;
       },
       error: (err) => {
@@ -218,7 +221,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     const query = event.query;
     this.userService.searchCustomers(query).subscribe({
       next: (res) => {
-        const users = res.data.map(user => ({ ...user.user, id: user.id })).map(user => ({ label: user.fullName + ' ' + user.phone, name: user.fullName, id: user.id, phone: user.phone }));
+        const users = res.data.map(user => ({ label: user.fullName + ' ' + this.formatPhoneNumber(user.phone), name: user.fullName, id: user.customer!.id, phone: user.phone }));
         this.userSearchResult.set(users);
       },
       error: (err) => {

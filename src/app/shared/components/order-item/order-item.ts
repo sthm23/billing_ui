@@ -35,7 +35,7 @@ export class OrderItem implements OnChanges {
   sale = signal(0);
 
   @Input() orderItem?: OrderItemCard;
-  @Output() delete = new EventEmitter<OrderItemAmountChange>();
+  @Output() delete = new EventEmitter<void>();
   @Output() amountChange = new EventEmitter<OrderItemAmountChange>();
 
   constructor() { }
@@ -51,7 +51,7 @@ export class OrderItem implements OnChanges {
   }
 
   removeItem() {
-    this.delete.emit({ type: 'decrement', price: this.price(), quantity: this.counter(), sale: this.sale() });
+    this.delete.emit();
   }
 
   handleCounter({ type, count }: { type: 'increment' | 'decrement', count: number }) {

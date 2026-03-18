@@ -104,7 +104,7 @@ export class OrderId implements OnInit {
           const searchResults = res.data.map(variant => {
             return {
               ...variant,
-              name: `${variant.sku} - ${variant.barCode}`
+              name: `${variant.sku} - ${variant.barCode} - ${variant.quantity} in stock - SUM${variant.price}`
             };
           }).filter(variant => variant.name.toLowerCase().includes(text.toLowerCase()));
 
@@ -130,12 +130,7 @@ export class OrderId implements OnInit {
     }
     const added = this.handleAddItem(orderItem);
     if (added) {
-      this.handleAmountChange({
-        type: 'increment',
-        price: variant.price,
-        quantity: orderItem.quantity,
-        sale: orderItem.sale
-      }, orderItem.id);
+      this.orderItems.update(items => [...items, orderItem]);
     } else {
       this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Item already added' });
     }
@@ -143,16 +138,7 @@ export class OrderId implements OnInit {
     this.searchResults.set([]);
   }
 
-  removeItem(event: OrderItemAmountChange, itemId: string) {
-    const item = this.orderItems().find(item => item.id === itemId);
-    if (item) {
-      this.handleAmountChange({
-        type: event.type,
-        price: event.price * event.quantity,
-        quantity: event.quantity,
-        sale: event.sale * event.quantity
-      }, itemId);
-    }
+  removeItem(itemId: string) {
     this.orderItems.update(items => items.filter(item => item.id !== itemId));
   }
 
@@ -161,7 +147,6 @@ export class OrderId implements OnInit {
     if (items.some(item => item.id === orderItem.id)) {
       return false;
     }
-    this.orderItems.update(items => [...items, orderItem]);
     return true;
   }
 

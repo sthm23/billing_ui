@@ -9,8 +9,9 @@
     </div>
     <div class="flex flex-col gap-4 items-end sm:items-start sm:flex-row justify-between mb-4">
       <p-autocomplete class="w-full" placeholder="Search product ..." [delay]="500" [minQueryLength]="3"
-        optionLabel="name" [(ngModel)]="searchValue" [suggestions]="searchResults()"
-        (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)" fluid />
+        panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
+        [suggestions]="searchResults()" (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)"
+        fluid />
       <p-button icon="pi pi-qrcode" label="Scan" />
     </div>
     <div class="flex flex-col gap-4">
@@ -21,7 +22,7 @@
       </div>
       }
       @for (item of orderItems(); track item.id; let i = $index) {
-      <app-order-item [orderItem]="item" (delete)="removeItem($event, item.id)"
+      <app-order-item [orderItem]="item" (delete)="removeItem(item.id)"
         (amountChange)="handleAmountChange($event, item.id)" />
       }
     </div>

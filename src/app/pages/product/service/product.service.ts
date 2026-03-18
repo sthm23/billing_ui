@@ -36,8 +36,7 @@ export class ProductService {
   }
 
   searchProducts(text: string) {
-    const url = `/api/product/variants`;
-    // const url = `/api/product/search?text=${text}`;
+    const url = `/api/product/search?text=${text}`;
     return this.http.get<SearchProductResponse>(url, {
       withCredentials: true,
     });
