@@ -125,11 +125,15 @@ export interface Attribute {
   name: string,
   type: AttributeType
 }
+
+export interface AttributeDetail extends Attribute {
+  values: AttributeItem[]
+}
 export interface AttributeItem {
   id: string,
   attributeId: string,
   attributeName: string,
-  value: string
+  value: string | number | boolean
 }
 
 export interface ProductTag {

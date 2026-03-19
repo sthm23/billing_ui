@@ -1,0 +1,36 @@
+<div class="flex flex-col h-full p-4">
+
+  <div class="card">
+    <p-table #dt [lazy]="true" [value]="attributes()" [tableStyle]="{ 'min-width': '50rem' }"
+      [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows" selectionMode="single"
+      (selectionChange)="selectAttribute($event)" [metaKeySelection]="true" dataKey="id" (onPage)="pageChange($event)">
+      <ng-template #caption>
+        <div class="flex justify-start items-center">
+          <p-button icon="pi pi-arrow-left" text (onClick)="goToDashboard()" />
+          <h2 class="text-2xl font-bold">Attributes</h2>
+        </div>
+        <div class="flex justify-end gap-2">
+          <p-button label="Create user" icon="pi pi-plus" (onClick)="createAttribute()" />
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th style="width:25%">Id</th>
+          <th style="width:25%">Name</th>
+          <th style="width:25%">Type</th>
+          <th style="width:25%">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-attribute>
+        <tr [pSelectableRow]="attribute">
+          <td>{{ attribute.id }}</td>
+          <td>{{ attribute.name }}</td>
+          <td>{{ attribute.type }}</td>
+          <td>
+            <p-button label="Edit" icon="pi pi-pencil" class="p-button-text" (onClick)="selectAttribute(attribute)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

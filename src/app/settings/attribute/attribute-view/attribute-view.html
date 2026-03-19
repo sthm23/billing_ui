@@ -1,0 +1,39 @@
+@let attribute = currentAttributeValues();
+@if(attribute) {
+<p-toast />
+<div class="flex flex-wrap flex-col gap-4 p-4">
+  <div class="flex">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
+      <h4 class="filter">Attribute</h4>
+    </div>
+  </div>
+  <div class="card flex flex-col justify-between gap-2 p-4">
+    <div class="flex flex-col gap-2">
+      <div class="flex-1 flex gap-4">
+        <div class="flex gap-4">
+          <h5 class="font-bold">Name:</h5>
+          <p>{{ attribute.name }}</p>
+        </div>
+        <div class="flex gap-4">
+          <h5 class="font-bold">Type:</h5>
+          <p>{{ attribute.type }}</p>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <span class="font-bold">Values:</span>
+        <ol>
+          @for (item of attribute.values; track $index; let i = $index; let last = $last) {
+          <li>{{i+1}}. {{item.value}} </li>
+          }
+        </ol>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button label="Edit" icon="pi pi-pencil" />
+    </div>
+
+  </div>
+</div>
+
+}

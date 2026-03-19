@@ -105,6 +105,26 @@ export class Menu {
             icon: 'pi pi-fw pi-cog',
             routerLink: ['/settings/profile'],
           },
+
+          {
+            label: 'Attribute',
+            icon: 'pi pi-fw pi-cog',
+            routerLink: ['/settings/attribute/list'],
+            items: [
+              {
+                label: 'List',
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/settings/attribute/list']
+              },
+              {
+                label: 'Create',
+                icon: 'pi pi-fw pi-plus-circle',
+                routerLink: ['/settings/attribute/create']
+              }
+            ]
+          },
+
+
         ]
       }
     ];
