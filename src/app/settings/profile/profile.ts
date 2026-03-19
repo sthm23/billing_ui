@@ -6,14 +6,12 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { AuthService } from '../../pages/auth/service/auth';
 import { Badge } from "primeng/badge";
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { CurrentUserType } from '../../models/auth.model';
 import { UserService } from '../../pages/user/service/user.service';
-import { UserInfo, UserStockMovement, UserType } from '../../models/user.model';
+import { UserInfo, UserStockMovement } from '../../models/user.model';
 import { Divider } from "primeng/divider";
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { ScrollerModule } from 'primeng/scroller';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller';
 
 @Component({
   selector: 'app-profile',
@@ -27,13 +25,16 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
     CurrencyPipe,
     Divider,
     ScrollerModule,
-    ScrollPanelModule
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 
 })
 export class Profile implements OnInit {
+
+  fistPage = 1;
+  lastItem = 30;
+
 
   currentUser = signal<null | UserInfo>(null);
   stockMovements = signal<UserStockMovement[]>([]);
@@ -69,7 +70,7 @@ export class Profile implements OnInit {
       })
     ).subscribe({
       next: (stockMoves) => {
-        this.stockMovements.set(stockMoves);
+        this.stockMovements.set(stockMoves.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       },
       error: (err) => {
         console.error('Error fetching current user:', err);
@@ -91,6 +92,17 @@ export class Profile implements OnInit {
       default:
         return 'info';
     }
+  }
+
+  handleScroll(event: ScrollerScrollIndexChangeEvent) {
+    console.log(event);
+
+    this.fistPage = event.first;
+    this.lastItem = event.last;
+
+    if (this.lastItem >= this.stockMovements().length) { }
+    if (this.fistPage === 0) { }
+
   }
 
 

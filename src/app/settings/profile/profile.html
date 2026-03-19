@@ -127,40 +127,38 @@
             <div class="space-y-4">
 
               <ul class="list-none p-0 m-0">
-
-
-                <p-scrollPanel [style]="{ width: '100%', height: '400px' }">
-                  <p-virtualScroller [items]="stockMovements()" [itemSize]="70" scrollHeight="400px">
-                    <ng-template let-stockMoves let-last="last" pTemplate="item">
-                      <div class="pr-4" [style.height.px]="80">
-                        <li class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                          <div>
-                            <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">
-                              {{stockMoves.variant.sku}}
-                            </span>
-                            <div class="flex items-center gap-2">
-                              <div class="mt-1 text-muted-color">
-                                <p-badge [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
-                              </div>
-                              <div class="mt-1 text-muted-color">{{stockMoves.createdAt | date:'dd/MM/yyyy, hh:mm a'}}
-                              </div>
+                <p-virtualScroller [items]="stockMovements()" [itemSize]="80" scrollHeight="400px"
+                  (onScrollIndexChange)="handleScroll($event)">
+                  <ng-template let-stockMoves let-last="last" pTemplate="item">
+                    <div class="pr-4">
+                      <li class="flex md:flex-row md:flex-wrap md:items-center md:justify-between mb-6">
+                        <div>
+                          <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">
+                            {{stockMoves.variant.sku}}
+                          </span>
+                          <div class="flex items-center gap-2">
+                            <div class="mt-1 text-muted-color">
+                              <p-badge [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
+                            </div>
+                            <div class="mt-1 text-muted-color">{{stockMoves.createdAt | date:'dd/MM/yyyy, hh:mm a'}}
                             </div>
                           </div>
-                          <div class="mt-2 md:mt-0 flex items-center">
-                            <div class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24"
-                              style="height: 8px">
-                              <div class="bg-surface-500 h-full" style="width: 50%"></div>
-                            </div>
-                            <span class="text-surface-500 ml-4 font-medium">{{stockMoves.quantity}}</span>
+                        </div>
+                        <div class="mt-2 md:mt-0 flex items-center">
+                          <div
+                            class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24 hidden sm:block"
+                            style="height: 8px">
+                            <div class="bg-surface-500 h-full " style="width: 50%"></div>
                           </div>
-                        </li>
-                        @if(!last) {
-                        <p-divider />
-                        }
-                      </div>
-                    </ng-template>
-                  </p-virtualScroller>
-                </p-scrollPanel>
+                          <span class="text-surface-500 ml-4 font-medium">{{stockMoves.quantity}}</span>
+                        </div>
+                      </li>
+                      @if(!last) {
+                      <p-divider />
+                      }
+                    </div>
+                  </ng-template>
+                </p-virtualScroller>
               </ul>
             </div>
           </div>
