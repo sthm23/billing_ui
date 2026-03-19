@@ -72,6 +72,10 @@ export class UserList implements OnInit, OnDestroy {
     this.router.navigate(['/pages/user/create']);
   }
 
+  selectUser(user: User) {
+    this.router.navigate(['/settings/profile', user.id]);
+  }
+
   ngOnDestroy() {
     this.appStore.stopLoader();
   }

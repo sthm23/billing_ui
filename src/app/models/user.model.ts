@@ -1,4 +1,5 @@
 import { BaseListResponse } from "./app.models"
+import { OrderStatus } from "./order.model"
 import { Store } from "./store.model"
 
 export enum UserType {
@@ -32,11 +33,69 @@ export interface User {
   staff: Staff | null
   role: UserRole
   customer: Customer | null
-  // staffOrders: Order[] | null
   refreshSessions?: RefreshSession[]
 }
 
+export interface UserInfo {
+  id: string
+  fullName: string
+  phone: string
+  type: UserType
+  role: UserRole
+  createdAt: string
+  image: string | null
+  payments: {
+    amount: number
+    createdAt: string
+    createdBy: string
+    id: string
+    orderId: string
+    paidAt: string | null
+    type: "CASH" | "CARD"
+  }[]
+  staffOrders: {
+    cashierId: string
+    channel: "ONLINE" | "POS"
+    createdAt: string
+    customerId: string
+    id: string
+    paidAmount: number
+    status: OrderStatus
+    storeId: string
+    totalAmount: number
+    warehouseId: string
+  }[]
+  auth: AuthAccount | null;
+  staff: {
+    createdAt: string
+    id: string
+    isActive: boolean
+    role: StaffRole
+    storeId: string
+    userId: string
+    warehouseId: string
+  }
+}
 
+export interface UserStockMovement {
+  createdAt: string
+  createdById: string
+  id: string
+  quantity: number
+  reason: "PURCHASE" | "SALE" | "ADJUSTMENT"
+  type: "IN" | "OUT"
+  unitCost: number
+  variantId: string
+  warehouseId: string
+  variant: {
+    barCode: number
+    id: string
+    price: number
+    productId: string
+    sku: string
+    storeId: string
+  }
+}
 export interface AuthAccount {
   id: string
   userId: string

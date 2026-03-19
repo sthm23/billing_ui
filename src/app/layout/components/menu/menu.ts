@@ -25,9 +25,6 @@ export class Menu {
         items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
       },
       {
-        separator: true
-      },
-      {
         label: 'Pages',
         icon: 'pi pi-fw pi-briefcase',
         routerLink: ['/pages'],
@@ -54,22 +51,6 @@ export class Menu {
               },
             ]
           },
-          // {
-          //   label: 'Auth',
-          //   icon: 'pi pi-fw pi-user',
-          //   items: [
-          //     {
-          //       label: 'Login',
-          //       icon: 'pi pi-fw pi-sign-in',
-          //       routerLink: ['/auth/login']
-          //     },
-          //     {
-          //       label: 'Sign Up',
-          //       icon: 'pi pi-fw pi-lock',
-          //       routerLink: ['/auth/sign-up']
-          //     }
-          //   ]
-          // },
           {
             label: 'Product',
             icon: 'pi pi-fw pi-tag',
@@ -113,16 +94,17 @@ export class Menu {
               }
             ]
           },
-          // {
-          //   label: 'Not Found',
-          //   icon: 'pi pi-fw pi-exclamation-circle',
-          //   routerLink: ['/pages/notfound']
-          // },
-          // {
-          //   label: 'Empty',
-          //   icon: 'pi pi-fw pi-circle-off',
-          //   routerLink: ['/pages/empty']
-          // }
+        ]
+      },
+
+      {
+        label: 'Settings',
+        items: [
+          {
+            label: 'Profile',
+            icon: 'pi pi-fw pi-cog',
+            routerLink: ['/settings/profile'],
+          },
         ]
       }
     ];

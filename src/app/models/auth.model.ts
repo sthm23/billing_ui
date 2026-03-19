@@ -19,6 +19,7 @@ export interface CurrentUserType {
   id: string;
   role: UserRole
   login: string;
+  image: string | null;
   fullName: string;
   phone: string;
   stores: Store[]
