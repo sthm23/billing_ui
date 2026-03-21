@@ -13,6 +13,11 @@ import { CurrencyPipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
 import { Menu, MenuModule } from 'primeng/menu';
 import { delay } from 'rxjs';
+import { OrderFilter } from './order-filter/order-filter';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { DatePickerModule } from 'primeng/datepicker';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-order-list',
@@ -24,6 +29,11 @@ import { delay } from 'rxjs';
     InputTextModule,
     TagModule,
     MenuModule,
+    OrderFilter,
+    SelectButtonModule,
+    DatePickerModule,
+    IconFieldModule,
+    InputIconModule
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',
@@ -54,6 +64,13 @@ export class OrderList implements OnInit {
   ];
   orders = signal<Order[]>([])
   selectedOrder: Order | null = null;
+
+  stateOptions = [
+    { label: 'All', value: 'ALL' },
+    { label: 'On hold', value: 'ON_HOLD' },
+    { label: 'Debt', value: 'DEPT' },
+    { label: 'Canceled', value: 'CANCELED' }
+  ];
 
   @ViewChild('menu') menu!: Menu;
 
@@ -114,6 +131,10 @@ export class OrderList implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create order' })
       }
     })
+  }
+
+  createReturnOrder() {
+
   }
 
   toggleAction(event: Event, menu: Menu, order: Order) {

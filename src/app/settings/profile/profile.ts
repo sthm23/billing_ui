@@ -20,11 +20,12 @@ import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller
     TagModule,
     OverlayBadgeModule,
     AvatarModule,
-    Badge,
+    // Badge,
     DatePipe,
     CurrencyPipe,
     Divider,
     ScrollerModule,
+    TagModule
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
@@ -109,7 +110,7 @@ export class Profile implements OnInit {
   userPayments() {
     const user = this.currentUser();
     if (!user) return 0;
-    return user.payments.reduce((total, payment) => +total + +payment.amount, 0);
+    return user.staff.payments.reduce((total, payment) => +total + +payment.amount, 0);
   }
 
   totalOrders() {
@@ -121,7 +122,7 @@ export class Profile implements OnInit {
   orders() {
     const user = this.currentUser();
     if (!user) return [];
-    return user.staffOrders.filter(order => order.status === 'COMPLETED' || order.status === 'DEBT');
+    return user.staff.orders.filter(order => order.status === 'COMPLETED' || order.status === 'DEBT');
   }
 
   debt() {

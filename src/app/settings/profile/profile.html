@@ -31,7 +31,8 @@
 
               <h2 class="mt-4 text-lg font-semibold text-center">{{user.fullName}}</h2>
               <p class="text-muted-foreground text-sm">{{user.type}}</p>
-              <p-badge [value]="user.auth?.isActive ? 'Active' : 'Inactive'" severity="secondary" class="mt-2" />
+              <p-tag [value]="user.auth?.isActive ? 'Active' : 'Inactive'"
+                [severity]="user.auth?.isActive ? 'success' : 'danger'" class="mt-2" />
               <p-button label="Message" icon="pi pi-telegram" class="mt-4" />
             </div>
             <div class="mt-6 space-y-4">
@@ -95,7 +96,7 @@
                   <i class="pi pi-dollar text-orange-500 !text-xl"></i>
                 </div>
               </div>
-              <span class="text-primary font-medium">{{user.payments.length}}+ </span>
+              <span class="text-primary font-medium">{{user.staff.payments.length}}+ </span>
               <span class="text-muted-color">payments received</span>
             </div>
           </div>
@@ -114,7 +115,7 @@
                 </div>
               </div>
               <span class="text-primary font-medium">
-                {{user.staffOrders.length - orders().length}}
+                {{user.staff.orders.length - orders().length}}
               </span>
               <span class="text-muted-color">active orders</span>
             </div>
@@ -138,7 +139,8 @@
                           </span>
                           <div class="flex items-center gap-2">
                             <div class="mt-1 text-muted-color">
-                              <p-badge [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
+                              <p-tag [icon]="!(stockMoves.type === 'IN') ? 'pi pi-arrow-up': 'pi pi-arrow-down'"
+                                [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
                             </div>
                             <div class="mt-1 text-muted-color">{{stockMoves.createdAt | date:'dd/MM/yyyy, hh:mm a'}}
                             </div>

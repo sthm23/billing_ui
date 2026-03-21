@@ -1,13 +1,36 @@
 <p-toast />
 
 <div class="card">
-  <div class="p-4">
+  <app-order-filter [data]="{}" />
+
+  <div class="p-0 md:p-4">
     <p-table [value]="orders()" [paginator]="true" [rows]="10" selectionMode="single"
       (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id">
       <ng-template #caption>
-        <div class="flex justify-end gap-2">
-          <p-button type="button" label="Create Order" icon="pi pi-plus" (click)="createOrder()" />
+        <div class="flex items-center flex-wrap justify-between gap-4">
+          <div
+            class="flex flex-1 flex-wrap flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
+
+            <p-iconfield>
+              <p-inputicon class="pi pi-search" />
+              <input type="text" pInputText placeholder="Search" />
+            </p-iconfield>
+            <div class="flex gap-x-2 flex-wrap gap-4">
+              <p-selectbutton class="flex-wrap!" [options]="stateOptions" optionLabel="label" optionValue="value"
+                aria-labelledby="basic" />
+              <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                placeholder="Select date range" selectionMode="range" [readonlyInput]="true" />
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <p-button type="button" label="Create" severity="primary" icon="pi pi-plus" (click)="createOrder()" />
+            <p-button type="button" label="Return" severity="secondary" icon="pi pi-directions"
+              (click)="createReturnOrder()" />
+          </div>
         </div>
+
+
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
@@ -35,3 +58,5 @@
       </ng-template>
     </p-table>
   </div>
+
+</div>

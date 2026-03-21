@@ -44,27 +44,8 @@ export interface UserInfo {
   role: UserRole
   createdAt: string
   image: string | null
-  payments: {
-    amount: number
-    createdAt: string
-    createdBy: string
-    id: string
-    orderId: string
-    paidAt: string | null
-    type: "CASH" | "CARD"
-  }[]
-  staffOrders: {
-    cashierId: string
-    channel: "ONLINE" | "POS"
-    createdAt: string
-    customerId: string
-    id: string
-    paidAmount: number
-    status: OrderStatus
-    storeId: string
-    totalAmount: number
-    warehouseId: string
-  }[]
+
+
   auth: AuthAccount | null;
   staff: {
     createdAt: string
@@ -74,6 +55,8 @@ export interface UserInfo {
     storeId: string
     userId: string
     warehouseId: string
+    orders: Order[]
+    payments: StaffPayment[]
   }
 }
 
@@ -135,17 +118,40 @@ export interface Customer {
   stores: Store[]
 }
 
+export interface Order {
+  cashierId: string
+  channel: "ONLINE" | "POS"
+  createdAt: string
+  customerId: string
+  id: string
+  paidAmount: number
+  status: OrderStatus
+  storeId: string
+  totalAmount: number
+  warehouseId: string
+
+}
+export interface StaffPayment {
+  amount: number
+  createdAt: string
+  createdBy: string
+  id: string
+  orderId: string
+  paidAt: string | null
+  type: "CASH" | "CARD"
+}
 export interface Staff {
   id: string
   userId: string
   storeId: string
   role: StaffRole
-  isActive: Boolean
+  isActive: boolean
   user: User
   store: Store
   warehouse: StaffWarehouse
   // stockMoves: StockMovement[]
-  // orders: Order[]
+  orders: Order[]
+  payments: StaffPayment[]
 
 }
 

@@ -78,7 +78,7 @@
                 @for (attr of productAttributes.values(); track $index) {
                 <div>
                   {{attr.name}}:@for(item of attr.items; track $index) {
-                  <p-chip [label]="item.value" class="mr-2 mb-2" />
+                  <p-chip [label]="item.value.toString()" class="mr-2 mb-2" />
                   }
                 </div>
                 }
