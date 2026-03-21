@@ -5,9 +5,12 @@
 <p-toast />
 @if(order) {
 <div class="flex flex-col gap-4">
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-4 w-full">
     <p-button icon="pi pi-arrow-left" text (click)="backOrderList()" />
     <h4 class="m-0!">Payment</h4>
+    <div class="ml-auto">
+      <p-button label="Return" icon="pi pi-directions" severity="danger" (click)="goToReturn(order.id)" />
+    </div>
   </div>
   <div class="flex flex-col gap-2">
     <span class="text-sm text-gray-500">Order # {{ order.id }}</span>

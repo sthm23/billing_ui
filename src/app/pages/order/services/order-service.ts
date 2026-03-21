@@ -44,4 +44,10 @@ export class OrderService {
       withCredentials: true
     })
   }
+
+  deleteOrder(orderId: string) {
+    return this.http.delete<{ message: string }>(`/api/orders/${orderId}`, {
+      withCredentials: true
+    })
+  }
 }

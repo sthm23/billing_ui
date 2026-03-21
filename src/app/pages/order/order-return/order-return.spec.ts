@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OrderCreate } from './order-create';
+import { OrderReturn } from './order-return';
 
-describe('OrderCreate', () => {
-  let component: OrderCreate;
-  let fixture: ComponentFixture<OrderCreate>;
+describe('OrderReturn', () => {
+  let component: OrderReturn;
+  let fixture: ComponentFixture<OrderReturn>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OrderCreate]
+      imports: [OrderReturn]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(OrderCreate);
+    fixture = TestBed.createComponent(OrderReturn);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

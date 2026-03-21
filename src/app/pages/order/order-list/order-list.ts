@@ -133,12 +133,8 @@ export class OrderList implements OnInit {
     })
   }
 
-  createReturnOrder() {
-
-  }
-
-  toggleAction(event: Event, menu: Menu, order: Order) {
-    menu.toggle(event);
+  createReturnOrder(id: string) {
+    this.router.navigate(['/pages/order/return', id])
   }
 
   getSeverity(status: OrderStatus) {
@@ -156,43 +152,34 @@ export class OrderList implements OnInit {
     }
   }
 
-  goToOrderView(order: Order) {
-    console.log(order);
-
-    // this.router.navigate(['/pages/order', order.id])
-  }
-
-  goToEditOrder(order: Order) {
-    console.log(order);
-
-    // this.router.navigate(['/pages/order/edit', order.id])
-  }
-
   deleteOrder(order: Order) {
-    console.log(order);
+    this.orderService.deleteOrder(order.id).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Order deleted successfully' });
+        this.loadOrders();
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to delete order' });
+      }
+    })
 
   }
 
   selectOrder(order: Order) {
 
-    if (this.menu.overlayVisible) {
-      setTimeout(() => {
-        this.menu.toggle({} as Event);
-        this.router.navigate(['/pages/order', order.id])
-      }, 350)
+    if (order.status === OrderStatus.COMPLETED) {
+      this.router.navigate(['/pages/order/return', order.id])
+    } else if (order.status === OrderStatus.CANCELLED) {
+      //view mode
+    } else if (order.status === OrderStatus.DEBT) {
+      this.router.navigate(['/pages/order/payment', order.id])
+    } else if (order.status === OrderStatus.HOLD) {
+      //edit mode
+      this.router.navigate(['/pages/order', order.id])
     } else {
-      if (order.status === OrderStatus.COMPLETED) {
-        //edit mode
-      } else if (order.status === OrderStatus.CANCELLED) {
-        //view mode
-      } else if (order.status === OrderStatus.DEBT) {
-        this.router.navigate(['/pages/order/payment', order.id])
-      } else if (order.status === OrderStatus.HOLD) {
-        //edit mode
-        this.router.navigate(['/pages/order', order.id])
-      } else {
-        this.router.navigate(['/pages/order', order.id])
-      }
+      this.router.navigate(['/pages/order', order.id])
     }
+
   }
 }

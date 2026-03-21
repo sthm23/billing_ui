@@ -234,6 +234,10 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     this.router.navigate(['/pages/order/list']);
   }
 
+  goToReturn(orderId: string) {
+    this.router.navigate(['/pages/order/return', orderId]);
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

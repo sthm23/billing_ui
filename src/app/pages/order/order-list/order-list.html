@@ -25,8 +25,8 @@
 
           <div class="flex justify-end gap-2">
             <p-button type="button" label="Create" severity="primary" icon="pi pi-plus" (click)="createOrder()" />
-            <p-button type="button" label="Return" severity="secondary" icon="pi pi-directions"
-              (click)="createReturnOrder()" />
+            <!-- <p-button type="button" label="Return" severity="secondary" icon="pi pi-directions"
+              (click)="createReturnOrder()" /> -->
           </div>
         </div>
 
@@ -50,9 +50,8 @@
           <td><p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag></td>
           <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
           <td>
-            <p-button (click)="toggleAction($event, menu, order)" [rounded]="true" [outlined]="true"
-              icon="pi pi-ellipsis-v" />
-            <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body" />
+            <p-button [rounded]="true" [outlined]="true" icon="pi pi-trash" severity="danger"
+              (click)="deleteOrder(order)" />
           </td>
         </tr>
       </ng-template>
