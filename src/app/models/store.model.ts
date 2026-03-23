@@ -43,8 +43,7 @@ export interface CreateWarehouse {
 export interface Warehouse {
   id: string
   name: string
-  storeId: string
+  staffId: string
   isActive: boolean
-  createdAt: string
-  // staffWarehouses: { id: string, staffId: string, warehouseId: string }[]
+  storeId: string
 }

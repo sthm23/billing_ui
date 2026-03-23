@@ -1,6 +1,6 @@
 import { BaseListResponse } from "./app.models"
 import { OrderStatus } from "./order.model"
-import { Store } from "./store.model"
+import { Store, Warehouse } from "./store.model"
 
 export enum UserType {
   CUSTOMER = 'CUSTOMER',
@@ -148,19 +148,15 @@ export interface Staff {
   isActive: boolean
   user: User
   store: Store
-  warehouse: StaffWarehouse
+  warehouse: {
+    warehouseId: string
+    warehouse: Warehouse
+    staffId: string
+  }[]
   // stockMoves: StockMovement[]
   orders: Order[]
   payments: StaffPayment[]
 
-}
-
-export interface StaffWarehouse {
-  id: string
-  name: string
-  staffId: string
-  isActive: boolean
-  storeId: string
 }
 
 export interface UserCreateRequest {

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { TableModule, Table } from 'primeng/table';
+import { TableModule, Table, TablePageEvent } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -13,18 +13,20 @@ import { BadgeModule } from 'primeng/badge';
 import { Router } from '@angular/router';
 import { ImageModule } from 'primeng/image';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-product-list',
   imports: [
-    CommonModule,
+    CurrencyPipe,
     TableModule,
     FormsModule,
     ButtonModule,
     ToastModule,
     BadgeModule,
     ImageModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    AvatarModule
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
@@ -71,7 +73,7 @@ export class ProductList implements OnInit, OnDestroy {
       });
   }
 
-  pageChange(event: any) {
+  pageChange(event: TablePageEvent) {
     this.dataTable.reset();
     this.first.set(event.first);
     this.rows = event.rows;
@@ -86,10 +88,6 @@ export class ProductList implements OnInit, OnDestroy {
     } else {
       return 'danger';
     }
-  }
-
-  getProductImg(product: Product): string {
-    return product.images.length > 0 ? product.images[0].url : '/no_image.svg';
   }
 
   productQuantity(product: Product): number {

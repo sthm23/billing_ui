@@ -5,7 +5,7 @@ import { Attribute, AttributeItem, CreateProductVariantPayload, Product, Product
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
-import { delay, Subject, switchMap, takeUntil } from 'rxjs';
+import { delay, forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryService } from '../../service/category.service';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
+import { Warehouse } from '../../../models/store.model';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -154,10 +155,6 @@ export class ProductVariant implements OnInit, OnDestroy {
       })
   }
 
-  getImageUrl(product: ProductDetail): string {
-    return product.images.length ? product.images[0].url : '/no_image.svg';
-  }
-
   // === 1) создаём multiselect-контролы по атрибутам ===
   private makeAttributeSelectionControls(attributes: Attribute[]) {
     // очистка на случай повторной загрузки
@@ -286,7 +283,7 @@ export class ProductVariant implements OnInit, OnDestroy {
 
       const createProductVariantPayload: CreateProductVariantPayload = {
         storeId: currentUser?.staff?.store.id || '',
-        warehouseId: currentUser?.staff?.warehouse.id || '',
+        warehouseId: product.warehouseId || '',
         productId: product.id,
         category: product.category,
         variants: payload

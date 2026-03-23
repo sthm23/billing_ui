@@ -32,6 +32,7 @@ export interface Order {
     createdAt: string
     createdBy: string
   },
+  warehouseId: string
   warehouse: {
     id: string
     storeId: string

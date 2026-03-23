@@ -29,6 +29,9 @@
               <div class="font-semibold">{{customer.name}}</div>
               <div class="text-sm text-gray-500">{{customer.phone}}</div>
             </div>
+            <div>
+              <p-button icon="pi pi-times" text (click)="clearCustomer()" />
+            </div>
           </div>
         </div>
         }@else {

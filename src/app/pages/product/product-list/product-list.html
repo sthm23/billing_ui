@@ -15,9 +15,9 @@
         <th style="width:12%">Name</th>
         <th style="width:13%">Brand</th>
         <th style="width:10%">Category</th>
+        <th style="width:15%">Warehouse</th>
         <th style="width:10%">In Stock</th>
         <th style="width:15%">Price Range</th>
-        <th style="width:15%">Created At</th>
         <th style="width:5%">Action</th>
       </tr>
     </ng-template>
@@ -25,15 +25,20 @@
       <tr [pSelectableRow]="product">
 
         <td>
-          <p-image [src]="getProductImg(product)" [alt]="product.name" width="50"
+          @if(product.images && product.images.length > 0) {
+          <p-image [src]="product.images[0].url" [alt]="product.name" width="50"
             class="shadow-lg object-cover h-[40px]" />
+          }@else {
+          <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20" size="normal"
+            shape="square" />
+          }
         </td>
         <td>{{ product.name }}</td>
         <td>{{ product.brand }}</td>
         <td>{{ product.category }}</td>
+        <td>{{ product.warehouse.name }}</td>
         <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
         <td>{{ product.priceRange.min | currency: " " : 'code' : '0.0'}}</td>
-        <td>{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
         <td>
           <p-button (click)="archive($event, product)" [outlined]="true" severity="danger" icon="pi pi-trash" />
         </td>

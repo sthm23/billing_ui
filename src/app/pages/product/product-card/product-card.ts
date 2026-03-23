@@ -219,10 +219,6 @@ export class ProductCard implements OnInit, OnDestroy {
       })
   }
 
-  getImageUrl(product: ProductDetail): string {
-    return product.images.length ? product.images[0].url : '/no_image.svg';
-  }
-
   addVariants(variants: ProductVariant[]) {
     this.visibleAddVariants = false;
   }

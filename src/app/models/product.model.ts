@@ -1,8 +1,11 @@
 import { BaseListResponse } from "./app.models"
+import { Warehouse } from "./store.model"
 
 export interface BaseProduct {
   id: string
   storeId: string
+  warehouseId: string
+  warehouse: Warehouse
   name: string
   category: string
   brand: string

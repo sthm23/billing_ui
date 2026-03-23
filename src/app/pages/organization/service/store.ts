@@ -24,7 +24,7 @@ export class StoreService {
   }
 
   getStores(page: number = 1, pageSize: number = 10) {
-    return this.http.get<StoreResponse>(`/api/store?page=${page}&pageSize=${pageSize}`, {
+    return this.http.get<StoreResponse>(`/api/store?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }

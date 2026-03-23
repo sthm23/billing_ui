@@ -9,8 +9,8 @@ import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemP
 export class OrderService {
   constructor(private http: HttpClient) { }
 
-  getOrders() {
-    return this.http.get<OrderResponse>('/api/orders', {
+  getOrders(page = 1, pageSize = 10) {
+    return this.http.get<OrderResponse>(`/api/orders?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     })
   }

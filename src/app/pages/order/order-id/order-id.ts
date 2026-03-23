@@ -99,7 +99,8 @@ export class OrderId implements OnInit {
   search(event: AutoCompleteCompleteEvent) {
     const text = event.query
     if (text && text.length > 3) {
-      this.productService.searchProducts(text).subscribe({
+      const warehouseId = this.currentOrder()!.warehouseId;
+      this.productService.searchProducts(warehouseId, text).subscribe({
         next: (res) => {
           const searchResults = res.data.map(variant => {
             return {

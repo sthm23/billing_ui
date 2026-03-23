@@ -16,13 +16,13 @@ export class UserService {
   }
 
   getUsers(page: number = 1, pageSize: number = 10) {
-    return this.http.get<UsersResponse>(`/api/users?page=${page}&pageSize=${pageSize}`, {
+    return this.http.get<UsersResponse>(`/api/users?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }
 
   getOwners(page: number = 1, pageSize: number = 10) {
-    return this.http.get<UsersResponse>(`/api/users/owners?page=${page}&pageSize=${pageSize}`, {
+    return this.http.get<UsersResponse>(`/api/users/owners?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }

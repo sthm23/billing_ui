@@ -64,9 +64,9 @@ export class UserView implements OnInit {
           const store = user.staff.store
           this.addOrgNode(store.id, store.name, OrgLevel.STORE, user.id);
 
-          if (user.staff.warehouse) {
-            const warehouse = user.staff.warehouse
-            this.addOrgNode(warehouse.id, warehouse.name, OrgLevel.WAREHOUSE, store.id);
+          if (user.staff.warehouse && user.staff.warehouse.length) {
+            const warehouse = user.staff.warehouse[0];
+            // this.addOrgNode(warehouse.warehouseId, warehouse.name, OrgLevel.WAREHOUSE, store.id);
           }
         }
 

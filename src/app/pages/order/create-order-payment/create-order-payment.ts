@@ -230,6 +230,10 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     });
   }
 
+  clearCustomer() {
+    this.customer.set(null)
+  }
+
   backOrderList() {
     this.router.navigate(['/pages/order/list']);
   }

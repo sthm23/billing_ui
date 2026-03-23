@@ -35,8 +35,8 @@ export class ProductService {
     });
   }
 
-  searchProducts(text: string) {
-    const url = `/api/product/search?text=${text}`;
+  searchProducts(warehouseId: string, text: string) {
+    const url = `/api/product/search/${warehouseId}?text=${text}`;
     return this.http.get<SearchProductResponse>(url, {
       withCredentials: true,
     });

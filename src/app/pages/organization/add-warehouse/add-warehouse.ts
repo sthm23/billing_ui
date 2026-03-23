@@ -56,6 +56,11 @@ export class AddWarehouse {
       ownerId: this.ownerId
     }
     this.loader.set(true)
+    if (!payload.name || payload.name.trim().length <= 2 || !payload.storeId || !payload.ownerId || payload.storeId.trim().length === 0 || payload.ownerId.trim().length === 0) {
+      this.error.emit();
+      this.loader.set(false);
+      return;
+    }
     this.storeService.createWarehouse(payload).subscribe({
       next: (res) => {
         this.loader.set(false);
