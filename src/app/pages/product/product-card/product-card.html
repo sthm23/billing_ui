@@ -101,7 +101,19 @@
           <div class="p-6 pt-0">
             <h5>Photo</h5>
             <div class="flex flex-wrap items-center gap-4">
+              @if(product.images.length === 0) {
+              <div class="flex flex-col items-center gap-2">
+                <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20"
+                  size="xlarge" shape="square" />
+                <p>no image available</p>
+              </div>
+              }
               @for (item of product.images; track $index) {
+              <div class="flex flex-col items-center gap-2">
+                <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20"
+                  size="xlarge" shape="square" />
+                <p>no image available</p>
+              </div>
               <p-image [preview]="true" [src]="item.url" [alt]="product.name" width="200"
                 class="shadow-lg object-cover" />
               }

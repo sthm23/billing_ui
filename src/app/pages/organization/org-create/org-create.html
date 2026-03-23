@@ -30,8 +30,6 @@
               <p-treeselect id="categoryId" class="w-full" formControlName="categoryId"
                 [class]="isValidField('categoryId')" [options]="categoryList()"
                 placeholder="Select last child category" />
-              <!-- <p-select id="categoryId" formControlName="categoryId" [options]="categoryList()" optionLabel="name"
-                placeholder="Choose one" class="w-full" [class]="isValidField('categoryId')"></p-select> -->
             </div>
           </div>
 
@@ -48,27 +46,8 @@
                 placeholder="Select attributes" [maxSelectedLabels]="3" class="w-full md:w-80"
                 [class]="isValidField('attributeIds')" />
             </div>
-            <!-- <div class="flex flex-col gap-2 w-full">
-              <label for="password">Password</label>
-              <p-password [class]="isValidField('password')" id="password" [feedback]="false" [toggleMask]="true"
-                formControlName="password" />
-            </div> -->
 
           </div>
-          <!-- @if(isShopHidden) {
-          <div class="flex flex-col md:flex-row gap-6" [formGroup]="staff">
-            <div class="flex flex-wrap gap-2 w-full">
-              <label for="storeId">Store</label>
-              <p-select id="storeId" formControlName="storeId" [options]="storeList()" optionLabel="name"
-                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
-            </div>
-            <div class="flex flex-wrap gap-2 w-full">
-              <label for="warehouseId">Warehouse</label>
-              <p-select id="warehouseId" formControlName="warehouseId" [options]="warehouses()" optionLabel="name"
-                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
-            </div>
-          </div>
-          } -->
         </div>
       </div>
 

@@ -21,7 +21,7 @@ import { CategoryService } from '../../service/category.service';
 import { StoreService } from '../../organization/service/store';
 import { FileUploadService } from '../../service/file-upload.service';
 import { AuthService } from '../../auth/service/auth';
-import { Store } from '../../../models/store.model';
+import { Store, Warehouse } from '../../../models/store.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TextareaModule } from 'primeng/textarea';
 
@@ -53,7 +53,9 @@ export class ProductCreate implements OnInit, OnDestroy {
   brands = signal<SelectType[]>([])
   tags = signal<SelectType[]>([])
   stores = signal<Store[]>([])
+  warehouses = signal<Warehouse[]>([])
   attributeOptions = signal<SelectType[]>([])
+
 
   uploadedFilesCancel$ = new BehaviorSubject<boolean>(false);
   appStore = inject(AppStore);
@@ -64,13 +66,14 @@ export class ProductCreate implements OnInit, OnDestroy {
     images: new FormControl<any[] | null>(null),
     category: new FormControl<MultiSelectType | null>(null, [Validators.required]),
     brand: new FormControl<SelectType | null>(null),
-    store: new FormControl<SelectType | null>(null, [Validators.required]),
+    store: new FormControl<SelectType | null>(null),
+    warehouse: new FormControl<SelectType | null>(null, [Validators.required]),
     attributes: new FormControl<SelectType[] | null>(null),
     tags: new FormControl<SelectType[] | null>(null)
   })
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private productService: ProductService,
     private categoryService: CategoryService,
     private storeService: StoreService,
@@ -85,6 +88,14 @@ export class ProductCreate implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.authService.isAdmin()) {
       this.fetchData();
+      this.productForm.get('store')?.valueChanges.subscribe(store => {
+        if (store) {
+          this.productForm.patchValue({ warehouse: null });
+          this.fetchStoreById(store.id);
+        } else {
+          this.warehouses.set([]);
+        }
+      })
     } else {
       const storeId = this.authService.getUserStoreId()!;
       this.fetchData(storeId);
@@ -104,7 +115,7 @@ export class ProductCreate implements OnInit, OnDestroy {
         next: ({ brands, store, categories, attributes, tags }) => {
           this.tags.set(tags);
           this.brands.set(brands);
-          this.stores.set([store]);
+          this.warehouses.set(store.warehouse);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
           this.categories.set(categoryData);
           this.attributeOptions.set(attributes);
@@ -148,6 +159,21 @@ export class ProductCreate implements OnInit, OnDestroy {
     }
   }
 
+  private fetchStoreById(storeId: string) {
+    this.storeService.getStoreById(storeId).subscribe({
+      next: (store) => {
+        this.warehouses.set(store.warehouse);
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.error?.message || 'Error fetching store data. Please try again.',
+        });
+      }
+    })
+  }
+
   clearForm() {
     this.productForm.reset()
     this.uploadedFilesCancel$.next(true);
@@ -168,7 +194,7 @@ export class ProductCreate implements OnInit, OnDestroy {
         categoryId: data.category?.key,
         images,
         brandId: data.brand?.id,
-        storeId: data.store?.id!,
+        warehouseId: data.warehouse?.id!,
         attributeIds: data.attributes?.map(a => a.id) || [],
         tagIds: data.tags?.map(t => t.id) || [],
         description: data.description || undefined

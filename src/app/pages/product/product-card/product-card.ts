@@ -33,6 +33,7 @@ import { MultiSelectType, SelectType } from '../../../models/app.models';
 import { DialogComponent } from '../../../shared/components/dialog/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { ChipModule } from 'primeng/chip';
+import { AvatarModule } from 'primeng/avatar';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -82,7 +83,8 @@ type VariantForm = {
     MultiSelectModule,
     DialogComponent,
     ChipModule,
-    TextareaModule
+    TextareaModule,
+    AvatarModule
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',

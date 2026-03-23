@@ -1,1 +1,173 @@
-<p>org-view works!</p>
+@let store = currentStore();
+<p-toast />
+@if(!store) {
+<p class="text-center text-muted-foreground">No store data available.</p>
+}@else {
+
+
+<div>
+  <div class="container mx-auto px-4 py-6 md:px-6 2xl:max-w-[1400px]">
+    <div class="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row">
+      <div class="flex items-center gap-4">
+        <p-button icon="pi pi-arrow-left" text (onClick)="goToDashboard()" />
+        <h3 class="m-0!">Store detail</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <p-button icon="pi pi-pen-to-square" label="Edit store" outlined="true" />
+        <p-button icon="pi pi-shop" label="Add warehouse" outlined="true" (onClick)="addWarehouse()" />
+        <app-add-warehouse [storeId]="store.id" [ownerId]="store.ownerId" [(visible)]="addWarehouseVisible"
+          (error)="handleError()" />
+      </div>
+    </div>
+    <div class="grid gap-6 md:grid-cols-6">
+      <div class="md:col-span-2">
+        <div class="card flex flex-col gap-6 shadow-sm p-0">
+          <div data-slot="card-content" class="p-6">
+            <div class="flex flex-col items-center">
+              <!-- @if(store.image) {
+              <p-avatar [image]="store.image" class="relative flex shrink-0 overflow-hidden rounded-full size-20"
+                size="xlarge" shape="circle" />
+              }@else {
+              <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded-full size-20"
+                size="xlarge" shape="circle" />
+              } -->
+
+              <h2 class="mt-4 text-lg font-semibold text-center">{{store.name}}</h2>
+              <p class="text-muted-foreground text-sm">{{store.warehouse.length}} Warehouses</p>
+              <p-tag [value]="store ? 'Active' : 'Inactive'" [severity]="store ? 'success' : 'danger'" class="mt-2" />
+              <p-button label="Message" icon="pi pi-telegram" class="mt-4" />
+            </div>
+            <div class="mt-6 space-y-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">Member since</span>
+                <span>{{store.createdAt| date:'mediumDate'}}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">Categories</span>
+                <span>{{store.categories}}</span>
+              </div>
+
+
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">Owner</span>
+                <span>{{store.ownerId}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6 md:col-span-4">
+        <div class="grid gap-4 sm:grid-cols-3">
+
+          <div class="flex flex-col gap-6 p-0">
+            <div class="card mb-0 h-full">
+              <div class="flex justify-between mb-4">
+                <div>
+                  <span class="block text-muted-color font-medium mb-4">Orders</span>
+                  <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                    22
+                  </div>
+                </div>
+                <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
+                  style="width: 2.5rem; height: 2.5rem">
+                  <i class="pi pi-shopping-cart text-blue-500 !text-xl"></i>
+                </div>
+              </div>
+              <span class="text-primary font-medium">23</span>
+              <span class="text-muted-color"> orders completed</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-6 p-0">
+            <div class="card mb-0 h-full">
+              <div class="flex justify-between mb-4">
+                <div>
+                  <span class="block text-muted-color font-medium mb-4">Payments</span>
+                  <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                    24
+                  </div>
+                </div>
+                <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border"
+                  style="width: 2.5rem; height: 2.5rem">
+                  <i class="pi pi-dollar text-orange-500 !text-xl"></i>
+                </div>
+              </div>
+              <span class="text-primary font-medium">21+ </span>
+              <span class="text-muted-color">payments received</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-6 p-0 ">
+            <div class="card mb-0 h-full">
+              <div class="flex justify-between mb-4 ">
+                <div>
+                  <span class="block text-muted-color font-medium mb-4">Debt</span>
+                  <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                    25
+                  </div>
+                </div>
+                <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border"
+                  style="width: 2.5rem; height: 2.5rem">
+                  <i class="pi pi-stores text-cyan-500 !text-xl"></i>
+                </div>
+              </div>
+              <span class="text-primary font-medium">
+                26
+              </span>
+              <span class="text-muted-color">active orders</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card flex flex-col gap-6 p-0">
+          <div class="p-6">
+            <h3 class="mb-4 text-lg font-semibold">Last activities</h3>
+            <div class="space-y-4">
+
+              <ul class="list-none p-0 m-0">
+                <!-- @if(stockMovements().length === 0) { -->
+                <p class="text-center text-muted-foreground">No recent activities.</p>
+                <!-- }@else {
+                <p-virtualScroller [items]="stockMovements()" [itemSize]="80" scrollHeight="400px"
+                  (onScrollIndexChange)="handleScroll($event)">
+                  <ng-template let-stockMoves let-last="last" pTemplate="item">
+                    <div class="pr-4">
+                      <li class="flex md:flex-row md:flex-wrap md:items-center md:justify-between mb-6">
+                        <div>
+                          <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">
+                            {{stockMoves.variant.sku}}
+                          </span>
+                          <div class="flex items-center gap-2">
+                            <div class="mt-1 text-muted-color">
+                              <p-tag [icon]="!(stockMoves.type === 'IN') ? 'pi pi-arrow-up': 'pi pi-arrow-down'"
+                                [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
+                            </div>
+                            <div class="mt-1 text-muted-color">{{stockMoves.createdAt | date:'dd/MM/yyyy, hh:mm a'}}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="mt-2 md:mt-0 flex items-center">
+                          <div
+                            class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24 hidden sm:block"
+                            style="height: 8px">
+                            <div class="bg-surface-500 h-full " style="width: 50%"></div>
+                          </div>
+                          <span class="text-surface-500 ml-4 font-medium">{{stockMoves.quantity}}</span>
+                        </div>
+                      </li>
+                      @if(!last) {
+                      <p-divider />
+                      }
+                    </div>
+                  </ng-template>
+                </p-virtualScroller>
+                } -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+}

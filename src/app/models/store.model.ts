@@ -16,7 +16,7 @@ export interface Store {
   createdAt: string
   createdBy: string // adminId
   creator: User
-  warehouse: Warehouse
+  warehouse: Warehouse[]
   categories: { category: Category[], categoryId: string, storeId: string }[]
   // products:   Product[]
   // orders:     Order[]

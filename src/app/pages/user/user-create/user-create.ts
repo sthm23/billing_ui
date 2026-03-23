@@ -74,49 +74,32 @@ export class UserCreate implements OnInit, OnDestroy {
     this.isShopHidden = !isAdmin;
     this.userRole = this.makeUserRoleSelectItems(isAdmin);
 
-    this.route.queryParams.subscribe(params => {
 
-      if (params.hasOwnProperty('storeId') && params.hasOwnProperty('warehouseId')) {
-        const store = params['storeId'].split('!!');
-        const warehouse = params['warehouseId'].split('!!');
-        this.staff.patchValue({
-          storeId: { id: store[0], name: store[1] } as any,
-          warehouseId: { id: warehouse[0], name: warehouse[1] },
-        })
-        this.storeList.set([{ id: store[0], name: store[1] } as any]);
-        this.warehouses.set([{ id: warehouse[0], name: warehouse[1] } as any]);
-        return;
-      }
-
-      if (this.authService.isAdmin()) {
-        this.fetchStoreInformation();
-        this.staff.controls.storeId.valueChanges.subscribe(store => {
-          this.warehouses.set([
-            {
-              name: store?.warehouse.name || '',
-              id: store?.warehouse.id || '',
-            }
-          ]);
-        })
-      } else {
-        const currentUser = this.authService.getCurrentUser()!;
-        if (currentUser.staff) {
-          this.storeList.set([{
-            name: currentUser.staff.store.name,
-            id: currentUser.staff.store.id,
-          } as any])
-          this.warehouses.set([{
-            name: currentUser.staff.warehouse.name,
-            id: currentUser.staff.warehouse.id,
-          }])
-          this.staff.patchValue({
-            storeId: { id: currentUser.staff.store.id, name: currentUser.staff.store.name } as any,
-            warehouseId: { id: currentUser.staff.warehouse.id, name: currentUser.staff.warehouse.name, },
-          })
+    if (this.authService.isAdmin()) {
+      this.fetchStoreInformation();
+      this.staff.controls.storeId.valueChanges.subscribe(store => {
+        const warehouses = store?.warehouse.map((wh) => ({
+          name: wh.name,
+          id: wh.id,
+        })) || [];
+        this.warehouses.set(warehouses);
+      })
+    } else {
+      const currentUser = this.authService.getCurrentUser()!;
+      this.storeService.getStoreById(currentUser.staff?.storeId!).subscribe({
+        next: (store) => {
+          this.storeList.set([{ ...store }]);
+          this.warehouses.set(store?.warehouse.map((wh) => ({
+            name: wh.name,
+            id: wh.id,
+          })) || []);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
         }
-      }
+      })
+    }
 
-    });
 
     this.toggleOwnerFields();
   }
@@ -136,10 +119,11 @@ export class UserCreate implements OnInit, OnDestroy {
       this.storeService.getStoreById(storeId).subscribe({
         next: (store) => {
           this.storeList.set([{ ...store }]);
-          this.warehouses.set([{
-            name: store.warehouse.name,
-            id: store.warehouse.id,
-          }])
+          const warehouses = store?.warehouse.map((wh) => ({
+            name: wh.name,
+            id: wh.id,
+          })) || [];
+          this.warehouses.set(warehouses);
         },
         error: (err) => {
           this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });

@@ -69,7 +69,7 @@ export interface ProductResponse extends BaseListResponse {
   data: Product[]
 }
 export interface CreateProduct {
-  storeId: string
+  warehouseId: string
   name: string
   images?: string[] | null
   categoryId?: string // categoryId

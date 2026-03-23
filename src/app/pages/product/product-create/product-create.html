@@ -11,10 +11,17 @@
         <div class="p-6 flex flex-col gap-6 w-full">
 
           <div class="flex flex-col md:flex-row gap-6">
+            @if(authService.isAdmin()) {
             <div class="flex flex-wrap gap-3 w-full">
               <label for="store">Store</label>
               <p-select id="store" formControlName="store" [options]="stores()" optionLabel="name"
                 [class]="productForm.controls.store.touched && productForm.controls.store.invalid ? 'ng-dirty ng-invalid' : ''" />
+            </div>
+            }
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="warehouse">Warehouse</label>
+              <p-select id="warehouse" formControlName="warehouse" [options]="warehouses()" optionLabel="name"
+                [class]="productForm.controls.warehouse.touched && productForm.controls.warehouse.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
             <div class="flex flex-wrap gap-2 w-full">
               <label for="category">Category</label>
@@ -71,8 +78,9 @@
 
       <div class="col-span-full lg:col-span-6">
         <div class="p-6">
-          <app-file-upload [storeId]="productForm.controls.store.value?.id" [cancel]="uploadedFilesCancel$"
-            (uploadComplete)="onUpload($event)" />
+          <app-file-upload
+            [storeId]="authService.getCurrentUser()?.staff?.storeId ?? productForm.controls.store.value?.id"
+            [cancel]="uploadedFilesCancel$" (uploadComplete)="onUpload($event)" />
         </div>
       </div>
 

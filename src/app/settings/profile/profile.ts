@@ -4,7 +4,6 @@ import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { AuthService } from '../../pages/auth/service/auth';
-import { Badge } from "primeng/badge";
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { UserService } from '../../pages/user/service/user.service';
 import { UserInfo, UserStockMovement } from '../../models/user.model';
@@ -20,7 +19,6 @@ import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller
     TagModule,
     OverlayBadgeModule,
     AvatarModule,
-    // Badge,
     DatePipe,
     CurrencyPipe,
     Divider,

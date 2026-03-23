@@ -36,7 +36,6 @@ import { forkJoin } from 'rxjs';
     ToastModule,
     RouterModule,
     InputMaskModule,
-    PasswordModule,
     MultiSelectModule,
     TreeSelectModule
   ],

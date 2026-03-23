@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
@@ -8,6 +8,13 @@ import { delay } from 'rxjs';
 import { Router } from '@angular/router';
 import { Store } from '../../../models/store.model';
 import { StoreService } from '../service/store';
+import { OrderFilter } from '../../order/order-list/order-filter/order-filter';
+import { Loader } from '../../../shared/components/loader/loader';
+import { DatePickerModule } from 'primeng/datepicker';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-org-list',
@@ -15,7 +22,15 @@ import { StoreService } from '../service/store';
     CommonModule,
     TableModule,
     FormsModule,
-    ButtonModule
+    ButtonModule,
+    DatePipe,
+    OrderFilter,
+    Loader,
+    DatePickerModule,
+    IconFieldModule,
+    InputIconModule,
+    SelectButtonModule,
+    InputTextModule
   ],
   templateUrl: './org-list.html',
   styleUrl: './org-list.css',
@@ -23,10 +38,17 @@ import { StoreService } from '../service/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrgList implements OnInit, OnDestroy {
-  stores: Store[] = []
+  stores = signal<Store[]>([]);
   first = signal(0);
   rows = 10;
   total = signal(0);
+
+  stateOptions = [
+    { label: 'All', value: 'ALL' },
+    { label: 'On hold', value: 'ON_HOLD' },
+    { label: 'Debt', value: 'DEPT' },
+    { label: 'Canceled', value: 'CANCELED' }
+  ];
 
   @ViewChild('dt') dataTable!: Table;
 
@@ -47,7 +69,7 @@ export class OrgList implements OnInit, OnDestroy {
       ).subscribe({
         next: (response) => {
           this.appStore.stopLoader();
-          this.stores = response.data;
+          this.stores.set(response.data);
           this.total.set(response.total);
         },
         error: (err) => {
@@ -68,6 +90,13 @@ export class OrgList implements OnInit, OnDestroy {
     this.router.navigate(['/pages/organization/view', store.id]);
   }
 
+  createStore() {
+    this.router.navigate(['/pages/organization/create']);
+  }
+
+  disableStore(store: Store) {
+
+  }
   ngOnDestroy() {
     this.appStore.stopLoader();
   }

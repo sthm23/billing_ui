@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
+import { AvatarModule } from 'primeng/avatar';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -50,7 +51,8 @@ type VariantForm = {
     InputNumberModule,
     ToastModule,
     TagModule,
-    DividerModule
+    DividerModule,
+    AvatarModule
   ],
   templateUrl: './product-variant.html',
   styleUrl: './product-variant.css',

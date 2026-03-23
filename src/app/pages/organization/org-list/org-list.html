@@ -1,26 +1,66 @@
-<div class="card min-h-[80vh]">
-  <p-table #dt [lazy]="true" [value]="stores" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
-    [paginator]="true" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
-    <ng-template #header>
-      <tr>
-        <th style="width:25%">Name</th>
-        <th style="width:25%">staff</th>
-        <th style="width:25%">warehouse</th>
-        <th style="width:25%">Created At</th>
-        <th style="width:25%">Action</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-store>
-      <tr>
-        <td>{{ store.name }}</td>
-        <td>{{ store.staff.length }}</td>
-        <td>{{ store.warehouse.name }}</td>
-        <td>{{ store.createdAt }}</td>
-        <td>
-          <button pButton type="button" icon="pi pi-info-circle" class="p-button-rounded p-button-primary p-mr-2"
-            (click)="goToOrgSchema(store)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+<app-loader [loading]="appStore.isLoading()">
+  <div class="card">
+    <app-order-filter [data]="{}" />
+    @if(stores().length === 0) {
+    <div class="flex flex-col items-center justify-center gap-4 py-8">
+      <i class="pi pi-building" style="font-size: 3rem;"></i>
+      <p class="text-lg">No organizations found.</p>
+    </div>
+
+    }@else {
+
+
+
+    <p-table #dt [lazy]="true" [value]="stores()" [tableStyle]="{ 'min-width': '50rem' }"
+      [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows"
+      (onPage)="pageChange($event)" selectionMode="single" (selectionChange)="goToOrgSchema($event)"
+      [metaKeySelection]="true" dataKey="id">
+      <ng-template #caption>
+        <div class="flex items-center flex-wrap justify-between gap-4">
+          <div
+            class="flex flex-1 flex-wrap flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
+
+            <p-iconfield>
+              <p-inputicon class="pi pi-search" />
+              <input type="text" pInputText placeholder="Search" />
+            </p-iconfield>
+            <div class="flex gap-x-2 flex-wrap gap-4">
+              <p-selectbutton class="flex-wrap!" [options]="stateOptions" optionLabel="label" optionValue="value"
+                aria-labelledby="basic" />
+              <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                placeholder="Select date range" selectionMode="range" [readonlyInput]="true" />
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <p-button type="button" label="Create" severity="primary" icon="pi pi-plus" (click)="createStore()" />
+          </div>
+        </div>
+
+
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th style="width:25%">Name</th>
+          <th style="width:25%">staff</th>
+          <th style="width:25%">warehouse</th>
+          <th style="width:25%">Created At</th>
+          <th style="width:25%">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-store>
+        <tr [pSelectableRow]="store">
+          <td>{{ store.name }}</td>
+          <td>{{ store.staff.length }}</td>
+          <td>{{ store.warehouse.length }}</td>
+          <td>{{ store.createdAt | date: 'dd/MM/yyyy hh:mm' }}</td>
+          <td>
+            <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" rounded="true"
+              (click)="disableStore(store)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    }
+  </div>
+</app-loader>

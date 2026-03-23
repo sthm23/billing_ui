@@ -128,6 +128,9 @@
             <div class="space-y-4">
 
               <ul class="list-none p-0 m-0">
+                @if(stockMovements().length === 0) {
+                <p class="text-center text-muted-foreground">No recent activities.</p>
+                }@else {
                 <p-virtualScroller [items]="stockMovements()" [itemSize]="80" scrollHeight="400px"
                   (onScrollIndexChange)="handleScroll($event)">
                   <ng-template let-stockMoves let-last="last" pTemplate="item">
@@ -161,6 +164,7 @@
                     </div>
                   </ng-template>
                 </p-virtualScroller>
+                }
               </ul>
             </div>
           </div>
