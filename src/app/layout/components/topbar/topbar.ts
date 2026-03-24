@@ -9,6 +9,9 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
+import { ListboxModule } from 'primeng/listbox';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-topbar',
@@ -19,7 +22,9 @@ import { MenuItem } from 'primeng/api';
     ButtonModule,
     DividerModule,
     BreadcrumbModule,
-    TitleCasePipe
+    TitleCasePipe,
+    MenuModule,
+    ListboxModule
   ],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
@@ -27,14 +32,40 @@ import { MenuItem } from 'primeng/api';
 export class Topbar implements OnInit, OnDestroy {
   breadcrumbItems: MenuItem[] = []
   destroyer$ = new Subject<void>();
+  selectedLanguage: MenuItem = { name: 'Rus', value: 'ru' };
+  languages: MenuItem[] = [
+    {
+      name: 'Eng', value: 'en', command: (event) => {
+        this.selectedLanguage = event.item as MenuItem;
+        this.setActiveLang(this.selectedLanguage['value']);
+      },
+    },
+    {
+      name: 'Rus', value: 'ru', command: (event) => {
+        this.selectedLanguage = event.item as MenuItem;
+        this.setActiveLang(this.selectedLanguage['value']);
+      },
+    },
+    {
+      name: 'Uzb', value: 'uz', command: (event) => {
+        this.selectedLanguage = event.item as MenuItem;
+        this.setActiveLang(this.selectedLanguage['value']);
+      },
+    },
+  ]
   constructor(
     public layoutService: LayoutService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translocoService: TranslocoService
   ) { }
 
   ngOnInit() {
+    const currentLang = localStorage.getItem('my_billing_lang') || 'ru';
+    this.selectedLanguage = this.languages.find(lang => lang['value'] === currentLang) || this.selectedLanguage;
+    this.setActiveLang(this.selectedLanguage['value']);
+
     this.breadcrumbItems = this.makeBreadcrumbLabel(this.router.routerState.snapshot.url)
 
     this.router.events.pipe(
@@ -81,6 +112,12 @@ export class Topbar implements OnInit, OnDestroy {
       lastSegment.label = 'detail';
     }
     return segments;
+  }
+
+  setActiveLang(lang: string) {
+    localStorage.setItem('my_billing_lang', lang);
+    document.documentElement.lang = lang;
+    this.translocoService.setActiveLang(lang)
   }
 
   ngOnDestroy(): void {

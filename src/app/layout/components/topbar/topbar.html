@@ -23,6 +23,20 @@
 
   <div class="layout-topbar-actions">
     <div class="layout-config-menu">
+      <div>
+        <p-menu #menu [model]="languages" [popup]="true">
+          <ng-template #item let-item>
+            <a pRipple class="flex items-center px-3 py-2 cursor-pointer" [class]="item.linkClass">
+              <img src="/icons/flags/{{item.value.toLowerCase()}}.svg" style="width: 18px" />
+              <span class="ms-2">{{ item.name }}</span>
+              @if(item.value === selectedLanguage['value']) {
+              <i class="pi pi-check ms-2"></i>
+              }
+            </a>
+          </ng-template>
+        </p-menu>
+        <p-button (click)="menu.toggle($event)" icon="pi pi-language" text />
+      </div>
       <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
         (click)="toggleDarkMode()">
         <i

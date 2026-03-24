@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, provideAppInitializer, inject } from '@angular/core';
 
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
@@ -8,6 +8,10 @@ import { Noir } from './custom-theme';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { BaseUrlInterceptor } from './shared/interceptors/url.interceptor';
+import { TranslocoHttpLoader } from './transloco-loader';
+import { provideTransloco } from '@ngneat/transloco';
+
+const storedLang = localStorage.getItem('my_billing_lang');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,5 +33,15 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'ru', 'uz'],
+        defaultLang: storedLang || 'ru',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader
+    }),
   ]
 };
