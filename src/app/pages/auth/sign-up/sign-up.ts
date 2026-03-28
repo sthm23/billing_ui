@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../service/auth';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,7 +14,8 @@ import { AuthService } from '../service/auth';
     InputTextModule,
     FormsModule,
     ButtonModule,
-    RouterLink
+    RouterLink,
+    TranslocoPipe
   ],
   templateUrl: './sign-up.html',
   styleUrl: './sign-up.css',

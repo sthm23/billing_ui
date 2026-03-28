@@ -10,39 +10,41 @@
 
     <div class="flex flex-col">
       <div class="card">
-        <h2 class="text-center">Welcome back</h2>
-        <p class="text-center"> Login with your Apple or Google account </p>
+        <h2 class="text-center">{{'login.title' | transloco }}</h2>
+        <p class="text-center"> {{'login.subTitle' | transloco }}</p>
         <div class="card-content">
           <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="flex flex-col">
-              <p-button class="mt-4" label="Login with Apple" icon="pi pi-apple" type="button" variant="outlined"
-                fluid />
-              <p-button class="mt-4" label="Login with Google" icon="pi pi-google" type="button" variant="outlined"
-                fluid />
+              <p-button class="mt-4" [label]="'login.withApple' | transloco" icon="pi pi-apple" type="button"
+                variant="outlined" fluid />
+              <p-button class="mt-4" [label]="'login.withGoogle' | transloco" icon="pi pi-google" type="button"
+                variant="outlined" fluid />
             </div>
             <p-divider>
-              <b>Or continue with</b>
+              <b>{{'login.withSubTitle' | transloco}}</b>
             </p-divider>
             <div class="flex flex-col">
-              <label for="email">Email</label>
+              <label for="email">{{'login.email' | transloco}}</label>
               <input formControlName="login" class="mt-2" pInputText id="email" autocomplete="off"
                 placeholder="m@example.com" required fluid />
             </div>
 
             <div class="flex flex-col mt-4">
               <div class="flex items-center">
-                <label for="password">Password</label>
+                <label for="password">{{'login.password' | transloco}}</label>
                 <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">
-                  Forgot your password?
+                  {{'login.forgotPassword' | transloco}}
                 </a>
               </div>
               <input formControlName="password" class="mt-2" pInputText id="password" type="password" required />
             </div>
             <div class="flex flex-col gap-2 mt-4">
-              <p-button type="submit" label="Login" class="w-full" styleClass="w-full" fluid />
+              <p-button type="submit" [label]="'login.loginButton' | transloco" class="w-full" styleClass="w-full"
+                fluid />
 
               <p class="text-center">
-                Don&apos;t have an account? <a routerLink="/auth/sign-up">Sign up</a>
+                {{'login.signUptext' | transloco}} <a routerLink="/auth/sign-up" class="underline">{{'login.signUp' |
+                  transloco}}</a>
               </p>
             </div>
 
@@ -50,8 +52,10 @@
         </div>
       </div>
       <p class="text-center">
-        By clicking continue, you agree to our <a class="underline" routerLink="/">Terms of Service </a>
-        and <a class="underline" routerLink="/">Privacy Policy</a>.
+        {{'login.termsAgreement' | transloco:{
+        termsOfService: 'login.termsOfService'| transloco,
+        privacyPolicy: 'login.privacyPolicy'| transloco
+        } }}
       </p>
     </div>
 

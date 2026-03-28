@@ -9,6 +9,7 @@ import { Divider } from "primeng/divider";
 import { AuthService } from '../../../pages/auth/service/auth';
 import { TitleCasePipe } from '@angular/common';
 import { CurrentUserType } from '../../../models/auth.model';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-sidebar-header',
@@ -25,32 +26,38 @@ import { CurrentUserType } from '../../../models/auth.model';
   styleUrl: './sidebar-header.css',
 })
 export class SidebarHeader implements OnInit {
-  items: MenuItem[] = [
-    {
-      label: 'Profile',
-      items: [
-        {
-          label: 'Settings',
-          icon: 'pi pi-cog',
-          command: () => this.gotoProfile()
-        },
-        {
-          label: 'Messages',
-          icon: 'pi pi-inbox',
-        },
-        {
-          label: 'Logout',
-          icon: 'pi pi-sign-out',
-          linkClass: '!text-red-500 dark:!text-red-400',
-          command: () => this.logOut()
-        }
-      ]
-    }
-  ];
+  items: MenuItem[] = [];
   currentUser: CurrentUserType | null = null;
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private translate: TranslocoService) { }
+
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+    this.translate.selectTranslateObject('sidebar').subscribe((res) => {
+      console.log(res);
+
+      this.items = [
+        {
+          label: res['profile'],
+          items: [
+            {
+              label: res['settings'],
+              icon: 'pi pi-cog',
+              command: () => this.gotoProfile()
+            },
+            {
+              label: res['messages'],
+              icon: 'pi pi-inbox',
+            },
+            {
+              label: res['logout'],
+              icon: 'pi pi-sign-out',
+              linkClass: '!text-red-500 dark:!text-red-400',
+              command: () => this.logOut()
+            }
+          ]
+        }
+      ]
+    })
   }
 
   gotoProfile() {

@@ -8,6 +8,7 @@ import { AuthService } from '../service/auth';
 import { switchMap } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,8 @@ import { ToastModule } from 'primeng/toast';
     ButtonModule,
     RouterLink,
     ReactiveFormsModule,
-    ToastModule
+    ToastModule,
+    TranslocoPipe
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -33,7 +35,8 @@ export class Login implements OnInit {
     private authService: AuthService,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translate: TranslocoService
   ) { }
 
   ngOnInit(): void {
@@ -63,7 +66,8 @@ export class Login implements OnInit {
           },
           error: (err) => {
             console.error('Login failed', err);
-            this.messageService.add({ severity: 'error', summary: 'Login Failed', detail: 'Invalid login or password' });
+            const errorMessage = this.translate.translateObject('errors');
+            this.messageService.add({ severity: 'error', summary: errorMessage['loginFailed'], detail: errorMessage['invalidCredentials'] });
           }
         })
     }

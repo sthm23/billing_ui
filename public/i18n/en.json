@@ -1,4 +1,22 @@
 {
+  "colors": {
+    "black": "Black",
+    "white": "White",
+    "red": "Red",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "yellow",
+    "purple": "Purple",
+    "orange": "Orange",
+    "gray": "Grey",
+    "pink": "Pink",
+    "brown": "Brown",
+    "gold": "Gold",
+    "silver": "Silver",
+    "bronze": "Bronze",
+    "olive": "olive",
+    "coral": "Coral"
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome to your dashboard! Here you can find an overview of your activities and statistics."
@@ -16,7 +34,44 @@
     "order": "Order",
     "product": "Product",
     "profile": "Profile",
+    "messages": "Messages",
+    "logout": "Logout",
     "settings": "Settings",
-    "attribute": "Attribute"
+    "attribute": "Attribute",
+    "reservedRights": "All rights reserved.",
+    "poweredBy": "Powered by {{company}}"
+  },
+  "login": {
+    "title": "Welcome back",
+    "subTitle": "Login with your Apple or Google account",
+    "withApple": "Login with Apple",
+    "withGoogle": "Login with Google",
+    "withSubTitle": "Or continue  with",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Login",
+    "signUp": "Sign up",
+    "signUptext": "Don&apos;t have an account?",
+    "termsAgreement": "By clicking continue, you agree to our {{termsOfService}} and {{privacyPolicy}}.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "signUp": {
+    "title": "Create your account",
+    "subTitle": "Enter your email below to create your account",
+    "name": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordRequirement": "Must be at least 8 characters long.",
+    "create": "Create Account",
+    "signin": "Sign in",
+    "signinText": "Already have an account?"
+  },
+  "errors": {
+    "title": "Error",
+    "loginFailed": "Login Failed",
+    "invalidCredentials": "Invalid login or password"
   }
 }

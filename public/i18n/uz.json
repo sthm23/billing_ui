@@ -1,4 +1,22 @@
 {
+  "colors": {
+    "black": "Qora",
+    "white": "Oq",
+    "red": "Qizil",
+    "blue": "Ko'k",
+    "green": "Yashil",
+    "yellow": "Sariq",
+    "purple": "Binafsha",
+    "orange": "To'q sariq",
+    "gray": "Kulrang",
+    "pink": "Pushti",
+    "brown": "Jigarrang",
+    "gold": "Oltin",
+    "silver": "Kumush",
+    "bronze": "Bronza",
+    "olive": "Zaytun",
+    "coral": "Koral"
+  },
   "dashboard": {
     "title": "Boshqaruv paneli",
     "welcome": "Boshqaruv paneliga hush kelibsiz! Bu yerda siz o'z faoliyatingiz va statistikangiz haqida umumiy ma'lumotga ega bo'lishingiz mumkin."
@@ -6,6 +24,8 @@
   "sidebar": {
     "home": "Asosiy",
     "profile": "Profil",
+    "messages": "Xabarlar",
+    "logout": "Chiqish",
     "settings": "Sozlamalar",
     "dashboard": "Boshqaruv paneli",
     "pages": "Sahifalar",
@@ -17,6 +37,42 @@
     "user": "Foydalanuvchi",
     "order": "Buyurtma",
     "product": "Mahsulot",
-    "attribute": "Atribut"
+    "attribute": "Atribut",
+    "reservedRights": "Barcha huquqlar himoyalangan.",
+    "poweredBy": "{{company}} tomonidan ishlab chiqilgan"
+  },
+  "login": {
+    "title": "Xush kelibsiz",
+    "subTitle": "Apple yoki Google account bilan kiring",
+    "withApple": "Apple account orqali",
+    "withGoogle": "Google account orqali",
+    "withSubTitle": "Yoki davom eting",
+    "email": "Elektron pochta",
+    "password": "Parol",
+    "forgotPassword": "Parolingizni unutdingizmi?",
+    "loginButton": "Kirish",
+    "signUp": "Ro'yxatdan o'tish",
+    "signUptext": "Hisobingiz yo'qmi?",
+    "termsAgreement": "Davom etish tugmasini bosish orqali siz bizning {{termsOfService}} va {{privacyPolicy}} bilan rozilik bildirasiz.",
+    "privacyPolicy": "Maxfiylik siyosati",
+    "termsOfService": "Xizmat ko'rsatish shartlari"
+  },
+  "signUp": {
+    "title": "Ro'yxatdan o'tish",
+    "subTitle": "Accaount yaratish uchun, elektron pochtangizni pastda kiriting",
+    "email": "Elektron pochta",
+    "password": "Parol",
+    "confirmPassword": "Parolni tasdiqlang",
+    "signUpButton": "Ro'yxatdan o'tish",
+    "passwordRequirement": "Parol kamida 8 harf belgilardan iborat bo'lishi kerak.",
+    "signin": "Ro'yxatdan o'tish",
+    "name": "To'liq ism",
+    "create": "Accaunt yaratish",
+    "signinText": "Accaountingiz bor bo'lsa?"
+  },
+  "errors": {
+    "title": "Xato",
+    "loginFailed": "Kirish muvaffaqiyatsiz",
+    "invalidCredentials": "Noto'g'ri login yoki parol"
   }
 }

@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-sidebar-footer',
-  imports: [],
+  imports: [
+    TranslocoPipe
+  ],
   templateUrl: './sidebar-footer.html',
   styleUrl: './sidebar-footer.css',
 })
