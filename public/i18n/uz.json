@@ -2,5 +2,21 @@
   "dashboard": {
     "title": "Boshqaruv paneli",
     "welcome": "Boshqaruv paneliga hush kelibsiz! Bu yerda siz o'z faoliyatingiz va statistikangiz haqida umumiy ma'lumotga ega bo'lishingiz mumkin."
+  },
+  "sidebar": {
+    "home": "Asosiy",
+    "profile": "Profil",
+    "settings": "Sozlamalar",
+    "dashboard": "Boshqaruv paneli",
+    "pages": "Sahifalar",
+    "organization": "Tashkilot",
+    "storeList": "Do'konlar ro'yxati",
+    "createStore": "Do'kon yaratish",
+    "list": "Ro'yxat",
+    "create": "Yaratish",
+    "user": "Foydalanuvchi",
+    "order": "Buyurtma",
+    "product": "Mahsulot",
+    "attribute": "Atribut"
   }
 }

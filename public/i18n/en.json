@@ -2,5 +2,21 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome to your dashboard! Here you can find an overview of your activities and statistics."
+  },
+  "sidebar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "pages": "Pages",
+    "organization": "Organization",
+    "storeList": "Store List",
+    "createStore": "Create Store",
+    "list": "List",
+    "create": "Create",
+    "user": "User",
+    "order": "Order",
+    "product": "Product",
+    "profile": "Profile",
+    "settings": "Settings",
+    "attribute": "Attribute"
   }
 }
