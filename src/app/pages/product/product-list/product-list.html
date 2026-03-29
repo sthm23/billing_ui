@@ -6,19 +6,19 @@
     (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
     <ng-template #caption>
       <div class="flex justify-end gap-2">
-        <p-button label="Create product" icon="pi pi-plus" (onClick)="goToCreateProduct()" />
+        <p-button [label]="'product.create'|transloco" icon="pi pi-plus" (onClick)="goToCreateProduct()" />
       </div>
     </ng-template>
     <ng-template #header>
       <tr>
-        <th style="width:12%">Img</th>
-        <th style="width:12%">Name</th>
-        <th style="width:13%">Brand</th>
-        <th style="width:10%">Category</th>
-        <th style="width:15%">Warehouse</th>
-        <th style="width:10%">In Stock</th>
-        <th style="width:15%">Price Range</th>
-        <th style="width:5%">Action</th>
+        <th style="width:12%">{{'product.img'|transloco}}</th>
+        <th style="width:12%">{{'product.name'|transloco}}</th>
+        <th style="width:13%">{{'product.brand'|transloco}}</th>
+        <th style="width:10%">{{'product.category'|transloco}}</th>
+        <th style="width:15%">{{'product.warehouse'|transloco}}</th>
+        <th style="width:10%">{{'product.inStock'|transloco}}</th>
+        <th style="width:15%">{{'product.priceRange'|transloco}}</th>
+        <th style="width:5%">{{'product.action'|transloco}}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-product>

@@ -2,7 +2,7 @@
 <div class="card" [formGroup]="productForm">
   <div class="flex items-center gap-4 flex-1">
     <p-button text icon="pi pi-arrow-left" (onClick)="goToList()" />
-    <h4 class="m-0!">Tovarlar yaratish</h4>
+    <h4 class="m-0!">{{'product.title'| transloco}}</h4>
   </div>
 
   <app-loader [loading]="false">
@@ -13,34 +13,35 @@
           <div class="flex flex-col md:flex-row gap-6">
             @if(authService.isAdmin()) {
             <div class="flex flex-wrap gap-3 w-full">
-              <label for="store">Store</label>
+              <label for="store">{{'product.store' | transloco}}</label>
               <p-select id="store" formControlName="store" [options]="stores()" optionLabel="name"
                 [class]="productForm.controls.store.touched && productForm.controls.store.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
             }
             <div class="flex flex-wrap gap-3 w-full">
-              <label for="warehouse">Warehouse</label>
+              <label for="warehouse">{{'product.warehouse' | transloco}}</label>
               <p-select id="warehouse" formControlName="warehouse" [options]="warehouses()" optionLabel="name"
                 [class]="productForm.controls.warehouse.touched && productForm.controls.warehouse.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="category">Category</label>
+              <label for="category">{{'product.category' | transloco}}</label>
               <p-treeselect id="category" class="w-full" formControlName="category" [options]="categories()"
-                placeholder="Select last child category" />
+                [placeholder]="'product.categoryPlaceholder'|transloco" />
             </div>
 
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="brand">Brand</label>
+              <label for="brand">{{'product.brand' | transloco}}</label>
               <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
                 [class]="productForm.controls.brand.touched && productForm.controls.brand.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
           </div>
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="tags">Tags</label>
+              <label for="tags">{{'product.tag' | transloco}}</label>
               <p-multiselect id="tags" optionGroupLabel="name" optionLabel="value" optionGroupChildren="values"
-                [options]="tags()" [group]="true" formControlName="tags" placeholder="Select tags" scrollHeight="250px"
-                display="chip" class="w-full md:w-80">
+                [options]="tags()" [group]="true" formControlName="tags"
+                [placeholder]="'product.tagPlaceholder'|transloco" scrollHeight="250px" display="chip"
+                class="w-full md:w-80">
                 <ng-template let-group #group>
                   <div class="flex items-center">
                     <span>{{ group.name }}</span>
@@ -50,14 +51,15 @@
 
             </div>
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="attributes">Attribute</label>
-              <p-multiselect id="attributes" formControlName="attributes" placeholder="Select attributes"
-                [options]="attributeOptions()" optionLabel="name" [maxSelectedLabels]="3"
+              <label for="attributes">{{'product.attribute' | transloco}}</label>
+              <p-multiselect id="attributes" formControlName="attributes"
+                [placeholder]="'product.attributePlaceholder' | transloco" [options]="attributeOptions()"
+                optionLabel="name" [maxSelectedLabels]="3"
                 [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
 
             <div class="flex flex-wrap gap-3 w-full">
-              <label for="name">Name</label>
+              <label for="name">{{'product.name' | transloco}}</label>
               <input pInputText id="name" type="text" formControlName="name"
                 [class]="productForm.controls.name.touched && productForm.controls.name.invalid ? 'ng-dirty ng-invalid' : ''" />
             </div>
@@ -66,7 +68,7 @@
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
 
-              <label for="description">Descriptions</label>
+              <label for="description">{{'product.description' | transloco}}</label>
               <textarea id="description" formControlName="description" rows="5" cols="30" pTextarea
                 [autoResize]="true"></textarea>
             </div>
@@ -85,8 +87,8 @@
       </div>
 
       <div class="flex flex-wrap justify-end gap-2 w-full">
-        <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
-        <p-button label="Submit" (onClick)="submit()"></p-button>
+        <p-button [label]="'product.cancel' | transloco" severity="secondary" (onClick)="clearForm()"></p-button>
+        <p-button [label]="'product.submit' | transloco" (onClick)="submit()"></p-button>
       </div>
     </p-fluid>
   </app-loader>

@@ -28,13 +28,14 @@ import { TranslocoService } from '@ngneat/transloco';
 export class SidebarHeader implements OnInit {
   items: MenuItem[] = [];
   currentUser: CurrentUserType | null = null;
-  constructor(private authService: AuthService, private translate: TranslocoService) { }
+  constructor(
+    private authService: AuthService,
+    private translate: TranslocoService
+  ) { }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     this.translate.selectTranslateObject('sidebar').subscribe((res) => {
-      console.log(res);
-
       this.items = [
         {
           label: res['profile'],

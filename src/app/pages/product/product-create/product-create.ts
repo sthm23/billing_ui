@@ -24,6 +24,7 @@ import { AuthService } from '../../auth/service/auth';
 import { Store, Warehouse } from '../../../models/store.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-product-create',
@@ -41,7 +42,8 @@ import { TextareaModule } from 'primeng/textarea';
     FileUploadComponent,
     TreeSelectModule,
     MultiSelectModule,
-    TextareaModule
+    TextareaModule,
+    TranslocoPipe
   ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',

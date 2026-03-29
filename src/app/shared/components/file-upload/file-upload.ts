@@ -6,10 +6,10 @@ import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductService } from '../../../pages/product/service/product.service';
 import { CommonModule } from '@angular/common';
 import { FileUploadData, UploadImageRequest } from '../../../models/product.model';
 import { FileUploadService } from '../../../pages/service/file-upload.service';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 
 @Component({
@@ -21,6 +21,7 @@ import { FileUploadService } from '../../../pages/service/file-upload.service';
     ToastModule,
     BadgeModule,
     ProgressBarModule,
+    TranslocoPipe
   ],
   templateUrl: './file-upload.html',
   styleUrl: './file-upload.css',

@@ -1,9 +1,7 @@
 @let product = productCard();
-@let attributeList = attributes();
-@let variants = variantsArray.controls;
 <p-toast />
 <p-fluid>
-  @if (product && attributeList.length) {
+  @if (product) {
   <div class="card flex flex-wrap justify-content-center" [formGroup]="form">
 
     <!-- LEFT: product info -->
@@ -16,7 +14,7 @@
       <div class="flex flex-col items-center gap-2">
         <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20" size="xlarge"
           shape="square" />
-        <p>no image available</p>
+        <p>{{'product.imgNoPlaceHolder' | transloco}}</p>
       </div>
       }
 
@@ -25,22 +23,23 @@
       <div class="flex flex-1 flex-wrap w-full">
         <div class="w-[40%] md:w-auto">
           <h4>{{ product.name }}</h4>
-          <p class="card-text">{{ product.description ?? 'No description available' }}</p>
+          <p class="card-text">{{ product.description ?? ('No description available' | transloco)}}</p>
           <div class="attribute">
-            <h6>Attributes</h6>
-            @if (attributeList && attributeList.length) {
+            <h6>{{'product.attribute' | transloco}}</h6>
+            @if (attributes() && attributes().length) {
             <div class="flex flex-col flex-wrap gap-4">
-              @for (attr of attributeList; track attr.id) {
+              @for (attr of attributes(); track attr.id) {
               <div class="flex gap-2">
-                <strong>{{ attr.name }}:</strong>
+                <strong>{{ `attribute.${attr.name}` | transloco }}:</strong>
                 @for (item of attrGroup.controls[attr.id].value; track $index; let i = $index; let last = $last) {
-                <p-tag icon="pi pi-info-circle" [value]="item.value.toString()" />
+                <p-tag icon="pi pi-info-circle" [value]="(getAttributeName(
+                  (`attributeValue.${item.value}` | transloco), item.value.toString()))" />
                 }
               </div>
               }
             </div>
             } @else {
-            <span>No attributes</span>
+            <span>{{'product.attributeNoPlaceholder'| transloco}}</span>
             }
           </div>
 
@@ -48,15 +47,15 @@
         <p-divider layout="vertical" class="hidden! md:flex!" />
         <ul class="list-group list-group-flush">
           <li class="mb-4 ">
-            <h6>Category</h6>
-            <p-tag [value]="product.category" severity="secondary" />
+            <h6>{{'product.category' | transloco}}</h6>
+            <p-tag [value]="`category.${product.category}` | transloco" severity="secondary" />
           </li>
           <li class="mb-4">
-            <h6>Brand</h6>
+            <h6>{{'product.brand' | transloco}}</h6>
             <p-tag [value]="product.brand" severity="secondary" />
           </li>
           <li class="mb-4">
-            <h6>Tags</h6>
+            <h6>{{'product.tag' | transloco}}</h6>
             @if (product.tags && product.tags.length) {
             <div class="flex flex-wrap gap-4">
 
@@ -65,7 +64,7 @@
               }
             </div>
             } @else {
-            <span>No tags</span>
+            <span>{{'product.tagNoPlaceholder' | transloco}}</span>
             }
           </li>
 
@@ -81,23 +80,30 @@
         <!-- Attribute selectors -->
         <div class="flex flex-col gap-3" formGroupName="attributes">
           <div class="flex flex-col md:flex-row gap-6">
-            @for (attr of attributeList; track attr.id) {
+            @for (attr of attributes(); track attr.id) {
             <div class="flex flex-col flex-wrap gap-3 w-full">
-              <label [for]="'attr-' + attr.id">{{ attr.name }}</label>
-              <p-multiselect [inputId]="'attr-' + attr.id" placeholder="Select values"
+              <label [for]="'attr-' + attr.id">{{ `attribute.${attr.name}` | transloco }}</label>
+              <p-multiselect [inputId]="'attr-' + attr.id" [placeholder]="'product.selectPlaceholder'|transloco"
                 [loading]="!(attr.items && attr.items.length)" [options]="attr.items" optionLabel="value"
-                [maxSelectedLabels]="3" [formControlName]="attr.id" />
+                [maxSelectedLabels]="3" [formControlName]="attr.id">
+                <ng-template let-attribute #item>
+                  <div class="flex items-center gap-2">
+                    <div>{{ getAttributeName((`attributeValue.${attribute.value}` | transloco), attribute.value) }}
+                    </div>
+                  </div>
+                </ng-template>
+              </p-multiselect>
             </div>
             }
           </div>
         </div>
 
         <!-- Variants -->
-        @if (variants.length) {
+        @if (variantsArray.controls.length) {
         <div class="flex flex-col gap-3" formArrayName="variants">
-          <h4 class="m-0">Variants</h4>
+          <h4 class="m-0">{{'product.variant' | transloco}}</h4>
 
-          @for (variant of variants; track variant.controls.key.value; let i = $index) {
+          @for (variant of variantsArray.controls; track variant.controls.key.value; let i = $index) {
           <div class="card m-0!" [formGroupName]="i">
             <div class="flex flex-col gap-3 flex-wrap md:flex-row">
 
@@ -106,8 +112,10 @@
               <div class="ml-2 flex flex-row gap-2 flex-wrap md:flex-col">
                 @for (attrItem of variant.controls.attrs.value; track attrItem.attributeId + ':' + attrItem.itemId) {
                 <div class="mr-3 min-w-20">
-                  <strong>{{ attrItem.attributeName }}</strong>:
-                  <p-tag icon="pi pi-info-circle" [value]="attrItem.itemName.toString()" />
+                  <strong>{{ getAttributeName((`attribute.${attrItem.attributeName}` | transloco),
+                    attrItem.attributeName) }}</strong>:
+                  <p-tag icon="pi pi-info-circle"
+                    [value]="getAttributeName((`attributeValue.${attrItem.itemName}` | transloco), attrItem.itemName)" />
                 </div>
                 }
               </div>
@@ -117,24 +125,24 @@
               <div class="flex flex-col md:flex-row gap-4">
 
                 <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'quantity-' + i">Quantity</label>
+                  <label [for]="'quantity-' + i">{{'product.quantity' | transloco}}</label>
                   <p-inputnumber [inputId]="'quantity-' + i" formControlName="quantity"
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
                 </div>
 
                 <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'barcode-' + i">Barcode</label>
+                  <label [for]="'barcode-' + i">{{'product.barcode' | transloco}}</label>
                   <input pInputText [id]="'barcode-' + i" formControlName="barCode" />
                 </div>
 
                 <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'price-' + i">Price</label>
+                  <label [for]="'price-' + i">{{'product.incomingPrice' | transloco}}</label>
                   <p-inputnumber [inputId]="'price-' + i" formControlName="price"
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
                 </div>
 
                 <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'salePrice-' + i">Sale price</label>
+                  <label [for]="'salePrice-' + i">{{'product.retailPrice' | transloco}}</label>
                   <p-inputnumber [inputId]="'salePrice-' + i" formControlName="salePrice"
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
                 </div>
@@ -146,7 +154,8 @@
         </div>
         } @else {
         <div class="text-sm text-500 text-color-secondary">
-          Select at least one value for each attribute to generate variants.
+          {{'product.variantPlaceholder' | transloco}}
+
         </div>
         }
 
@@ -155,8 +164,8 @@
 
     <!-- actions -->
     <div class="flex flex-wrap justify-end gap-2 w-full">
-      <p-button label="Cancel" severity="secondary" (onClick)="clearForm()"></p-button>
-      <p-button label="Submit" (onClick)="submit()"></p-button>
+      <p-button [label]="'product.cancel' | transloco" severity="secondary" (onClick)="clearForm()"></p-button>
+      <p-button [label]="'product.submit' | transloco" (onClick)="submit()"></p-button>
     </div>
 
   </div>

@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail } from '../../../models/product.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
-import { delay, forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { CategoryService } from '../../service/category.service';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputTextModule } from 'primeng/inputtext';
 import { FluidModule } from 'primeng/fluid';
@@ -18,7 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
-import { Warehouse } from '../../../models/store.model';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -53,7 +53,8 @@ type VariantForm = {
     ToastModule,
     TagModule,
     DividerModule,
-    AvatarModule
+    AvatarModule,
+    TranslocoPipe
   ],
   templateUrl: './product-variant.html',
   styleUrl: './product-variant.css',
@@ -86,12 +87,11 @@ export class ProductVariant implements OnInit, OnDestroy {
     public productService: ProductService,
     private categoryService: CategoryService,
     private authService: AuthService,
-    private messageService: MessageService,
-    private cdRef: ChangeDetectorRef
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe().subscribe(params => {
       const productId = params.get('id');
       if (productId) {
         this.fetchProductById(productId);
@@ -143,10 +143,6 @@ export class ProductVariant implements OnInit, OnDestroy {
             return { ...attr, items: attrItems } as AttrItemList;
           });
           this.attributes.set(updList);
-          // ВАЖНО: после загрузки items можно восстановить выбор + значения variants
-          // if (this.productCard()?.variants?.length) {
-          //   this.prefillFormFromExistingVariants(this.productCard()!, items);
-          // }
         },
         error: (err) => {
           console.error('Error fetching product:', err);
@@ -309,93 +305,12 @@ export class ProductVariant implements OnInit, OnDestroy {
 
   }
 
-  // /**
-  //  * Заполняет form из product.variants:
-  //  * 1) выставляет выбранные AttributeItem'ы в multiselect'ы
-  //  * 2) генерирует variants (FormArray) как декартово произведение
-  //  * 3) проставляет quantity/price/salePrice/barCode по совпадающему key
-  //  */
-  // private prefillFormFromExistingVariants(product: ProductDetail, allItems: AttributeItem[]) {
-  //   const variants = product.variants ?? [];
-  //   if (!variants.length) return;
-
-  //   // itemId -> item, чтобы знать attributeId для каждого выбранного значения
-  //   const itemById = new Map<string, AttributeItem>();
-  //   allItems.forEach(it => itemById.set(it.id, it));
-
-  //   // 1) собрать выбранные items по каждому attributeId на основе variants
-  //   const selectedByAttrId = new Map<string, AttributeItem[]>();
-
-  //   for (const v of variants) {
-  //     const vAttrs = v.attributes ?? [];
-  //     for (const a of vAttrs) {
-  //       // поддержка разных возможных названий поля id значения
-  //       const valueId: string | undefined =
-  //         a.id ?? a.attributeId;
-
-  //       if (!valueId) continue;
-
-  //       const item = itemById.get(valueId);
-  //       if (!item) continue;
-
-  //       const list = selectedByAttrId.get(item.attributeId) ?? [];
-  //       if (!list.some(x => x.id === item.id)) list.push(item);
-  //       selectedByAttrId.set(item.attributeId, list);
-  //     }
-  //   }
-
-  //   // 2) выставить multiselect значения без триггера rebuild на каждом setValue
-  //   for (const [attrId, control] of Object.entries(this.attrGroup.controls)) {
-  //     const selected = selectedByAttrId.get(attrId) ?? [];
-  //     control.setValue(selected, { emitEvent: false } as any);
-  //   }
-
-  //   // 3) сгенерировать строки variants (комбинации)
-  //   this.rebuildVariantsFromSelection();
-
-  //   // 4) заполнить quantity/price/salePrice/barCode по key
-  //   const formByKey = new Map<string, FormGroup<VariantForm>>();
-  //   this.variantsArray.controls.forEach(ctrl => formByKey.set(ctrl.controls.key.value, ctrl));
-
-  //   const attrNameById = new Map<string, string>();
-  //   product.attributes?.forEach(a => attrNameById.set(a.id, a.name));
-
-  //   for (const v of variants) {
-  //     const vAttrs = v?.attributes ?? [];
-
-  //     const attrs: VariantAttr[] = [];
-  //     for (const a of vAttrs) {
-  //       const valueId: string | undefined =
-  //         a?.id ?? a?.attributeId;
-
-  //       if (!valueId) continue;
-
-  //       const item = itemById.get(valueId);
-  //       if (!item) continue;
-
-  //       attrs.push({
-  //         attributeId: item.attributeId,
-  //         attributeName: attrNameById.get(item.attributeId) ?? '',
-  //         itemId: item.id,
-  //         itemName: item.value ?? ''
-  //       });
-  //     }
-
-  //     if (!attrs.length) continue;
-
-  //     const key = this.buildVariantKey(attrs);
-  //     const fg = formByKey.get(key);
-  //     if (!fg) continue;
-
-  //     // поддержка разных возможных названий полей в product.variants
-  //     fg.controls.quantity.setValue(v?.quantity ?? null);
-  //     // fg.controls.price.setValue(v?.costPrice ?? v?.price ?? null);
-  //     fg.controls.salePrice.setValue(v?.price ?? null);
-  //     fg.controls.barCode.setValue(v?.barCode ?? null);
-  //   }
-
-  //   this.cdRef.detectChanges();
-  // }
+  getAttributeName(text: string, attrName: string): string {
+    if (text.includes('.')) {
+      return attrName.toString();
+    }
+    return text;
+  }
 
   ngOnDestroy(): void {
     this.destroyer$.next();

@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { ImageModule } from 'primeng/image';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AvatarModule } from 'primeng/avatar';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-product-list',
@@ -26,7 +27,8 @@ import { AvatarModule } from 'primeng/avatar';
     BadgeModule,
     ImageModule,
     ConfirmDialogModule,
-    AvatarModule
+    AvatarModule,
+    TranslocoPipe
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',

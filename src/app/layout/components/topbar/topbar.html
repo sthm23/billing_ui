@@ -35,7 +35,9 @@
             </a>
           </ng-template>
         </p-menu>
-        <p-button (click)="menu.toggle($event)" icon="pi pi-language" text />
+        <p-button (click)="menu.toggle($event)" text>
+          <img src="/icons/flags/{{selectedLanguage['value'].toLowerCase()}}.svg" style="width: 18px" />
+        </p-button>
       </div>
       <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
         (click)="toggleDarkMode()">
