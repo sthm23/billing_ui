@@ -11,7 +11,7 @@
     </ng-template>
     <ng-template #header>
       <tr>
-        <th style="width:12%">{{'product.img'|transloco}}</th>
+        <th style="width:8%">{{'product.img'|transloco}}</th>
         <th style="width:12%">{{'product.name'|transloco}}</th>
         <th style="width:13%">{{'product.brand'|transloco}}</th>
         <th style="width:10%">{{'product.category'|transloco}}</th>
@@ -34,8 +34,8 @@
           }
         </td>
         <td>{{ product.name }}</td>
-        <td>{{ product.brand }}</td>
-        <td>{{ product.category }}</td>
+        <td>{{ getProductTranslate((`brand.${product.brand}`|transloco), product.brand)}}</td>
+        <td>{{ getProductTranslate((`category.${product.category}`|transloco), product.category) }}</td>
         <td>{{ product.warehouse.name }}</td>
         <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
         <td>{{ product.priceRange.min | currency: " " : 'code' : '0.0'}}</td>

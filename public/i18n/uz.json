@@ -90,6 +90,9 @@
     "Tops": "Ustki kiyimlar",
     "Bottoms": "Pastki kiyimlar"
   },
+  "brand": {
+    "Other": "Boshqa"
+  },
   "dashboard": {
     "title": "Boshqaruv paneli",
     "welcome": "Boshqaruv paneliga hush kelibsiz! Bu yerda siz o'z faoliyatingiz va statistikangiz haqida umumiy ma'lumotga ega bo'lishingiz mumkin."
@@ -155,9 +158,11 @@
     "action": "Harakat",
     "create": "Yaratish",
     "title": "Mahsulot yaratmoq",
+    "editTitle": "Mahsulot o'zgartirish",
     "store": "Dokon",
     "tag": "Teglar",
     "variant": "Variantlar",
+    "addVariant": "Variant qo'shish",
     "tagPlaceholder": "Teglar tanglang",
     "tagNoPlaceholder": "Teglar mavjud emas",
     "attribute": "Atributlar",
@@ -176,9 +181,26 @@
     "retailPrice": "Sotuv narx",
     "incomingPrice": "Kirib kelgan narx",
     "barcode": "Shrix-kod nomer",
+    "sku": "Artikul",
     "quantity": "Miqdor",
     "imgNoPlaceHolder": "Rasm mavjud emas",
-    "selectPlaceholder": "Qiymatlarni tanlang"
+    "selectPlaceholder": "Qiymatlarni tanlang",
+    "stockMovement": "Ombor kirim-chiqim {{attribute}} - {{value}} uchun",
+    "createAt": "Yaratilgan sana",
+    "createBy": "Kim yaratgan",
+    "inOut": "Kirdi/chiqdi",
+    "reason": "Sababi",
+    "reasonType": {
+      "PURCHASE": "Sotib olish",
+      "SALE": "Sotuv",
+      "ADJUSTMENT": "Korrektsiya",
+      "RETURN": "Qaytarilgan"
+    },
+    "noOrders": "Bu mahsulot uchun hali zakaz mavjud emas.",
+    "stockMovementType": {
+      "IN": "Kirim",
+      "OUT": "Chiqim"
+    }
   },
   "errors": {
     "title": "Xato",

@@ -32,7 +32,7 @@
               <div class="flex gap-2">
                 <strong>{{ `attribute.${attr.name}` | transloco }}:</strong>
                 @for (item of attrGroup.controls[attr.id].value; track $index; let i = $index; let last = $last) {
-                <p-tag icon="pi pi-info-circle" [value]="(getAttributeName(
+                <p-tag icon="pi pi-info-circle" [value]="(getProductTranslate(
                   (`attributeValue.${item.value}` | transloco), item.value.toString()))" />
                 }
               </div>
@@ -52,7 +52,8 @@
           </li>
           <li class="mb-4">
             <h6>{{'product.brand' | transloco}}</h6>
-            <p-tag [value]="product.brand" severity="secondary" />
+            <p-tag [value]="getProductTranslate((`brand.${product.brand}` | transloco), product.brand)"
+              severity="secondary" />
           </li>
           <li class="mb-4">
             <h6>{{'product.tag' | transloco}}</h6>
@@ -88,7 +89,7 @@
                 [maxSelectedLabels]="3" [formControlName]="attr.id">
                 <ng-template let-attribute #item>
                   <div class="flex items-center gap-2">
-                    <div>{{ getAttributeName((`attributeValue.${attribute.value}` | transloco), attribute.value) }}
+                    <div>{{ getProductTranslate((`attributeValue.${attribute.value}` | transloco), attribute.value) }}
                     </div>
                   </div>
                 </ng-template>
@@ -112,10 +113,10 @@
               <div class="ml-2 flex flex-row gap-2 flex-wrap md:flex-col">
                 @for (attrItem of variant.controls.attrs.value; track attrItem.attributeId + ':' + attrItem.itemId) {
                 <div class="mr-3 min-w-20">
-                  <strong>{{ getAttributeName((`attribute.${attrItem.attributeName}` | transloco),
+                  <strong>{{ getProductTranslate((`attribute.${attrItem.attributeName}` | transloco),
                     attrItem.attributeName) }}</strong>:
                   <p-tag icon="pi pi-info-circle"
-                    [value]="getAttributeName((`attributeValue.${attrItem.itemName}` | transloco), attrItem.itemName)" />
+                    [value]="getProductTranslate((`attributeValue.${attrItem.itemName}` | transloco), attrItem.itemName)" />
                 </div>
                 }
               </div>

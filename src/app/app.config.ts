@@ -40,6 +40,9 @@ export const appConfig: ApplicationConfig = {
         defaultLang: storedLang || 'ru',
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
+        missingHandler: {
+          logMissingKey: false,
+        },
       },
       loader: TranslocoHttpLoader
     }),

@@ -90,6 +90,9 @@
     "Tops": "Топы",
     "Bottoms": "Низы"
   },
+  "brand": {
+    "Other": "Другое"
+  },
   "dashboard": {
     "title": "Панель управления",
     "welcome": "Добро пожаловать на панель управления! Здесь вы можете ознакомиться с обзором вашей деятельности и статистикой."
@@ -154,9 +157,11 @@
     "action": "Действия",
     "create": "Создать",
     "title": "Создать товар",
+    "editTitle": "Обновить товар",
     "store": "Магазин",
     "tag": "Теги",
     "variant": "Варианты",
+    "addVariant": "Добавить вариант",
     "tagPlaceholder": "Выбрать теги",
     "tagNoPlaceholder": "Теги отсутствует",
     "attribute": "Атрибуты",
@@ -175,9 +180,27 @@
     "retailPrice": "Цена для продажи",
     "incomingPrice": "Цена прихода",
     "barcode": "Штрихкод",
+    "sku": "Артикул",
     "quantity": "Количество",
     "imgNoPlaceHolder": "Изображение отсутствует",
-    "selectPlaceholder": "Выберите значения"
+    "selectPlaceholder": "Выберите значения",
+    "stockMovement": "Складные перемещения для {{attribute}} - {{value}}",
+    "createAt": "Дата создания",
+    "createBy": "Кем создан",
+    "inOut": "Приход/расход",
+    "reason": "Причина",
+    "reasonType": {
+      "ADJUSTMENT": "Корректировка",
+      "PURCHASE": "Покупка",
+      "SALE": "Продажа",
+      "RETURN": "Возврат",
+      "TRANSFER": "Перемещение"
+    },
+    "noOrders": "Для этого продукта еще нет заказов.",
+    "stockMovementType": {
+      "IN": "Приход",
+      "OUT": "Уход"
+    }
   },
   "errors": {
     "title": "Ошибка",

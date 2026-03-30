@@ -305,11 +305,11 @@ export class ProductVariant implements OnInit, OnDestroy {
 
   }
 
-  getAttributeName(text: string, attrName: string): string {
-    if (text.includes('.')) {
-      return attrName.toString();
+  getProductTranslate(translation: string, value: string): string {
+    if (translation.includes('.')) {
+      return value.toString();
     }
-    return text;
+    return translation;
   }
 
   ngOnDestroy(): void {

@@ -46,7 +46,7 @@ export interface ProductVariant {
 export interface StockMovement {
   id: string
   type: 'IN' | 'OUT'
-  reason: 'PURCHASE' | 'SALE' | 'ADJUSTMENT'
+  reason: 'PURCHASE' | 'SALE' | 'ADJUSTMENT' | 'RETURN'
   warehouseId: string
   quantity: number
   unitCost: string

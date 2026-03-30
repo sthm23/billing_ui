@@ -145,6 +145,13 @@ export class ProductList implements OnInit, OnDestroy {
     this.router.navigate(['/pages/product/create']);
   }
 
+  getProductTranslate(translation: string, value: string): string {
+    if (translation.includes('.')) {
+      return value;
+    }
+    return translation;
+  }
+
   ngOnDestroy() {
     this.appStore.stopLoader();
   }

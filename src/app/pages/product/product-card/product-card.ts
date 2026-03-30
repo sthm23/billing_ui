@@ -34,6 +34,7 @@ import { DialogComponent } from '../../../shared/components/dialog/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { ChipModule } from 'primeng/chip';
 import { AvatarModule } from 'primeng/avatar';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -84,7 +85,8 @@ type VariantForm = {
     DialogComponent,
     ChipModule,
     TextareaModule,
-    AvatarModule
+    AvatarModule,
+    TranslocoPipe
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -235,6 +237,18 @@ export class ProductCard implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate(['/pages/product/list']);
+  }
+
+  getProductTranslate(translation: string, value: string): string {
+    if (translation.includes('.')) {
+      return value;
+    }
+    return translation;
+  }
+
+  isControlValid(controlName: string): string {
+    const control = this.productForm.get(controlName);
+    return control && control.touched && control.invalid ? 'ng-dirty ng-invalid' : '';
   }
 
 

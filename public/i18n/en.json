@@ -89,6 +89,9 @@
     "Tops": "Tops",
     "Bottoms": "Bottoms"
   },
+  "brand": {
+    "Other": "Other"
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome to your dashboard! Here you can find an overview of your activities and statistics."
@@ -153,9 +156,11 @@
     "action": "Action",
     "create": "Create",
     "title": "Create product",
+    "editTitle": "Edit product",
     "store": "Store",
     "tag": "Tags",
     "variant": "Variants",
+    "addVariant": "Add variant",
     "tagPlaceholder": "Select tags",
     "tagNoPlaceholder": "No tags available",
     "attribute": "Attribute",
@@ -171,12 +176,29 @@
     "submit": "Submit",
     "edit": "Edit",
     "variantPlaceholder": "Select at least one value for each attribute to generate variants.",
-    "retailPrice": "retailPrice",
-    "incomingPrice": "incomingPrice",
-    "barcode": "barcode",
-    "quantity": "quantity",
+    "retailPrice": "Retail Price",
+    "incomingPrice": "Incoming Price",
+    "barcode": "Barcode",
+    "sku": "SKU",
+    "quantity": "Quantity",
     "imgNoPlaceHolder": "No image available",
-    "selectPlaceholder": "Select values"
+    "selectPlaceholder": "Select values",
+    "stockMovement": "Stock movement for {{attribute}} - {{value}}",
+    "createAt": "Created At",
+    "createBy": "Created By",
+    "inOut": "In/Out",
+    "reason": "Reason",
+    "reasonType": {
+      "PURCHASE": "Purchase",
+      "SALE": "Sale",
+      "ADJUSTMENT": "Adjustment",
+      "RETURN": "Return"
+    },
+    "noOrders": "There are no order for this product yet.",
+    "stockMovementType": {
+      "IN": "Input",
+      "OUT": "Output"
+    }
   },
   "errors": {
     "title": "Error",
