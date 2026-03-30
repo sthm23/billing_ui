@@ -63,7 +63,7 @@
     "Coral": "Коралловый"
   },
   "category": {
-    "Lumber": "Пиломатериалы древесины",
+    "Lumber": "Древесины",
     "Beam": "Балка брус",
     "Batten": "Рейка",
     "Electronics": "Электроника",
@@ -103,9 +103,7 @@
     "settings": "Настройки",
     "dashboard": "Панель управления",
     "pages": "Страницы",
-    "organization": "Организация",
-    "storeList": "Список магазинов",
-    "createStore": "Создать магазин",
+    "organization": "Магазин",
     "list": "Список",
     "create": "Создать",
     "user": "Пользователь",
@@ -201,6 +199,31 @@
       "IN": "Приход",
       "OUT": "Уход"
     }
+  },
+  "organization": {
+    "noFound": "Магазин не найден.",
+    "create": "Создать",
+    "edit": "Редактировать",
+    "name": "Название",
+    "staff": "Сотрудники",
+    "warehouse": "Склад",
+    "createAt": "Дата создания",
+    "action": "Действие",
+    "search": "Поиск",
+    "dateRange": "Выберите диапазон дат",
+    "createTitle": "Создать магазин",
+    "storeName": "Название магазина",
+    "warehouseName": "Название склада",
+    "owner": "Владелец",
+    "category": "Категория",
+    "brand": "Бренд",
+    "attribute": "Атрибуты",
+    "categoryPlaceholder": "Выбирайте одну категорий",
+    "brandPlaceholder": "Выберите бренды",
+    "attributePlaceholder": "Выберите атрибуты",
+    "ownerPlaceholder": "Выберите владельца",
+    "submit": "Подтвердить",
+    "cancel": "Отмена"
   },
   "errors": {
     "title": "Ошибка",

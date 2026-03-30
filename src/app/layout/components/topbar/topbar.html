@@ -1,7 +1,7 @@
 <div class="layout-topbar">
   <div class="layout-topbar-logo-container">
-    <p-button class="layout-menu-button layout-topbar-action" [rounded]="true" [text]="true"
-      (click)="layoutService.onMenuToggle()" size="small">
+    <p-button class="layout-menu-button layout-topbar-action" [text]="true" (click)="layoutService.onMenuToggle()"
+      size="small">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect width="18" height="18" x="3" y="3" rx="2"></rect>
@@ -35,20 +35,15 @@
             </a>
           </ng-template>
         </p-menu>
-        <p-button (click)="menu.toggle($event)" text>
+        <p-button size="large" (click)="menu.toggle($event)" text>
           <img src="/icons/flags/{{selectedLanguage['value'].toLowerCase()}}.svg" style="width: 18px" />
         </p-button>
       </div>
-      <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
-        (click)="toggleDarkMode()">
-        <i
-          [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-      </p-button>
-      <p-button type="button" size="small" class="layout-topbar-action" [rounded]="true" [text]="true"
-        (click)="handleExit()">
-        <i class="pi pi-power-off"></i>
-        <span>Exit</span>
-      </p-button>
+      <p-button type="button" size="large" [icon]="layoutService.isDarkTheme() ? 'pi pi-moon' : 'pi pi-sun'"
+        [text]="true" (click)="toggleDarkMode()" />
+
+      <p-button type="button" [text]="true" (click)="handleExit()" icon="pi pi-power-off" size="large" />
+
     </div>
   </div>
 </div>

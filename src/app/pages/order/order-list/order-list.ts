@@ -22,6 +22,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { SelectModule } from 'primeng/select';
 import { Warehouse } from '../../../models/store.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-order-list',
@@ -40,7 +41,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     FormsModule,
     DrawerModule,
     SelectModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TranslocoPipe
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',

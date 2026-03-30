@@ -19,8 +19,8 @@
             <div class="flex gap-x-2 flex-wrap gap-4">
               <p-selectbutton class="flex-wrap!" [(ngModel)]="selectedStatus" [options]="stateOptions"
                 optionLabel="label" optionValue="value" aria-labelledby="basic" />
-              <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-                placeholder="Select date range" selectionMode="range" [readonlyInput]="true" />
+              <p-datepicker [focusTrap]="false" iconDisplay="input" [showIcon]="true"
+                [placeholder]="'organization.dateRange' | transloco" selectionMode="range" [readonlyInput]="true" />
             </div>
           </div>
 
@@ -64,8 +64,8 @@
           <td><p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag></td>
           <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
           <td>
-            <p-button [disabled]="order.status === 'COMPLETED' || order.status === 'CANCELLED'" [rounded]="true"
-              [outlined]="true" icon="pi pi-trash" severity="danger" (click)="confirmDeleteOrder($event, order)" />
+            <p-button [disabled]="order.status === 'COMPLETED' || order.status === 'CANCELLED'" [outlined]="true"
+              icon="pi pi-trash" severity="danger" (click)="confirmDeleteOrder($event, order)" />
           </td>
         </tr>
       </ng-template>

@@ -4,7 +4,7 @@
     @if(stores().length === 0) {
     <div class="flex flex-col items-center justify-center gap-4 py-8">
       <i class="pi pi-building" style="font-size: 3rem;"></i>
-      <p class="text-lg">No organizations found.</p>
+      <p class="text-lg">{{'organization.noFound' | transloco}}</p>
     </div>
 
     }@else {
@@ -22,18 +22,14 @@
 
             <p-iconfield>
               <p-inputicon class="pi pi-search" />
-              <input type="text" pInputText placeholder="Search" />
+              <input type="text" pInputText [placeholder]="'organization.search' | transloco" />
             </p-iconfield>
-            <div class="flex gap-x-2 flex-wrap gap-4">
-              <p-selectbutton class="flex-wrap!" [options]="stateOptions" optionLabel="label" optionValue="value"
-                aria-labelledby="basic" />
-              <p-datepicker [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-                placeholder="Select date range" selectionMode="range" [readonlyInput]="true" />
-            </div>
+
           </div>
 
           <div class="flex justify-end gap-2">
-            <p-button type="button" label="Create" severity="primary" icon="pi pi-plus" (click)="createStore()" />
+            <p-button type="button" [label]="'organization.create' | transloco" severity="primary" icon="pi pi-plus"
+              (click)="createStore()" />
           </div>
         </div>
 
@@ -41,11 +37,11 @@
       </ng-template>
       <ng-template #header>
         <tr>
-          <th style="width:25%">Name</th>
-          <th style="width:25%">staff</th>
-          <th style="width:25%">warehouse</th>
-          <th style="width:25%">Created At</th>
-          <th style="width:25%">Action</th>
+          <th style="width:25%">{{'organization.name' | transloco}}</th>
+          <th style="width:25%">{{'organization.staff' | transloco}}</th>
+          <th style="width:25%">{{'organization.warehouse' | transloco}}</th>
+          <th style="width:25%">{{'organization.createAt' | transloco}}</th>
+          <th style="width:25%">{{'organization.action' | transloco}}</th>
         </tr>
       </ng-template>
       <ng-template #body let-store>
@@ -55,7 +51,7 @@
           <td>{{ store.warehouse.length }}</td>
           <td>{{ store.createdAt | date: 'dd/MM/yyyy hh:mm' }}</td>
           <td>
-            <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" rounded="true"
+            <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true"
               (click)="disableStore(store)"></button>
           </td>
         </tr>

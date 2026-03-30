@@ -47,31 +47,26 @@ export class Menu {
               visible: this.authService.isAdmin(),
               items: [
                 {
-                  label: res['storeList'],
-                  icon: 'pi pi-fw pi-globe',
+                  label: res['list'],
+                  icon: 'pi pi-fw pi-list',
                   routerLink: ['/pages/organization/list']
                 },
                 {
-                  label: res['createStore'],
-                  icon: 'pi pi-fw pi-globe',
+                  label: res['create'],
+                  icon: 'pi pi-fw pi-plus-circle',
                   routerLink: ['/pages/organization/create']
                 },
               ]
             },
             {
               label: res['product'],
-              icon: 'pi pi-fw pi-tag',
+              icon: 'pi pi-fw pi-box',
               items: [
                 {
                   label: res['list'],
                   icon: 'pi pi-fw pi-list',
                   routerLink: ['/pages/product/list']
                 },
-                {
-                  label: res['create'],
-                  icon: 'pi pi-fw pi-plus-circle',
-                  routerLink: ['/pages/product/create']
-                }
               ]
             },
             {
@@ -83,11 +78,6 @@ export class Menu {
                   icon: 'pi pi-fw pi-list',
                   routerLink: ['/pages/user/list']
                 },
-                {
-                  label: res['create'],
-                  icon: 'pi pi-fw pi-plus-circle',
-                  routerLink: ['/pages/user/create']
-                }
               ]
             },
             {
@@ -115,7 +105,7 @@ export class Menu {
 
             {
               label: res['attribute'],
-              icon: 'pi pi-fw pi-cog',
+              icon: 'pi pi-fw pi-tag',
               routerLink: ['/settings/attribute/list'],
               items: [
                 {

@@ -1,6 +1,6 @@
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule, Scroll } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, Scroll } from '@angular/router';
 import { StyleClassModule } from 'primeng/styleclass';
 import { LayoutService } from '../../service/layout.service';
 import { AuthService } from '../../../pages/auth/service/auth';
@@ -57,7 +57,6 @@ export class Topbar implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
     private translocoService: TranslocoService
   ) { }
 

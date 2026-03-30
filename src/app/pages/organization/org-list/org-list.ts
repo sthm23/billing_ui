@@ -15,6 +15,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { InputTextModule } from 'primeng/inputtext';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-org-list',
@@ -30,7 +31,8 @@ import { InputTextModule } from 'primeng/inputtext';
     IconFieldModule,
     InputIconModule,
     SelectButtonModule,
-    InputTextModule
+    InputTextModule,
+    TranslocoPipe
   ],
   templateUrl: './org-list.html',
   styleUrl: './org-list.css',

@@ -1,26 +1,25 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { ButtonModule } from 'primeng/button';
 import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
 import { InputMaskModule } from 'primeng/inputmask';
-import { SelectItemGroup } from 'primeng/api';
-import { PasswordModule } from 'primeng/password';
-import { AppStore } from '../../../store/app.store';
 import { MultiSelectType, SelectType } from '../../../models/app.models';
 import { CategoryService } from '../../service/category.service';
 import { UserService } from '../../user/service/user.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { StoreService } from '../service/store';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { Category } from '../../../models/product.model';
 
 
 @Component({
@@ -37,7 +36,9 @@ import { forkJoin } from 'rxjs';
     RouterModule,
     InputMaskModule,
     MultiSelectModule,
-    TreeSelectModule
+    TreeSelectModule,
+    TranslocoPipe,
+    TranslatePipe
   ],
   templateUrl: './org-create.html',
   styleUrl: './org-create.css',
@@ -61,11 +62,16 @@ export class OrgCreate implements OnInit, OnDestroy {
     attributeIds: new FormControl<SelectType[] | null>(null, [Validators.required]),
   })
 
+  translateObject = {}
+  categoryArr: Category[] = []
+  destroy$ = new Subject<void>();
+
   constructor(
     private userService: UserService,
     private storeService: StoreService,
     private categoryService: CategoryService,
     private messageService: MessageService,
+    private translate: TranslocoService
   ) {
   }
 
@@ -79,25 +85,29 @@ export class OrgCreate implements OnInit, OnDestroy {
       brands: this.categoryService.getBrandList(),
       categories: this.categoryService.getCategoryList(),
       attributes: this.categoryService.getAttributeList()
-    }).subscribe({
-      next: ({ owners, brands, categories, attributes }) => {
-        this.ownerList.set(owners.data.map((owner) => ({
-          name: owner.fullName,
-          id: owner.id
-        })));
-        const data = this.makeSelectTypes(categories)
-        this.categoryList.set(data);
+    }).pipe(takeUntil(this.destroy$), switchMap(({ owners, brands, categories, attributes }) => {
 
-        this.brandList.set(brands.map((brand) => ({
-          name: brand.name,
-          id: brand.id
-        })));
-        this.categoryList.set(this.makeSelectTypes(categories));
-        this.attributeList.set(attributes.map((attr) => ({
-          name: attr.name,
-          id: attr.id
-        })));
+      this.ownerList.set(owners.data.map((owner) => ({
+        name: owner.fullName,
+        id: owner.id
+      })));
+      this.categoryArr = categories;
+      const data = this.makeSelectTypes(categories)
+      this.categoryList.set(data);
 
+      this.brandList.set(brands.map((brand) => ({
+        name: brand.name,
+        id: brand.id
+      })));
+
+      this.attributeList.set(attributes.map((attr) => ({
+        name: attr.name,
+        id: attr.id
+      })));
+      return this.translate.selectTranslateObject('category')
+    })).subscribe({
+      next: (translate) => {
+        this.translateObject = translate;
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch data' });
@@ -106,8 +116,6 @@ export class OrgCreate implements OnInit, OnDestroy {
   }
 
   submitForm() {
-    console.log(this.storeForm.value);
-
     if (this.storeForm.valid) {
       const data = this.storeForm.value;
       const payload = {
@@ -165,7 +173,15 @@ export class OrgCreate implements OnInit, OnDestroy {
     return result as MultiSelectType[];
   }
 
+  getStoreTranslatedName(translate: string, value: string): string {
+    if (translate.includes('.')) {
+      return value
+    }
+    return translate
+  }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

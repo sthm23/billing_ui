@@ -37,8 +37,7 @@
       <p-badge value="Pending" severity="warn" />
       <div class="p-fileupload-file-actions">
         <p-button icon="pi pi-times" class="item-grow"
-          (onClick)="onRemoveTemplatingFile($event, item, removeFileCallback, i)" text [rounded]="true"
-          severity="danger" />
+          (onClick)="onRemoveTemplatingFile($event, item, removeFileCallback, i)" text severity="danger" />
       </div>
     </div>
     }
@@ -58,8 +57,7 @@
       <p-badge value="Completed" severity="success" />
       <div class="p-fileupload-file-actions">
         <p-button icon="pi pi-times" class="item-grow"
-          (click)="onRemoveTemplatingFile($event, item, removeUploadedFileCallback, i)" text [rounded]="true"
-          severity="danger" />
+          (click)="onRemoveTemplatingFile($event, item, removeUploadedFileCallback, i)" text severity="danger" />
       </div>
     </div>
     }
