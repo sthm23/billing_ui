@@ -3,8 +3,8 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { Router } from '@angular/router';
-import { CategoryService } from '../../../pages/service/category.service';
 import { Attribute } from '../../../models/product.model';
+import { CategoryService } from '../../../shared/services/category.service';
 
 @Component({
   selector: 'app-attribute-list',

@@ -8,7 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FileUploadData, UploadImageRequest } from '../../../models/product.model';
-import { FileUploadService } from '../../../pages/service/file-upload.service';
+import { FileUploadService } from '../../services/file-upload.service';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 

@@ -11,7 +11,7 @@ import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
 import { InputMaskModule } from 'primeng/inputmask';
 import { MultiSelectType, SelectType } from '../../../models/app.models';
-import { CategoryService } from '../../service/category.service';
+import { CategoryService } from '../../../shared/services/category.service';
 import { UserService } from '../../user/service/user.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { StoreService } from '../service/store';

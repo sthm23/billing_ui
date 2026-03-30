@@ -17,9 +17,9 @@ import { FileUploadComponent } from '../../../shared/components/file-upload/file
 import { ProductService } from '../service/product.service';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { CreateProduct, FileUploadData, Product } from '../../../models/product.model';
-import { CategoryService } from '../../service/category.service';
+import { CategoryService } from '../../../shared/services/category.service';
 import { StoreService } from '../../organization/service/store';
-import { FileUploadService } from '../../service/file-upload.service';
+import { FileUploadService } from '../../../shared/services/file-upload.service';
 import { AuthService } from '../../auth/service/auth';
 import { Store, Warehouse } from '../../../models/store.model';
 import { MultiSelectModule } from 'primeng/multiselect';

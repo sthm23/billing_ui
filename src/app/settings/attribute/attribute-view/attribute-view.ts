@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { CategoryService } from '../../../pages/service/category.service';
+import { CategoryService } from '../../../shared/services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
