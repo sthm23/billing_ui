@@ -44,6 +44,7 @@
     "Pine": "Pine",
     "Spruce": "Spruce",
     "Oak": "Oak",
+    "Walnut": "Walnut",
     "Red": "Red",
     "Green": "Green",
     "Blue": "Blue",
@@ -101,8 +102,6 @@
     "dashboard": "Dashboard",
     "pages": "Pages",
     "organization": "Store",
-    "storeList": "Store List",
-    "createStore": "Create Store",
     "list": "List",
     "create": "Create",
     "user": "User",
@@ -194,7 +193,7 @@
       "ADJUSTMENT": "Adjustment",
       "RETURN": "Return"
     },
-    "noOrders": "There are no order for this product yet.",
+    "noOrders": "There are no orders for this product yet.",
     "stockMovementType": {
       "IN": "Input",
       "OUT": "Output"
@@ -224,6 +223,63 @@
     "ownerPlaceholder": "Select owner",
     "submit": "Submit",
     "cancel": "Cancel"
+  },
+  "order": {
+    "status": {
+      "name": "Status",
+      "HOLD": "Holding",
+      "DEBT": "Debt",
+      "CREATED": "Created",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "paymentMethod": {
+      "name": "Payment method",
+      "CASH": "Cash",
+      "CARD": "Card",
+      "DEBT": "Debt",
+      "INSTALLMENT": "Installment"
+    },
+    "channel": {
+      "name": "Channel",
+      "ONLINE": "Online",
+      "POS": "POS"
+    },
+    "noFound": "No order found.",
+    "submit": "Submit",
+    "create": "Create",
+    "cancel": "Cancel",
+    "store": "Store",
+    "warehouse": "Warehouse",
+    "warehousePlaceholder": "Choose a warehouse",
+    "warehouseTitle": "Select warehouse",
+    "creator": "Creator",
+    "total": "Total",
+    "action": "Action",
+    "dateRange": "Choose date range",
+    "search": "Search",
+    "scan": "Scan",
+    "order": "Order",
+    "searchPlaceholder": "Search product ...",
+    "searchCustomerPlaceholder": "Search customer ...",
+    "orderItemEmpty": "No products have been added to the order. Please add products to create an order.",
+    "totalAmount": "Total amount",
+    "sale": "Sale",
+    "hold": "On hold",
+    "payment": "Payment",
+    "payments": "Payments",
+    "addCustomer": "Add customer",
+    "searchCustomer": "Search for an existing customer or create a new one.",
+    "return": "Return",
+    "createdAt": "Created at",
+    "customer": "Customer",
+    "paymentTitle": "You can select multiple payment methods for split payment."
+  },
+  "notFound": {
+    "title": "OOPS, THIS PAGE NOT FOUND!",
+    "description": "The link may be corrupted or the page may have been removed.",
+    "goHome": "Go to home page",
+    "contactSupport": "Contact support"
   },
   "errors": {
     "title": "Error",

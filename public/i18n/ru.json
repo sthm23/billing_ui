@@ -99,18 +99,18 @@
   },
   "sidebar": {
     "home": "Главная",
-    "profile": "Профиль",
-    "settings": "Настройки",
     "dashboard": "Панель управления",
     "pages": "Страницы",
     "organization": "Магазин",
     "list": "Список",
     "create": "Создать",
     "user": "Пользователь",
-    "messages": "Сообщения",
-    "logout": "Выйти",
     "order": "Заказ",
     "product": "Продукт",
+    "profile": "Профиль",
+    "messages": "Сообщения",
+    "logout": "Выйти",
+    "settings": "Настройки",
     "attribute": "Атрибут",
     "reservedRights": "Все права защищены.",
     "poweredBy": "Разработано с {{company}}"
@@ -191,8 +191,7 @@
       "ADJUSTMENT": "Корректировка",
       "PURCHASE": "Покупка",
       "SALE": "Продажа",
-      "RETURN": "Возврат",
-      "TRANSFER": "Перемещение"
+      "RETURN": "Возврат"
     },
     "noOrders": "Для этого продукта еще нет заказов.",
     "stockMovementType": {
@@ -224,6 +223,63 @@
     "ownerPlaceholder": "Выберите владельца",
     "submit": "Подтвердить",
     "cancel": "Отмена"
+  },
+  "order": {
+    "status": {
+      "name": "Статус",
+      "HOLD": "Ожидание",
+      "DEBT": "Долг",
+      "CREATED": "Создано",
+      "COMPLETED": "Завершено",
+      "CANCELLED": "Отменено"
+    },
+    "paymentMethod": {
+      "name": "Способ оплаты",
+      "CASH": "Наличные",
+      "CARD": "Карта",
+      "DEBT": "Долг",
+      "INSTALLMENT": "Рассрочка"
+    },
+    "channel": {
+      "name": "Способ оплаты",
+      "ONLINE": "Онлайн",
+      "POS": "Касса"
+    },
+    "noFound": "Заказ не найден.",
+    "submit": "Подтвердить",
+    "create": "Создать",
+    "cancel": "Отмена",
+    "store": "Магазин",
+    "warehouse": "Склад",
+    "warehousePlaceholder": "Выберите склад",
+    "warehouseTitle": "Выберите склад",
+    "creator": "Создатель",
+    "total": "Итого",
+    "action": "Действие",
+    "dateRange": "Выберите диапазон дат",
+    "search": "Поиск",
+    "scan": "Сканировать",
+    "order": "Заказ",
+    "searchPlaceholder": "Поиск товара",
+    "searchCustomerPlaceholder": "Поиск клиента",
+    "orderItemEmpty": "В заказе нет товаров. Пожалуйста, добавьте товары для создания заказа.",
+    "totalAmount": "Общая сумма",
+    "sale": "Скидка",
+    "hold": "Бронь",
+    "payment": "Оплата",
+    "payments": "Оплаты",
+    "addCustomer": "Добавить клиента",
+    "searchCustomer": "Поиск существующего клиента или создание нового.",
+    "return": "Возврат",
+    "createdAt": "Создано",
+    "customer": "Клиент",
+    "paymentTitle": "Вы можете выбрать несколько способов оплаты для разделения платежа."
+  },
+  "notFound": {
+    "title": "Ой, страница не найдена!",
+    "description": "Страница, которую вы ищете, не существует. Пожалуйста, проверьте URL или вернитесь на главную страницу.",
+    "goHome": "Вернуться на главную страницу",
+    "contactSupport": "Связаться с поддержкой"
   },
   "errors": {
     "title": "Ошибка",

@@ -8,17 +8,17 @@
       <h4 class="filter">Order</h4>
     </div>
     <div class="flex flex-col gap-4 items-end sm:items-start sm:flex-row justify-between mb-4">
-      <p-autocomplete class="w-full" placeholder="Search product ..." [delay]="500" [minQueryLength]="3"
-        panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
+      <p-autocomplete class="w-full" [placeholder]="'order.searchPlaceholder' | transloco" [delay]="500"
+        [minQueryLength]="3" panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
         [suggestions]="searchResults()" (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)"
         fluid />
-      <p-button icon="pi pi-qrcode" label="Scan" />
+      <p-button icon="pi pi-qrcode" [label]="'order.scan' | transloco" />
     </div>
     <div class="flex flex-col gap-4">
       @if(orderItems().length === 0) {
       <div class="flex flex-col items-center gap-4 mt-8">
         <i class="pi pi-shopping-cart text-6xl text-gray-400"></i>
-        <p class="text-gray-500">No items in the order. Please add products to the order.</p>
+        <p class="text-gray-500">{{'order.orderItemEmpty' | transloco}}</p>
       </div>
       }
       @for (item of orderItems(); track item.id; let i = $index) {
@@ -30,11 +30,11 @@
   <div class="flex-3 card flex flex-col justify-between gap-2 p-4">
     <div class="flex flex-col justify-between gap-2 mt-4">
       <div class="flex flex-col justify-between gap-1">
-        <div>Total amount:</div>
+        <div>{{'order.totalAmount' | transloco}}:</div>
         <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
       </div>
       <div class="flex flex-col justify-between gap-1">
-        <div>Sale:</div>
+        <div>{{'order.sale' | transloco}}:</div>
         <div class="flex items-center gap-4">
           <p class="flex items-center mb-0! text-xl text-(--p-button-text-danger-color)">
             {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
@@ -46,7 +46,7 @@
     </div>
     <p-divider class="my-2" />
     <div class="flex flex-col items-end sm:items-start">
-      <div>Total: </div>
+      <div>{{'order.total' | transloco}}: </div>
       <div class="flex items-center gap-2">
         <p class="text-xl font-bold mb-0!">{{ totalAmount() - saleAmount() | currency: " ": "code":
           "0.0"}} UZS
@@ -55,8 +55,10 @@
       </div>
     </div>
     <div class="flex gap-2 justify-end mt-4">
-      <p-button icon="pi pi-clock" class="submit-btn" label="Hold" severity="secondary" (onClick)="holdOrder()" />
-      <p-button icon="pi pi-wallet" class="submit-btn" label="Payment" (onClick)="goToPayment()" />
+      <p-button icon="pi pi-clock" class="submit-btn" [label]="'order.hold' | transloco" severity="secondary"
+        (onClick)="holdOrder()" />
+      <p-button icon="pi pi-wallet" class="submit-btn" [label]="'order.payment' | transloco"
+        (onClick)="goToPayment()" />
     </div>
   </div>
 </div>

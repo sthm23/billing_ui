@@ -175,14 +175,14 @@ export class OrderList implements OnInit {
 
   getSeverity(status: OrderStatus) {
     switch (status) {
-      case OrderStatus.CANCELLED:
-        return 'danger';
+      case OrderStatus.HOLD:
+        return 'warn';
       case OrderStatus.CREATED:
         return 'info';
       case OrderStatus.COMPLETED:
         return 'success';
       case OrderStatus.DEBT:
-        return 'warn';
+        return 'danger';
       default:
         return null;
     }
@@ -240,5 +240,12 @@ export class OrderList implements OnInit {
       this.router.navigate(['/pages/order', order.id])
     }
 
+  }
+
+  getTranslatedText(translate: string, value: string): string {
+    if (translate.includes('.')) {
+      return value
+    }
+    return translate
   }
 }

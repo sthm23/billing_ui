@@ -20,6 +20,7 @@ import { FluidModule } from 'primeng/fluid';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 
 type PaymentMethod = 'CASH' | 'CARD';
@@ -43,7 +44,8 @@ type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
     FluidModule,
     ToastModule,
     AccordionModule,
-    BadgeModule
+    BadgeModule,
+    TranslocoPipe
   ],
   templateUrl: './create-order-payment.html',
   styleUrl: './create-order-payment.css',
@@ -240,6 +242,13 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
   goToReturn(orderId: string) {
     this.router.navigate(['/pages/order/return', orderId]);
+  }
+
+  getTranslateText(translate: string, value: string): string {
+    if (translate.includes('.')) {
+      return value
+    }
+    return translate
   }
 
   ngOnDestroy(): void {
