@@ -40,14 +40,13 @@
             <i class="pi pi-user"></i>
           </p-inputgroup-addon>
           <p-autocomplete class="mr-4!" [placeholder]="'order.searchCustomerPlaceholder' | transloco" inputId="customer"
-            optionLabel="label" [suggestions]="userSearchResult()" (completeMethod)="search($event)"
-            (onSelect)="selectSearchOption($event)" fluid />
+            optionLabel="label" [emptyMessage]="'order.noResults' | transloco:{ item: 'order.customer' | transloco }"
+            [suggestions]="userSearchResult()" (completeMethod)="search($event)" (onSelect)="selectSearchOption($event)"
+            fluid />
           <p-button type="button" (click)="customerDialogVisible = true">
             <i class="pi pi-plus"></i>
             <span class="hidden sm:block">{{'order.addCustomer' | transloco}}</span>
           </p-button>
-
-
         </p-inputgroup>
         }
       </div>

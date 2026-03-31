@@ -8,6 +8,9 @@ import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
+import { TranslocoPipe } from '@ngneat/transloco';
+import { TagModule } from 'primeng/tag';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-user-list',
@@ -15,7 +18,10 @@ import { Router } from '@angular/router';
     CommonModule,
     TableModule,
     FormsModule,
-    ButtonModule
+    ButtonModule,
+    TranslocoPipe,
+    TagModule,
+    InputTextModule
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
@@ -74,6 +80,39 @@ export class UserList implements OnInit, OnDestroy {
 
   selectUser(user: User) {
     this.router.navigate(['/settings/profile', user.id]);
+  }
+
+  getUserRole(user: User): string {
+    if (user.role === 'OWNER') {
+      return 'owner';
+    } else if (user.role === 'ADMIN') {
+      return 'admin';
+    } else {
+      return user.staff?.role.toLowerCase() || 'staff';
+    }
+  }
+
+  getSeverity(user: User) {
+    if (user.role === 'OWNER') {
+      return 'info';
+    } else if (user.role === 'ADMIN') {
+      return 'danger';
+    } else {
+      return null;
+    }
+  }
+
+  normalizePhoneNumber(phone: string): string {
+    if (!phone) return '';
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 12 && cleaned.startsWith('998')) {
+      return `+${cleaned.slice(0, 3)} (${cleaned.slice(3, 5)}) ${cleaned.slice(5, 8)}-${cleaned.slice(8, 10)}-${cleaned.slice(10)}`;
+    }
+    return phone;
+  }
+
+  deleteUser(user: User) {
+    //need to implement disable user instead of delete, because of foreign key constraints in database
   }
 
   ngOnDestroy() {

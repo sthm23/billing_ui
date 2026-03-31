@@ -15,6 +15,7 @@ import { FluidModule } from 'primeng/fluid';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-dialog/sale-dialog';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 
 @Component({
@@ -28,7 +29,8 @@ import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-di
     FluidModule,
     FormsModule,
     ToastModule,
-    SaleDialog
+    SaleDialog,
+    TranslocoPipe
   ],
   templateUrl: './order-return.html',
   styleUrl: './order-return.css',

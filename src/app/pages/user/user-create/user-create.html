@@ -2,7 +2,7 @@
 <div class="card" [formGroup]="userForm">
   <div class="flex items-center gap-4 flex-1">
     <p-button text icon="pi pi-arrow-left" (onClick)="goToList()" />
-    <h4 class="m-0!">User create</h4>
+    <h4 class="m-0!">{{'user.createTitle' | transloco}}</h4>
   </div>
 
   <app-loader [loading]="false">
@@ -12,17 +12,17 @@
 
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="role">User role</label>
+              <label for="role">{{'user.role' | transloco}}</label>
               <p-select id="role" formControlName="role" [options]="userRole" optionLabel="label" [group]="true"
-                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+                [placeholder]="'user.selectOne' | transloco" class="w-full" [class]="isValidField('role')"></p-select>
             </div>
             <div class="flex flex-wrap gap-3 w-full">
-              <label for="fullName">Full name</label>
+              <label for="fullName">{{'user.name' | transloco}}</label>
               <input pInputText id="fullName" type="text" formControlName="fullName"
                 [class]="isValidField('fullName')" />
             </div>
             <div class="flex flex-wrap gap-3 w-full">
-              <label for="phone">Phone</label>
+              <label for="phone">{{'user.phone' | transloco}}</label>
               <p-inputmask [class]="isValidField('phone')" id="phone" mask="(99)-999-9999" formControlName="phone"
                 placeholder="(99)-999-9999" />
 
@@ -31,11 +31,11 @@
 
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="login">Login</label>
+              <label for="login">{{'user.login' | transloco}}</label>
               <input [class]="isValidField('login')" pInputText id="login" type="text" formControlName="login" />
             </div>
             <div class="flex flex-col gap-2 w-full">
-              <label for="password">Password</label>
+              <label for="password">{{'user.password' | transloco}}</label>
               <p-password [class]="isValidField('password')" id="password" [feedback]="false" [toggleMask]="true"
                 formControlName="password" />
             </div>
@@ -44,14 +44,14 @@
           @if(isShopHidden) {
           <div class="flex flex-col md:flex-row gap-6" [formGroup]="staff">
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="storeId">Store</label>
+              <label for="storeId">{{'user.store' | transloco}}</label>
               <p-select id="storeId" formControlName="storeId" [options]="storeList()" optionLabel="name"
-                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+                [placeholder]="'user.selectOne' | transloco" class="w-full" [class]="isValidField('role')"></p-select>
             </div>
             <div class="flex flex-wrap gap-2 w-full">
-              <label for="warehouseId">Warehouse</label>
+              <label for="warehouseId">{{'user.warehouse' | transloco}}</label>
               <p-select id="warehouseId" formControlName="warehouseId" [options]="warehouses()" optionLabel="name"
-                placeholder="Choose one" class="w-full" [class]="isValidField('role')"></p-select>
+                [placeholder]="'user.selectOne' | transloco" class="w-full" [class]="isValidField('role')"></p-select>
             </div>
           </div>
           }
@@ -59,8 +59,8 @@
       </div>
 
       <div class="flex flex-wrap justify-end gap-2 w-full">
-        <p-button label="Bekor qilish" variant="outlined" (onClick)="clearForm()"></p-button>
-        <p-button label="Tasdiqlash" severity="contrast" (onClick)="submitForm()"></p-button>
+        <p-button label="{{'user.cancel' | transloco}}" variant="outlined" (onClick)="clearForm()"></p-button>
+        <p-button label="{{'user.submit' | transloco}}" severity="contrast" (onClick)="submitForm()"></p-button>
       </div>
     </p-fluid>
   </app-loader>

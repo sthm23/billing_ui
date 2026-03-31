@@ -136,6 +136,6 @@ export class Profile implements OnInit {
   }
 
   goToDashboard() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/pages/user/list']);
   }
 }

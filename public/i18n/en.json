@@ -273,7 +273,39 @@
     "return": "Return",
     "createdAt": "Created at",
     "customer": "Customer",
-    "paymentTitle": "You can select multiple payment methods for split payment."
+    "paymentTitle": "You can select multiple payment methods for split payment.",
+    "noResults": "No {{item}} found matching your search.",
+    "products": "Products"
+  },
+  "user": {
+    "name": "Full name",
+    "phone": "Phone",
+    "createdAt": "Created at",
+    "type": "Type",
+    "action": "Action",
+    "createTitle": "Create user",
+    "login": "Login",
+    "role": "Role",
+    "roles": "Roles",
+    "password": "Password",
+    "store": "Store",
+    "warehouse": "Warehouse",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "staff": {
+      "label": "Staff",
+      "owner": "Store Owner",
+      "manager": "Manager",
+      "sales": "Sales",
+      "stock": "Stock",
+      "cashier": "Cashier",
+      "admin": "Admin",
+      "user": "User"
+    },
+    "noFound": "No user found.",
+    "search": "Search",
+    "create": "Create",
+    "selectOne": "Choose one"
   },
   "notFound": {
     "title": "OOPS, THIS PAGE NOT FOUND!",

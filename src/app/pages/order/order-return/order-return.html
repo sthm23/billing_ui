@@ -6,7 +6,8 @@
       <h4 class="filter">Order</h4>
     </div>
     <div class="flex flex-col gap-4 items-end sm:items-start sm:flex-row justify-between mb-4">
-      <p-autocomplete class="w-full" placeholder="Search product ..." [delay]="500" [minQueryLength]="3"
+      <p-autocomplete [emptyMessage]="'order.noResults' | transloco:{ item: 'order.products' | transloco }"
+        class="w-full" placeholder="Search product ..." [delay]="500" [minQueryLength]="3"
         panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
         [suggestions]="searchResults()" (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)"
         fluid />

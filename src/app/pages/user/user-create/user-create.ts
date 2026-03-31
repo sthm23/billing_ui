@@ -20,6 +20,8 @@ import { SelectType } from '../../../models/app.models';
 import { StoreService } from '../../organization/service/store';
 import { AuthService } from '../../auth/service/auth';
 import { Store } from '../../../models/store.model';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-user-create',
   imports: [
@@ -33,7 +35,8 @@ import { Store } from '../../../models/store.model';
     ToastModule,
     RouterModule,
     InputMaskModule,
-    PasswordModule
+    PasswordModule,
+    TranslocoPipe
   ],
   templateUrl: './user-create.html',
   styleUrl: './user-create.css',
@@ -55,12 +58,13 @@ export class UserCreate implements OnInit, OnDestroy {
   });
 
   isShopHidden = false;
-
+  destroyer$ = new Subject<void>();
   userRole: SelectItemGroup[] = [];
 
   storeList = signal<Store[]>([]);
   warehouses = signal<SelectType[]>([]);
 
+  translate = inject(TranslocoService);
   messageService = inject(MessageService);
   userService = inject(UserService);
   storeService = inject(StoreService);
@@ -72,12 +76,20 @@ export class UserCreate implements OnInit, OnDestroy {
   ngOnInit(): void {
     const isAdmin = this.authService.isAdmin();
     this.isShopHidden = !isAdmin;
-    this.userRole = this.makeUserRoleSelectItems(isAdmin);
+    this.translate.selectTranslateObject('user').pipe(takeUntil(this.destroyer$)).subscribe({
+      next: (res) => {
+        this.userRole = this.makeUserRoleSelectItems(isAdmin, res);
+      },
+      error: (err) => {
+        console.error('Translation loading error:', err);
+      }
+    })
+
 
 
     if (this.authService.isAdmin()) {
       this.fetchStoreInformation();
-      this.staff.controls.storeId.valueChanges.subscribe(store => {
+      this.staff.controls.storeId.valueChanges.pipe(takeUntil(this.destroyer$)).subscribe(store => {
         const warehouses = store?.warehouse.map((wh) => ({
           name: wh.name,
           id: wh.id,
@@ -86,18 +98,19 @@ export class UserCreate implements OnInit, OnDestroy {
       })
     } else {
       const currentUser = this.authService.getCurrentUser()!;
-      this.storeService.getStoreById(currentUser.staff?.storeId!).subscribe({
-        next: (store) => {
-          this.storeList.set([{ ...store }]);
-          this.warehouses.set(store?.warehouse.map((wh) => ({
-            name: wh.name,
-            id: wh.id,
-          })) || []);
-        },
-        error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
-        }
-      })
+      this.storeService.getStoreById(currentUser.staff?.storeId!).pipe(takeUntil(this.destroyer$))
+        .subscribe({
+          next: (store) => {
+            this.storeList.set([{ ...store }]);
+            this.warehouses.set(store?.warehouse.map((wh) => ({
+              name: wh.name,
+              id: wh.id,
+            })) || []);
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+          }
+        })
     }
 
 
@@ -105,7 +118,7 @@ export class UserCreate implements OnInit, OnDestroy {
   }
 
   private toggleOwnerFields() {
-    this.userForm.controls.role.valueChanges.subscribe((value) => {
+    this.userForm.controls.role.valueChanges.pipe(takeUntil(this.destroyer$)).subscribe((value) => {
       if (value?.value === UserRole.OWNER) {
         this.isShopHidden = false;
       } else {
@@ -116,7 +129,7 @@ export class UserCreate implements OnInit, OnDestroy {
 
   fetchStoreInformation(storeId?: string) {
     if (storeId && !this.authService.isAdmin()) {
-      this.storeService.getStoreById(storeId).subscribe({
+      this.storeService.getStoreById(storeId).pipe(takeUntil(this.destroyer$)).subscribe({
         next: (store) => {
           this.storeList.set([{ ...store }]);
           const warehouses = store?.warehouse.map((wh) => ({
@@ -130,7 +143,7 @@ export class UserCreate implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.storeService.getStores().subscribe({
+      this.storeService.getStores().pipe(takeUntil(this.destroyer$)).subscribe({
         next: (stores) => {
           this.storeList.set(stores.data);
         },
@@ -169,7 +182,7 @@ export class UserCreate implements OnInit, OnDestroy {
 
       const url = payload.role === UserRole.OWNER ? '/api/store/owner' : '/api/store/staff';
 
-      this.userService.createUser(url, payload).subscribe({
+      this.userService.createUser(url, payload).pipe(takeUntil(this.destroyer$)).subscribe({
         next: (res) => {
           this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Foydalanuvchi yaratildi' });
           this.userForm.reset();
@@ -197,31 +210,31 @@ export class UserCreate implements OnInit, OnDestroy {
     this.staff.reset();
   }
 
-  private makeUserRoleSelectItems(isAdmin: boolean) {
+  private makeUserRoleSelectItems(isAdmin: boolean, translations: any) {
     if (isAdmin) {
       return [
         {
-          label: 'Roles', items: [
-            { label: 'Owner', value: UserRole.OWNER },
+          label: translations.roles || 'Roles', items: [
+            { label: translations.staff.owner || 'Owner', value: UserRole.OWNER },
           ],
         },
         {
-          label: 'Staff', items: [
-            { label: 'Manager', value: StaffRole.MANAGER },
-            { label: 'Seller', value: StaffRole.SELLER },
-            { label: 'Warehouse', value: StaffRole.WAREHOUSE },
-            { label: 'Cashier', value: StaffRole.CASHIER },
+          label: translations.staff || 'Staff', items: [
+            { label: translations.staff.manager || 'Manager', value: StaffRole.MANAGER },
+            { label: translations.staff.sales || 'Seller', value: StaffRole.SELLER },
+            { label: translations.staff.stock || 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: translations.staff.cashier || 'Cashier', value: StaffRole.CASHIER },
           ]
         }
       ]
     } else {
       return [
         {
-          label: 'Staff', items: [
-            { label: 'Manager', value: StaffRole.MANAGER },
-            { label: 'Seller', value: StaffRole.SELLER },
-            { label: 'Warehouse', value: StaffRole.WAREHOUSE },
-            { label: 'Cashier', value: StaffRole.CASHIER },
+          label: translations.staff.label || 'Staff', items: [
+            { label: translations.staff.manager || 'Manager', value: StaffRole.MANAGER },
+            { label: translations.staff.sales || 'Seller', value: StaffRole.SELLER },
+            { label: translations.staff.stock || 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: translations.staff.cashier || 'Cashier', value: StaffRole.CASHIER },
           ]
         }
       ]
@@ -235,5 +248,8 @@ export class UserCreate implements OnInit, OnDestroy {
   goToList() {
     this.router.navigate(['pages/user/list'])
   }
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {
+    this.destroyer$.next();
+    this.destroyer$.complete();
+  }
 }

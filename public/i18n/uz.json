@@ -273,7 +273,39 @@
     "return": "Qaytarish",
     "createdAt": "Yaratilgan sana",
     "customer": "Mijoz",
-    "paymentTitle": "Bo'lib to'lash uchun bir nechta to'lov usullarini tanlashingiz mumkin."
+    "paymentTitle": "Bo'lib to'lash uchun bir nechta to'lov usullarini tanlashingiz mumkin.",
+    "noResults": "Qidiruvingizga mos keladigan {{item}} topilmadi.",
+    "products": "Tovarlar"
+  },
+  "user": {
+    "name": "To'liq ism",
+    "phone": "Telefon",
+    "createdAt": "Yaratilgan sana",
+    "type": "Turkimi",
+    "action": "Harakat",
+    "createTitle": "Foydalanuvchi yaratish",
+    "login": "Login",
+    "password": "Parol",
+    "store": "Do'kon",
+    "warehouse": "Ombor",
+    "cancel": "Bekor qilish",
+    "submit": "Tasdiqlash",
+    "role": "Rol",
+    "roles": "Rolar",
+    "staff": {
+      "label": "Xodimlar",
+      "owner": "Magazin egasi",
+      "manager": "Menejer",
+      "sales": "Sotuvchi",
+      "stock": "Omborchi",
+      "cashier": "Kassir",
+      "user": "Foydalanuvchi",
+      "admin": "Admin"
+    },
+    "noFound": "Foydalanuvchi topilmadi.",
+    "search": "Qidirish",
+    "create": "Yaratish",
+    "selectOne": "Bittasini tanlang"
   },
   "notFound": {
     "title": "VOY, BU SAHIFA TOPILMADI!",
