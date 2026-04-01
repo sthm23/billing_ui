@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { AppStore } from '../../../store/app.store';
+import { AppStore } from '../../../../store/app.store';
 import { Router } from '@angular/router';
-import { Attribute } from '../../../models/product.model';
-import { CategoryService } from '../../../shared/services/category.service';
+import { Attribute } from '../../../../models/product.model';
+import { CategoryService } from '../../../../shared/services/category.service';
 
 @Component({
   selector: 'app-attribute-list',
@@ -48,7 +48,7 @@ export class AttributeList implements OnInit {
   }
 
   selectAttribute(attribute: Attribute) {
-    this.router.navigate([`/settings/attribute/view/${attribute.id}`]);
+    this.router.navigate([`pages/settings/attribute/view/${attribute.id}`]);
   }
 
   pageChange(event: any) {
@@ -60,6 +60,6 @@ export class AttributeList implements OnInit {
   }
 
   createAttribute() {
-    this.router.navigate(['/settings/attribute/create']);
+    this.router.navigate(['pages/settings/attribute/create']);
   }
 }

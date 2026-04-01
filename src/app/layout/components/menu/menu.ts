@@ -29,18 +29,20 @@ export class Menu {
       this.model = [
         {
           label: res['home'],
-          items: [{ label: res['dashboard'], icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+          items: [
+            { label: res['dashboard'], icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+            {
+              label: res['profile'],
+              icon: 'pi pi-fw pi-user',
+              routerLink: ['/pages/settings/profile'],
+            },
+          ]
         },
         {
           label: res['pages'],
           icon: 'pi pi-fw pi-briefcase',
           routerLink: ['/pages'],
           items: [
-            // {
-            //   label: 'Landing',
-            //   icon: 'pi pi-fw pi-globe',
-            //   routerLink: ['/landing']
-            // },
             {
               label: res['organization'],
               icon: 'pi pi-fw pi-sitemap',
@@ -93,30 +95,25 @@ export class Menu {
             },
           ]
         },
-
         {
           label: res['settings'],
+          visible: this.authService.isAdmin(),
           items: [
-            {
-              label: res['profile'],
-              icon: 'pi pi-fw pi-cog',
-              routerLink: ['/settings/profile'],
-            },
 
             {
               label: res['attribute'],
               icon: 'pi pi-fw pi-tag',
-              routerLink: ['/settings/attribute/list'],
+              routerLink: ['/pages/settings/attribute/list'],
               items: [
                 {
                   label: res['list'],
                   icon: 'pi pi-fw pi-list',
-                  routerLink: ['/settings/attribute/list']
+                  routerLink: ['/pages/settings/attribute/list']
                 },
                 {
                   label: res['create'],
                   icon: 'pi pi-fw pi-plus-circle',
-                  routerLink: ['/settings/attribute/create']
+                  routerLink: ['/pages/settings/attribute/create']
                 }
               ]
             },

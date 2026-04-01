@@ -1,10 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { CategoryService } from '../../../shared/services/category.service';
+import { CategoryService } from '../../../../shared/services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { AttributeDetail } from '../../../models/product.model';
+import { AttributeDetail } from '../../../../models/product.model';
 
 
 @Component({
@@ -37,7 +37,7 @@ export class AttributeView implements OnInit {
       this.fetchAttribute(this.attributeId);
     } else {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid attribute ID' });
-      this.router.navigate(['/settings/attribute/list']);
+      this.router.navigate(['pages/settings/attribute/list']);
     }
   }
 
@@ -48,12 +48,12 @@ export class AttributeView implements OnInit {
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch attribute details' });
-        this.router.navigate(['/settings/attribute/list']);
+        this.router.navigate(['pages/settings/attribute/list']);
       },
     })
   }
 
   backToList() {
-    this.router.navigate(['/settings/attribute/list']);
+    this.router.navigate(['pages/settings/attribute/list']);
   }
 }
