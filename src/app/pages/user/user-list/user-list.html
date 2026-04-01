@@ -27,10 +27,7 @@
         <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
         <td><p-tag [value]="`user.staff.${getUserRole(user)}` | transloco" [severity]="getSeverity(user)" /></td>
         <td>
-          @if(user.role === 'OWNER') {
-
-          <button pButton type="button" icon="pi pi-sitemap" (click)="goToOrgSchema(user)"></button>
-          }@else if(user.role === 'ADMIN') {
+          @if(user.role === 'ADMIN') {
           <span>-</span>
           }@else {
           <p-button icon="pi pi-trash" severity="danger" outlined (click)="deleteUser(user)"></p-button>

@@ -187,11 +187,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Foydalanuvchi yaratildi' });
           this.userForm.reset();
           this.staff.reset();
-          if (payload.role === UserRole.OWNER) {
-            this.router.navigate(['/pages/user/view', res.id]);
-          } else {
-            this.router.navigate(['/pages/user/list']);
-          }
+          this.router.navigate(['/pages/user/list']);
         },
         error: (err: { error: UserErrorResponse }) => {
           this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error.message || 'Foydalanuvchi yaratishda xatolik yuz berdi' });

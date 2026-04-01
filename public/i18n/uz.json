@@ -307,6 +307,35 @@
     "create": "Yaratish",
     "selectOne": "Bittasini tanlang"
   },
+  "profile": {
+    "title": "Profil",
+    "notFound": "Foydalanuvchi ma'lumotlari mavjud emas.",
+    "type": {
+      "name": "Tur",
+      "OWNER": "Egası",
+      "ADMIN": "Admin",
+      "STAFF": "Xodim"
+    },
+    "status": {
+      "name": "Status",
+      "ACTIVE": "Faol",
+      "INACTIVE": "Nofaol"
+    },
+    "message": "Xabar",
+    "memberSince": "A'zolikdan beri",
+    "login": "Login",
+    "password": "Parol",
+    "role": "Rol",
+    "phone": "Telefon",
+    "orders": "Zakazlar",
+    "orderText": "zakazlar tugallandi",
+    "payments": "To'lovlar",
+    "paymentText": "to'lovlar qabul qilindi",
+    "debt": "Qarz",
+    "debtText": "faol zakazlar",
+    "lastActivities": "So'nggi faoliyatlar",
+    "activitiesEmpty": "So'nggi faoliyatlar mavjud emas."
+  },
   "notFound": {
     "title": "VOY, BU SAHIFA TOPILMADI!",
     "description": "Havola buzilgan yoki sahifa olib tashlangan bo'lishi mumkin.",

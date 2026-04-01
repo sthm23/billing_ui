@@ -59,6 +59,7 @@ export class UserList implements OnInit, OnDestroy {
         error: (err) => {
           this.appStore.stopLoader();
           console.error('Error fetching users:', err);
+          this.router.navigate(['/pages/order/list']);
         }
       });
   }
@@ -68,10 +69,6 @@ export class UserList implements OnInit, OnDestroy {
     this.first.set(event.first);
     this.rows = event.rows;
     this.fetchUsers(this.first() / this.rows + 1, this.rows);
-  }
-
-  goToOrgSchema(user: User) {
-    this.router.navigate(['/pages/user/view', user.id]);
   }
 
   createUser() {

@@ -307,6 +307,35 @@
     "create": "Create",
     "selectOne": "Choose one"
   },
+  "profile": {
+    "title": "Profile",
+    "notFound": "No user data available.",
+    "type": {
+      "name": "Type",
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "STAFF": "Staff"
+    },
+    "status": {
+      "name": "Status",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "message": "Message",
+    "memberSince": "Member since",
+    "login": "Login",
+    "password": "Password",
+    "role": "Role",
+    "phone": "Phone",
+    "orders": "Orders",
+    "orderText": "orders completed",
+    "payments": "Payments",
+    "paymentText": "payments received",
+    "debt": "Debt",
+    "debtText": "active orders",
+    "lastActivities": "Last activities",
+    "activitiesEmpty": "No recent activities."
+  },
   "notFound": {
     "title": "OOPS, THIS PAGE NOT FOUND!",
     "description": "The link may be corrupted or the page may have been removed.",

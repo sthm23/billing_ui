@@ -11,6 +11,7 @@ import { Divider } from "primeng/divider";
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +24,9 @@ import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller
     CurrencyPipe,
     Divider,
     ScrollerModule,
-    TagModule
+    TagModule,
+    TranslocoPipe
+
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
