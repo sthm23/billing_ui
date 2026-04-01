@@ -1,7 +1,7 @@
 <p-toast />
 <p-confirmdialog />
 <div class="card">
-  <app-order-filter [data]="{}" />
+
 
   <div class="p-0 md:p-4">
     <p-table #dt [loading]="loader()" [lazy]="true" [value]="orders()" [paginator]="true" selectionMode="single"
@@ -58,17 +58,21 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-order>
-        <tr [pSelectableRow]="order">
+        <tr [pSelectableRow]="order.status !== 'CANCELLED' ? order : null">
           <td>{{ order.store.name }}</td>
           <td>{{ order.warehouse.name }}</td>
           <td>{{ order.cashier.role }}</td>
           <td>{{ (`order.channel.${order.channel}` | transloco) }}</td>
-          <td><p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco),order.status)"
-              [severity]="getSeverity(order.status)"></p-tag></td>
+          <td>
+            <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco),order.status)"
+              [severity]="getSeverity(order.status)"></p-tag>
+          </td>
           <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
           <td>
-            <p-button [disabled]="order.status === 'COMPLETED' || order.status === 'CANCELLED'" [outlined]="true"
-              icon="pi pi-trash" severity="danger" (click)="confirmDeleteOrder($event, order)" />
+            <p-button class="mr-2" [disabled]="isDisable(order, 'RETURN')" [outlined]="true" icon="pi pi-directions"
+              severity="secondary" (click)="goToReturnPage(order)" />
+            <p-button [disabled]="isDisable(order, 'DELETE')" [outlined]="true" icon="pi pi-trash" severity="danger"
+              (click)="confirmDeleteOrder($event, order)" />
           </td>
         </tr>
       </ng-template>

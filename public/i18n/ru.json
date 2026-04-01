@@ -260,6 +260,7 @@
     "search": "Поиск",
     "scan": "Сканировать",
     "order": "Заказ",
+    "price": "Цена",
     "searchPlaceholder": "Поиск товара",
     "searchCustomerPlaceholder": "Поиск клиента",
     "orderItemEmpty": "В заказе нет товаров. Пожалуйста, добавьте товары для создания заказа.",

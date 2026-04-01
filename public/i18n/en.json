@@ -260,6 +260,7 @@
     "search": "Search",
     "scan": "Scan",
     "order": "Order",
+    "price": "Price",
     "searchPlaceholder": "Search product ...",
     "searchCustomerPlaceholder": "Search customer ...",
     "orderItemEmpty": "No products have been added to the order. Please add products to create an order.",

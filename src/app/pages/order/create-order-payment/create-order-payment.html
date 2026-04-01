@@ -8,8 +8,10 @@
     <p-button icon="pi pi-arrow-left" text (click)="backOrderList()" />
     <h4 class="m-0!">{{'order.payment' | transloco}}</h4>
     <div class="ml-auto">
+      @if(order.status === 'COMPLETED' || order.status === 'DEBT') {
       <p-button label="{{'order.return' | transloco}}" icon="pi pi-directions" severity="danger"
-        (click)="goToReturn(order.id)" />
+        (click)="goToReturn(order.id)" [disabled]="!hasAccess(order, 'RETURN')" />
+      }
     </div>
   </div>
   <div class="flex flex-col gap-2">
@@ -30,7 +32,9 @@
               <div class="text-sm text-gray-500">{{customer.phone}}</div>
             </div>
             <div>
+              @if(!(order.status === 'COMPLETED' || order.status === 'DEBT')) {
               <p-button icon="pi pi-times" text (click)="clearCustomer()" />
+              }
             </div>
           </div>
         </div>
@@ -50,6 +54,7 @@
         </p-inputgroup>
         }
       </div>
+      @if(order.status !== 'COMPLETED') {
       <div>
         <div class="text-gray-600">
           <p>{{'order.paymentMethod.name' | transloco}}:</p>
@@ -76,6 +81,7 @@
       <div class="flex justify-end mt-4">
         <p-button [label]="'order.submit' | transloco" (onClick)="submit()" />
       </div>
+      }
     </div>
 
     <div class="flex-3 card flex flex-col justify-start gap-2">
@@ -97,23 +103,31 @@
         <p-accordion-panel [value]="0">
           <p-accordion-header class="pt-0!">
             <div class="flex flex-wrap items-center gap-2 w-full">
-              <span class="text-xl font-bold mb-0!">{{'order.payments' | transloco}}</span>
-              <span class="ml-auto mr-2 text-(--p-green-600) text-xl font-bold mb-0!">
-                +{{paymentAmounts() | currency: " ": "code":"0.0"}} UZS
-              </span>
+              <div class="flex flex-col">
+                <div class="text-xl font-bold mb-0!">{{'order.payments' | transloco}}</div>
+                <div class="ml-auto mr-2 text-(--p-green-600) text-xl font-bold mb-0!">
+                  +{{paymentAmounts() | currency: " ": "code":"0.0"}} UZS
+                </div>
+              </div>
               <p-badge [value]="order.payments.length" severity="secondary" class="mr-2" />
             </div>
           </p-accordion-header>
           <p-accordion-content>
             @for (item of order.payments; track item.id; let i = $index) {
-            <p class="m-0">
-              <span class="font-bold">
-                <span>{{i+1}}. </span>
+            @if($first) {
+            <p-divider />
+            }
+            <div class="font-bold flex items-center gap-4 mb-4 justify-between">
+              <div>{{i+1}}.</div>
+              <div class="flex flex-col">
                 <span class="text-(--p-green-600)">+{{ item.amount | currency: " ": "code":"0.0"}}UZS</span>
-                {{ item.createdAt| date:'dd/MM/yyyy' }}
-                <p-badge [value]="item.type" severity="secondary" />
-              </span>
-            </p>
+                <span>{{ item.createdAt| date:'dd/MM/yyyy' }}</span>
+              </div>
+              <p-badge [value]="`order.paymentMethod.${item.type}` | transloco" severity="secondary" />
+            </div>
+            @if(!$last) {
+            <p-divider />
+            }
             }
           </p-accordion-content>
         </p-accordion-panel>

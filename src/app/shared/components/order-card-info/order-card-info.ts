@@ -1,11 +1,11 @@
 import { Component, EventEmitter, input, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-order-filter',
+  selector: 'app-order-card-info',
   imports: [],
-  templateUrl: './order-filter.html',
-  styleUrl: './order-filter.css',
+  templateUrl: './order-card-info.html',
+  styleUrl: './order-card-info.css',
 })
-export class OrderFilter {
+export class OrderCardInfo {
   @Input() data = {};
 }

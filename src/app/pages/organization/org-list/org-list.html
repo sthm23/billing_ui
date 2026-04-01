@@ -1,6 +1,5 @@
 <app-loader [loading]="appStore.isLoading()">
   <div class="card">
-    <app-order-filter [data]="{}" />
     @if(stores().length === 0) {
     <div class="flex flex-col items-center justify-center gap-4 py-8">
       <i class="pi pi-building" style="font-size: 3rem;"></i>

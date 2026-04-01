@@ -76,7 +76,7 @@ export class UserList implements OnInit, OnDestroy {
   }
 
   selectUser(user: User) {
-    this.router.navigate(['/settings/profile', user.id]);
+    this.router.navigate(['pages/settings/profile', user.id]);
   }
 
   getUserRole(user: User): string {

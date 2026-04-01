@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { CreateOrderPaymentPayload, OrderDetail, OrderDetailItem, OrderPayment, OrderPaymentPayload, PaymentType } from '../../../models/order.model';
+import { CreateOrderPaymentPayload, OrderDetail, OrderDetailItem, OrderPayment, OrderPaymentPayload, OrderStatus, PaymentType } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe, DatePipe } from '@angular/common';
@@ -89,19 +89,8 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
-    const validMethods: PaymentMethod[] = ['CASH', 'CARD'];
-    this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
-      validMethods.forEach(method => {
-        methodControls.get(method)!.disable({ onlySelf: true });
-      })
-      methods.forEach(method => {
-        methodControls.get(method as keyof PaymentMethodGroup)!.enable({ onlySelf: true });
-      })
-    });
-
-
     const orderId = this.route.snapshot.paramMap.get('id');
+    this.paymentChanged()
     if (orderId) {
       this.loadOrder(orderId);
     } else {
@@ -129,6 +118,19 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         console.error(err);
         this.router.navigate(['/pages/order/list']);
       }
+    });
+  }
+
+  private paymentChanged() {
+    const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
+    const validMethods: PaymentMethod[] = ['CASH', 'CARD'];
+    this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
+      validMethods.forEach(method => {
+        methodControls.get(method)!.disable({ onlySelf: true });
+      })
+      methods.forEach(method => {
+        methodControls.get(method as keyof PaymentMethodGroup)!.enable({ onlySelf: true });
+      })
     });
   }
 
@@ -249,6 +251,15 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       return value
     }
     return translate
+  }
+
+  hasAccess(order: OrderDetail, action: 'RETURN' | 'CREATE' | 'DELETE'): boolean {
+    if (action === 'RETURN') {
+      if (order.status === OrderStatus.COMPLETED || order.status === OrderStatus.DEBT) {
+        return true;
+      }
+    }
+    return false;
   }
 
   ngOnDestroy(): void {

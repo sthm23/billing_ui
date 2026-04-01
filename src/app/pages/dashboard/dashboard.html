@@ -1,15 +1,12 @@
 <div class="p-4">
   <h2 class="text-2xl font-bold mb-4">{{'dashboard.title' | transloco}}</h2>
   <p>{{'dashboard.welcome' | transloco}}</p>
-  <div class="flex align-center justify-between">
-    <div class="card w-60 h-30">Card 1</div>
-    <div class="card w-60 h-30">Card 2</div>
-    <div class="card w-60 h-30">Card 3</div>
-    <div class="card w-60 h-30">Card 4</div>
-  </div>
+  <app-order-card-info [data]="{}" />
+  <!-- <div class="flex align-center justify-between">
+  </div> -->
   <div class="content">
-    <div class="card w-full h-60 mt-4">
-      main card
+    <div class="card w-full min-h-60 mt-4">
+      <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
     </div>
   </div>
 </div>

@@ -12,7 +12,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CurrencyPipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
 import { delay } from 'rxjs';
-import { OrderFilter } from './order-filter/order-filter';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DatePickerModule } from 'primeng/datepicker';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -33,7 +32,6 @@ import { TranslocoPipe } from '@ngneat/transloco';
     ButtonModule,
     InputTextModule,
     TagModule,
-    OrderFilter,
     SelectButtonModule,
     DatePickerModule,
     IconFieldModule,
@@ -227,19 +225,56 @@ export class OrderList implements OnInit {
 
   selectOrder(order: Order) {
 
-    if (order.status === OrderStatus.COMPLETED) {
-      this.router.navigate(['/pages/order/return', order.id])
-    } else if (order.status === OrderStatus.CANCELLED) {
-      //view mode
-    } else if (order.status === OrderStatus.DEBT) {
-      this.router.navigate(['/pages/order/payment', order.id])
-    } else if (order.status === OrderStatus.HOLD) {
-      //edit mode
-      this.router.navigate(['/pages/order', order.id])
-    } else {
-      this.router.navigate(['/pages/order', order.id])
+    switch (order.status) {
+      case OrderStatus.COMPLETED:
+        this.router.navigate(['/pages/order/payment', order.id])
+        return;
+      case OrderStatus.CREATED:
+        this.router.navigate(['/pages/order', order.id])
+        return;
+      case OrderStatus.DEBT:
+        this.router.navigate(['/pages/order/payment', order.id])
+        return;
+      case OrderStatus.HOLD:
+        this.router.navigate(['/pages/order', order.id])
+        return;
+      default:
+        return;
     }
+  }
 
+  isDisable(order: Order, action: 'RETURN' | 'DELETE'): boolean {
+    if (action === 'RETURN') {
+      switch (order.status) {
+        case OrderStatus.COMPLETED:
+          return false;
+        case OrderStatus.DEBT:
+          return false;
+        case OrderStatus.CANCELLED:
+        case OrderStatus.HOLD:
+        case OrderStatus.CREATED:
+        default:
+          return true;
+      }
+    }
+    if (action === 'DELETE') {
+      switch (order.status) {
+        case OrderStatus.CREATED:
+          return false;
+        case OrderStatus.HOLD:
+          return false;
+        case OrderStatus.DEBT:
+        case OrderStatus.COMPLETED:
+        case OrderStatus.CANCELLED:
+        default:
+          return true;
+      }
+    }
+    return false;
+  }
+
+  goToReturnPage(order: Order) {
+    this.router.navigate(['/pages/order/return', order.id])
   }
 
   getTranslatedText(translate: string, value: string): string {

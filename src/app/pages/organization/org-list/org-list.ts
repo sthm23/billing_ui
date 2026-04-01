@@ -8,7 +8,6 @@ import { delay } from 'rxjs';
 import { Router } from '@angular/router';
 import { Store } from '../../../models/store.model';
 import { StoreService } from '../service/store';
-import { OrderFilter } from '../../order/order-list/order-filter/order-filter';
 import { Loader } from '../../../shared/components/loader/loader';
 import { DatePickerModule } from 'primeng/datepicker';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -25,7 +24,6 @@ import { TranslocoPipe } from '@ngneat/transloco';
     FormsModule,
     ButtonModule,
     DatePipe,
-    OrderFilter,
     Loader,
     DatePickerModule,
     IconFieldModule,
