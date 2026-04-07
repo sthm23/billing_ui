@@ -6,24 +6,36 @@
         optionValue="value" aria-labelledby="basic" />
     </div>
     <div class="flex flex-col gap-4 mb-4" formGroupName="method">
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4 pt-4">
         <p-inputgroup>
-          <p-inputnumber placeholder="Cash" formControlName="CASH" [invalid]="isValid('CASH')" />
-          <p-inputgroup-addon><i class="pi pi-money-bill"></i></p-inputgroup-addon>
+          <p-floatlabel>
+            <p-inputnumber id="cash" placeholder="Cash" formControlName="CASH" [invalid]="isValid('CASH')" />
+            <label for="cash">Cash</label>
+          </p-floatlabel>
+          <p-inputgroup-addon>
+            <i class="pi pi-money-bill"></i>
+          </p-inputgroup-addon>
         </p-inputgroup>
         @if(isValid('CASH')) {
-        <p-message severity="error" size="small" variant="simple">Selection is required</p-message>
+        <p-message severity="error" size="small" variant="simple">{{ getControlError('CASH') }}</p-message>
         }
       </div>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col pt-4 gap-4">
         <p-inputgroup>
-          <p-inputnumber placeholder="Card" formControlName="CARD" [invalid]="isValid('CARD')" />
+          <p-floatlabel>
+            <p-inputnumber id="card" placeholder="Card" formControlName="CARD" [invalid]="isValid('CARD')" />
+            <label for="card">Card</label>
+          </p-floatlabel>
           <p-inputgroup-addon><i class="pi pi-credit-card"></i></p-inputgroup-addon>
         </p-inputgroup>
         @if(isValid('CARD')) {
-        <p-message severity="error" size="small" variant="simple">Selection is required</p-message>
+        <p-message severity="error" size="small" variant="simple">{{ getControlError('CARD') }}</p-message>
         }
       </div>
+
+      @if(showTotalError()) {
+      <p-message severity="error" size="small" variant="simple">{{ getTotalError() }}</p-message>
+      }
     </div>
 
     <div class="flex justify-end gap-2">

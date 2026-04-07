@@ -126,8 +126,10 @@ export interface CreateOrderItemPayload {
 
 export interface ReturnOrderItemPayload {
   orderId: string,
-  items: Omit<OrderItemPayload, 'variantId'>[]
-  payments: OrderPaymentPayload[]
+  items: (Omit<OrderItemPayload, 'variantId'> & {
+    itemId: string;
+  })[]
+  returnPayments: OrderPaymentPayload[]
 }
 export interface CreateOrderPayload {
   storeId: string;

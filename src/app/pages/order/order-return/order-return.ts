@@ -1,23 +1,19 @@
 import { Component, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { OrderDetail, OrderItemCard } from '../../../models/order.model';
+import { OrderDetail, OrderItemCard, OrderPaymentPayload, PaymentType, ReturnOrderItemPayload } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { OrderItem, OrderItemAmountChange } from '../../../shared/components/order-item/order-item';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe } from '@angular/common';
-import { ProductVariant } from '../../../models/product.model';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { FormControl, FormGroup, FormsModule } from "@angular/forms";
 import { FluidModule } from 'primeng/fluid';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslocoPipe } from '@ngneat/transloco';
-import { ReturnPaymentDialog } from '../../../shared/components/return-payment-dialog/return-payment-dialog';
+import { ReturnPaymentData, ReturnPaymentDialog } from '../../../shared/components/return-payment-dialog/return-payment-dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
-
-type PaymentMethod = 'CASH' | 'CARD';
-type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
 @Component({
   selector: 'app-order-return',
   imports: [
@@ -27,41 +23,34 @@ type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
     CurrencyPipe,
     AutoCompleteModule,
     FluidModule,
-    FormsModule,
     ToastModule,
     TranslocoPipe,
-    ReturnPaymentDialog
+    ReturnPaymentDialog,
+    ConfirmDialogModule
   ],
   templateUrl: './order-return.html',
   styleUrl: './order-return.css',
-  providers: [MessageService]
+  providers: [MessageService, ConfirmationService]
 })
 export class OrderReturn implements OnInit {
-  searchResults = signal<ProductVariant[]>([]);
-  searchValue = '';
 
   totalAmount = signal<number>(0);
   totalPayment = signal<number>(0);
+  totalReturnPayment = signal<number>(0);
   saleAmount = signal<number>(0);
   orderItems = signal<OrderItemCard[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
+  returnPayments = signal<OrderPaymentPayload[]>([]);
 
   returnPaymentDialogVisible = false;
-
-  paymentForm = new FormGroup({
-    paymentMethod: new FormControl<string[]>(['CASH'], { nonNullable: true }),
-    method: new FormGroup<PaymentMethodGroup>({
-      CASH: new FormControl<number>({ value: 0, disabled: false }, { nonNullable: true }),
-      CARD: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
-    }),
-  });
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private orderService: OrderService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {
     effect(() => {
       this.totalAmount.set(this.orderItems().reduce((total, item) => total + (item.price * item.quantity), 0));
@@ -89,7 +78,7 @@ export class OrderReturn implements OnInit {
             itemId: item.id,
             id: item.variantId,
             name: `${item.variant.sku} - ${item.variant.barCode}`,
-            stock: +item.quantity, //+item.variant.quantity,
+            stock: +item.quantity,
             price: +item.retailPrice,
             quantity: 0,
             sale: +item.sale,
@@ -108,8 +97,6 @@ export class OrderReturn implements OnInit {
       }
     });
   }
-
-
 
   handleAmountChange({ quantity, type, sale = 0 }: OrderItemAmountChange, itemId: string) {
     if (type === 'decrement' || type === 'increment') {
@@ -130,15 +117,65 @@ export class OrderReturn implements OnInit {
     }
   }
 
-
-
   submit() {
     const order = this.currentOrder();
     if (!order) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Order not found' });
       return;
     }
+    const payments = this.returnPayments();
+    if (!payments) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid payment data' });
+      return;
+    }
+    const returnItems = this.orderItems().filter(item => item.quantity > 0).map(item => ({
+      itemId: item.itemId!,
+      quantity: +item.quantity,
+      sale: +item.sale,
+      retailPrice: +item.price,
+      costAtSale: +item.costAtSale
+    }));
 
+    this.confirmSave({
+      orderId: order.id,
+      items: returnItems,
+      returnPayments: payments
+    });
+
+
+  }
+
+  confirmSave(data: ReturnOrderItemPayload) {
+    this.confirmationService.confirm({
+      message: 'Are you confirm this order return?',
+      header: 'Confirm Save',
+      icon: 'pi pi-exclamation-triangle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Return',
+        severity: 'danger'
+      },
+      accept: () => {
+        this.orderService.returnOrder(data).subscribe({
+          next: (res) => {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Return processed successfully' });
+            this.router.navigate(['/pages/order/list']);
+          },
+          error: (err) => {
+            console.error(err);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to process return' });
+          }
+        });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'info', summary: 'Cancelled', detail: 'Return cancelled' });
+      }
+    });
   }
 
   setReturnPayment() {
@@ -149,7 +186,13 @@ export class OrderReturn implements OnInit {
     this.router.navigate(['/pages/order/list']);
   }
 
-  handleReturnPaymentDialogChange(event: any) {
-    console.log(event);
+  handleReturnPaymentDialogChange(event: ReturnPaymentData) {
+    const payments = Object.entries(event).map(([method, amount]) => ({
+      type: method as PaymentType,
+      amount: +amount
+    }));
+    this.returnPayments.set(payments);
+    const totalReturnPayment = payments.reduce((total, payment) => total + payment.amount, 0);
+    this.totalReturnPayment.set(totalReturnPayment);
   }
 }
