@@ -3,62 +3,51 @@
   <div class="flex-10">
     <div class="flex items-center gap-4">
       <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
-      <h4 class="filter">Order</h4>
-    </div>
-    <div class="flex flex-col gap-4 items-end sm:items-start sm:flex-row justify-between mb-4">
-      <p-autocomplete [emptyMessage]="'order.noResults' | transloco:{ item: 'order.products' | transloco }"
-        class="w-full" placeholder="Search product ..." [delay]="500" [minQueryLength]="3"
-        panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
-        [suggestions]="searchResults()" (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)"
-        fluid />
-      <p-button icon="pi pi-qrcode" label="Scan" />
+      <h4 class="filter">Return Order</h4>
     </div>
     <div class="flex flex-col gap-4">
-      @if(orderItems().length === 0) {
-      <div class="flex flex-col items-center gap-4 mt-8">
-        <i class="pi pi-shopping-cart text-6xl text-gray-400"></i>
-        <p class="text-gray-500">No items in the order. Please add products to the order.</p>
-      </div>
-      }
       @for (item of orderItems(); track item.id; let i = $index) {
-      <app-order-item [orderItem]="item" (delete)="removeItem(item.id)"
-        (amountChange)="handleAmountChange($event, item.id)" />
+      <app-order-item type="RETURN" [orderItem]="item" (amountChange)="handleAmountChange($event, item.id)" />
       }
     </div>
   </div>
   <div class="flex-3 card flex flex-col justify-between gap-2 p-4">
-    <div class="flex flex-col justify-between gap-2 mt-4">
-      <div class="flex flex-col justify-between gap-1">
-        <div>Total amount:</div>
-        <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
+    <div class="flex flex-col justify-between gap-1">
+      <div>{{'order.payment' | transloco}}:</div>
+      <p class="text-xl text-(--p-green-600)">+{{ totalPayment() | currency: " ": "code": "0.0" }} UZS</p>
+    </div>
+    <div>
+      <div class="flex flex-col justify-between gap-2">
+        <div class="flex flex-col justify-between gap-1">
+          <div>{{'order.totalAmount' | transloco}}:</div>
+          <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
+        </div>
+        <div class="flex flex-col justify-between gap-1">
+          <div>{{'order.sale' | transloco}}:</div>
+          <div class="flex items-center gap-4">
+            <p class="flex items-center mb-0! text-xl text-(--p-button-text-danger-color)">
+              {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
+            </p>
+          </div>
+        </div>
+
       </div>
-      <div class="flex flex-col justify-between gap-1">
-        <div>Sale:</div>
-        <div class="flex items-center gap-4">
-          <p class="flex items-center mb-0! text-xl text-(--p-button-text-danger-color)">
-            {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
+      <p-divider />
+      <div class="flex flex-col items-end sm:items-start">
+        <div>Return: </div>
+        <div class="flex items-center gap-2">
+          <p class="text-xl font-bold mb-0!">{{ totalAmount() - saleAmount() | currency: " ": "code":
+            "0.0"}} UZS
           </p>
-          <p-button [disabled]="saleAmount() === 0" icon="pi pi-trash" severity="danger" outlined
-            (click)="resetDiscount()" />
+          <p-button outlined icon="pi pi-wallet" [disabled]="totalAmount() === 0" (onClick)="setReturnPayment()" />
         </div>
       </div>
     </div>
-    <p-divider class="my-2" />
-    <div class="flex flex-col items-end sm:items-start">
-      <div>Total: </div>
-      <div class="flex items-center gap-2">
-        <p class="text-xl font-bold mb-0!">{{ totalAmount() - saleAmount() | currency: " ": "code":
-          "0.0"}} UZS
-        </p>
-        <p-button outlined icon="pi pi-pencil" [disabled]="orderItems().length === 0" (onClick)="setPriceSale()" />
-      </div>
-    </div>
     <div class="flex gap-2 justify-end mt-4">
-      <p-button icon="pi pi-clock" class="submit-btn" label="Hold" severity="secondary" (onClick)="holdOrder()" />
-      <p-button icon="pi pi-wallet" class="submit-btn" label="Payment" (onClick)="goToPayment()" />
+      <p-button class="submit-btn" label="Tasdiqlash" (onClick)="submit()" />
     </div>
   </div>
 </div>
 
-<app-sale-dialog [(visible)]="saleDialogVisible" (visibleChange)="handleSaleDialogChange($event)"
-  [price]="totalAmount()" [sale]="saleAmount()" />
+<app-return-payment-dialog [visible]="returnPaymentDialogVisible" (close)="returnPaymentDialogVisible = $event"
+  (data)="handleReturnPaymentDialogChange($event)" [returnAmount]="totalAmount() - saleAmount()" />

@@ -123,6 +123,12 @@ export interface CreateOrderItemPayload {
   customerId: string | null
   items: OrderItemPayload[]
 }
+
+export interface ReturnOrderItemPayload {
+  orderId: string,
+  items: Omit<OrderItemPayload, 'variantId'>[]
+  payments: OrderPaymentPayload[]
+}
 export interface CreateOrderPayload {
   storeId: string;
   warehouseId: string

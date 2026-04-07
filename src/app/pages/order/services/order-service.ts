@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload } from '../../../models/order.model';
+import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload, ReturnOrderItemPayload } from '../../../models/order.model';
 
 
 @Injectable({
@@ -35,6 +35,12 @@ export class OrderService {
 
   createOrderPayment(orderId: string, body: CreateOrderPaymentPayload) {
     return this.http.post<{ message: string }>(`/api/orders/payment/${orderId}`, body, {
+      withCredentials: true
+    })
+  }
+
+  returnOrder(returnOrderPayload: ReturnOrderItemPayload) {
+    return this.http.post<{ message: string }>('/api/orders/return', returnOrderPayload, {
       withCredentials: true
     })
   }

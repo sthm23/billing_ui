@@ -34,6 +34,7 @@ export class OrderItem implements OnChanges {
   price = signal(0);
   sale = signal(0);
 
+  @Input() type: 'RETURN' | 'SALE' = 'SALE';
   @Input() orderItem?: OrderItemCard;
   @Output() delete = new EventEmitter<void>();
   @Output() amountChange = new EventEmitter<OrderItemAmountChange>();

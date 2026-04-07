@@ -24,15 +24,19 @@
           </div>
           }
         </div>
+        @if(type !== 'RETURN') {
         <p-button icon="pi pi-pencil" severity="secondary" outlined type="button"
           (click)="isPriceChangeDialogVisible = true" />
+        }
 
 
       </div>
+      @if(type !== 'RETURN') {
       <div class="flex justify-end">
         <p-button type="button" [outlined]="true" icon="pi pi-trash" severity="danger"
           (click)="removeItem()"></p-button>
       </div>
+      }
     </div>
   </div>
 </p-fluid>

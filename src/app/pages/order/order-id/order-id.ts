@@ -83,7 +83,7 @@ export class OrderId implements OnInit {
             id: item.variantId,
             name: `${item.variant.sku} - ${item.variant.barCode}`,
             stock: +item.variant.quantity,
-            price: +item.retailPrice - item.sale,
+            price: +item.retailPrice,
             quantity: +item.quantity,
             sale: +item.sale,
             costAtSale: +item.costAtSale
