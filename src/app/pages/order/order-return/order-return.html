@@ -4,6 +4,10 @@
     <div class="flex items-center gap-4">
       <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
       <h4 class="filter">Return Order</h4>
+      @let order = currentOrder();
+      @if(order && order.status) {
+      <p-tag [value]="order.status" />
+      }
     </div>
     <div class="flex flex-col gap-4">
       @for (item of orderItems(); track item.id; let i = $index) {
@@ -31,9 +35,13 @@
       </div>
       <p-divider />
       <div class="flex items-center gap-4 justify-between">
+        <h5 class="m-0!">{{'order.debt' | transloco}}:</h5>
+        <div class="text-(--p-red-600)">{{debt() | currency: " ": "code": "0.0"}} UZS</div>
+      </div>
+      <div class="flex items-center gap-4 justify-between">
         <h5 class="m-0!">{{'order.payment' | transloco}}:</h5>
-        <div>{{totalPayment() | currency: " ": "code": "0.0"}} UZS</div>
-        <p-button outlined icon="pi pi-wallet" [disabled]="totalAmount() === 0" (onClick)="setReturnPayment()" />
+        <div class="text-(--p-green-600)">+{{customerPayment() | currency: " ": "code": "0.0"}} UZS</div>
+        <p-button outlined icon="pi pi-wallet" [disabled]="!(returnAmount() > 0)" (onClick)="setReturnPayment()" />
       </div>
       @let payments = returnPayments();
       @if(payments.length) {
@@ -54,18 +62,60 @@
     <p-divider />
     <div class="flex flex-col items-end sm:items-start">
       <div>Return: </div>
+      @if(returnAmount() > 0) {
       <div class="flex items-center gap-2">
-        <p class="text-xl font-bold mb-0!">{{ totalAmount() - saleAmount() | currency: " ": "code":
+        <p class="text-xl font-bold mb-0!">{{ returnAmount() | currency: " ": "code":
           "0.0"}} UZS
         </p>
       </div>
+      }@else {
+      <div class="flex items-center gap-2">
+        <p class="text-xl font-bold mb-0!">0 UZS
+        </p>
+      </div>
+      }
     </div>
     <div class="flex gap-2 justify-end mt-4">
-      <p-confirmdialog />
+
       <p-button class="submit-btn" label="Tasdiqlash" (onClick)="submit()" />
     </div>
   </div>
 </div>
+<p-confirmdialog>
+  <ng-template #message let-message>
+    <div class="flex flex-col items-center gap-4">
+      <i class="pi pi-exclamation-triangle text-(--p-red-600) text-6xl!"></i>
+      <div class="text-lg font-bold">Are you sure you want to process this return?</div>
+      <div class="card flex justify-center gap-4 flex-wrap m-0!">
+        <div class="flex flex-col">
+          @for (item of orderItems(); track item.id; let last = $last) {
+          @if(item.quantity > 0) {
+          <div class="flex items-center flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+              <div>
+                <div class="font-semibold">{{item.name}}</div>
+                <div class="text-sm text-gray-500">{{'order.price' | transloco}}: {{ item.price| currency: " ":
+                  "code": "0.0" }} UZS</div>
+              </div>
+            </div>
+            <div class="ml-auto flex flex-wrap items-center gap-4">
+              <span>{{ item.quantity }} x {{ (item.price - item.sale) | currency: " ": "code": "0.0" }}
+                UZS</span>
+              <span>=</span>
+              <span>{{ (item.quantity * (item.price - item.sale)) | currency: " ": "code": "0.0" }} UZS</span>
+            </div>
+          </div>
+          <p-divider />
+          }
+          }
+          <div>Total: {{(totalAmount() - saleAmount()) | currency: " ": "code": "0.0"}} UZS</div>
+          <div>Debt: -{{debt() | currency: " ": "code": "0.0"}} UZS</div>
+          <div>Total return: {{returnAmount() | currency: " ": "code": "0.0"}} UZS</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmdialog>
 
 <app-return-payment-dialog [visible]="returnPaymentDialogVisible" (close)="returnPaymentDialogVisible = $event"
-  (data)="handleReturnPaymentDialogChange($event)" [returnAmount]="totalAmount() - saleAmount()" />
+  (data)="handleReturnPaymentDialogChange($event)" [returnAmount]="returnAmount()" />

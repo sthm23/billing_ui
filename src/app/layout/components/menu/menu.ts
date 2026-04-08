@@ -63,35 +63,17 @@ export class Menu {
             {
               label: res['product'],
               icon: 'pi pi-fw pi-box',
-              items: [
-                {
-                  label: res['list'],
-                  icon: 'pi pi-fw pi-list',
-                  routerLink: ['/pages/product/list']
-                },
-              ]
+              routerLink: ['/pages/product/list']
             },
             {
               label: res['user'],
               icon: 'pi pi-fw pi-users',
-              items: [
-                {
-                  label: res['list'],
-                  icon: 'pi pi-fw pi-list',
-                  routerLink: ['/pages/user/list']
-                },
-              ]
+              routerLink: ['/pages/user/list']
             },
             {
               label: res['order'],
               icon: 'pi pi-fw pi-shopping-cart',
-              items: [
-                {
-                  label: res['list'],
-                  icon: 'pi pi-fw pi-list',
-                  routerLink: ['/pages/order/list']
-                }
-              ]
+              routerLink: ['/pages/order/list']
             },
           ]
         },

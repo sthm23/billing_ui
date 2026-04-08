@@ -260,7 +260,7 @@
     "search": "Qidirish",
     "scan": "Skanerlash",
     "order": "Zakaz",
-    "price": "Narxs",
+    "price": "Narx",
     "searchPlaceholder": "Tovar qidirish",
     "searchCustomerPlaceholder": "Mijozni izlash",
     "orderItemEmpty": "Zakazga hech qanday tovar qo'shilmagan. Iltimos, zakaz yaratish uchun tovar qo'shing.",
@@ -313,7 +313,7 @@
     "notFound": "Foydalanuvchi ma'lumotlari mavjud emas.",
     "type": {
       "name": "Tur",
-      "OWNER": "Egası",
+      "OWNER": "Egasi",
       "ADMIN": "Admin",
       "STAFF": "Xodim"
     },

@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ReturnPaymentData, ReturnPaymentDialog } from '../../../shared/components/return-payment-dialog/return-payment-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-order-return',
@@ -26,7 +27,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ToastModule,
     TranslocoPipe,
     ReturnPaymentDialog,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TagModule
   ],
   templateUrl: './order-return.html',
   styleUrl: './order-return.css',
@@ -35,9 +37,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 export class OrderReturn implements OnInit {
 
   totalAmount = signal<number>(0);
-  totalPayment = signal<number>(0);
-  totalReturnPayment = signal<number>(0);
+  customerPayment = signal<number>(0);
+  cashierPayment = signal<number>(0);
   saleAmount = signal<number>(0);
+  debt = signal<number>(0);
   orderItems = signal<OrderItemCard[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
@@ -84,11 +87,12 @@ export class OrderReturn implements OnInit {
             sale: +item.sale,
             costAtSale: +item.costAtSale
           }));
+          this.debt.set(res.totalAmount - res.paidAmount);
           this.orderItems.set(items)
         }
         if (res.payments && res.payments.length > 0) {
           const totalPayment = res.payments.reduce((total, payment) => total + +payment.amount, 0);
-          this.totalPayment.set(totalPayment);
+          this.customerPayment.set(totalPayment);
         }
       },
       error: (err) => {
@@ -193,6 +197,14 @@ export class OrderReturn implements OnInit {
     }));
     this.returnPayments.set(payments);
     const totalReturnPayment = payments.reduce((total, payment) => total + payment.amount, 0);
-    this.totalReturnPayment.set(totalReturnPayment);
+    this.cashierPayment.set(totalReturnPayment);
+  }
+
+  returnAmount() {
+    const order = this.currentOrder()
+    if (order && order.status === 'DEBT') {
+      return this.totalAmount() - this.saleAmount() - this.debt();
+    }
+    return this.totalAmount() - this.saleAmount();
   }
 }
