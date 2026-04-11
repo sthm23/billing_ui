@@ -9,6 +9,7 @@ import { switchMap } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 @Component({
   selector: 'app-login',
@@ -36,7 +37,7 @@ export class Login implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef,
     private messageService: MessageService,
-    private translate: TranslocoService
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {

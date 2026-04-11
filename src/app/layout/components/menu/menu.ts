@@ -6,6 +6,7 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../pages/auth/service/auth';
 import { TranslocoService } from '@ngneat/transloco';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateService } from '../../../shared/services/translate.service';
 @Component({
   selector: 'app-menu',
   imports: [CommonModule, MenuItems, RouterModule],
@@ -18,14 +19,14 @@ export class Menu {
 
   constructor(
     private authService: AuthService,
-    private translate: TranslocoService
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
 
     this.translate.selectTranslateObject('sidebar').pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe((res: Record<string, string>) => {
+    ).subscribe((res) => {
       this.model = [
         {
           label: res['home'],

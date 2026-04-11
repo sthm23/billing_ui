@@ -48,7 +48,7 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
-          <th>{{'order.store' | transloco}}</th>
+          <th>{{'order.createdAt' | transloco}}</th>
           <th>{{'order.warehouse' | transloco}}</th>
           <th>{{'order.creator' | transloco}}</th>
           <th>{{'order.channel.name' | transloco}}</th>
@@ -59,12 +59,12 @@
       </ng-template>
       <ng-template pTemplate="body" let-order>
         <tr [pSelectableRow]="order.status !== 'CANCELLED' ? order : null">
-          <td>{{ order.store.name }}</td>
+          <td>{{ order.createdAt | date:'dd.MM.yyyy' }}</td>
           <td>{{ order.warehouse.name }}</td>
           <td>{{ order.cashier.role }}</td>
           <td>{{ (`order.channel.${order.channel}` | transloco) }}</td>
           <td>
-            <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco),order.status)"
+            <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco), order.status)"
               [severity]="getSeverity(order.status)"></p-tag>
           </td>
           <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>

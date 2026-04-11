@@ -9,7 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { Table, TableModule, TablePageEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
 import { delay } from 'rxjs';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -22,6 +22,7 @@ import { SelectModule } from 'primeng/select';
 import { Warehouse } from '../../../models/store.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoPipe } from '@ngneat/transloco';
+
 
 @Component({
   selector: 'app-order-list',
@@ -40,7 +41,8 @@ import { TranslocoPipe } from '@ngneat/transloco';
     DrawerModule,
     SelectModule,
     ConfirmDialogModule,
-    TranslocoPipe
+    TranslocoPipe,
+    DatePipe
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',
@@ -74,7 +76,7 @@ export class OrderList implements OnInit {
     private authService: AuthService,
     private router: Router,
     private messageService: MessageService,
-    private confirmService: ConfirmationService
+    private confirmService: ConfirmationService,
   ) { }
 
   ngOnInit() {
@@ -174,13 +176,15 @@ export class OrderList implements OnInit {
   getSeverity(status: OrderStatus) {
     switch (status) {
       case OrderStatus.HOLD:
-        return 'warn';
+        return 'contrast';
       case OrderStatus.CREATED:
         return 'info';
       case OrderStatus.COMPLETED:
         return 'success';
       case OrderStatus.DEBT:
         return 'danger';
+      case OrderStatus.REFUNDED:
+        return 'warn';
       default:
         return null;
     }

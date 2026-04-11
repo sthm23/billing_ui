@@ -231,7 +231,9 @@
       "DEBT": "Qarz",
       "CREATED": "Yaratildi",
       "COMPLETED": "Tugallangan",
-      "CANCELLED": "Bekor qilingan"
+      "CANCELLED": "Bekor qilingan",
+      "REFUNDED": "Qaytarilgan",
+      "CREDIT": "Kredit"
     },
     "paymentMethod": {
       "name": "To'lov usuli",

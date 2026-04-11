@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 import { Router, RouterModule } from '@angular/router';
-import { BehaviorSubject, forkJoin, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { Loader } from '../../../shared/components/loader/loader';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AppStore } from '../../../store/app.store';
@@ -16,7 +16,7 @@ import { MultiSelectType, SelectType } from '../../../models/app.models';
 import { FileUploadComponent } from '../../../shared/components/file-upload/file-upload';
 import { ProductService } from '../service/product.service';
 import { TreeSelectModule } from 'primeng/treeselect';
-import { CreateProduct, FileUploadData, Product } from '../../../models/product.model';
+import { Category, CreateProduct, FileUploadData, Product } from '../../../models/product.model';
 import { CategoryService } from '../../../shared/services/category.service';
 import { StoreService } from '../../organization/service/store';
 import { FileUploadService } from '../../../shared/services/file-upload.service';
@@ -25,6 +25,8 @@ import { Store, Warehouse } from '../../../models/store.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TextareaModule } from 'primeng/textarea';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslateService } from '../../../shared/services/translate.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-product-create',
@@ -43,7 +45,8 @@ import { TranslocoPipe } from '@ngneat/transloco';
     TreeSelectModule,
     MultiSelectModule,
     TextareaModule,
-    TranslocoPipe
+    TranslocoPipe,
+    TranslatePipe
   ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
@@ -57,7 +60,10 @@ export class ProductCreate implements OnInit, OnDestroy {
   stores = signal<Store[]>([])
   warehouses = signal<Warehouse[]>([])
   attributeOptions = signal<SelectType[]>([])
+  translateObject = {}
+  categoryArr: Category[] = []
 
+  destroy$ = new Subject<void>();
 
   uploadedFilesCancel$ = new BehaviorSubject<boolean>(false);
   appStore = inject(AppStore);
@@ -81,7 +87,8 @@ export class ProductCreate implements OnInit, OnDestroy {
     private storeService: StoreService,
     private fileUploadService: FileUploadService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translate: TranslateService
   ) {
 
   }
@@ -113,15 +120,19 @@ export class ProductCreate implements OnInit, OnDestroy {
         categories: this.categoryService.getStoreCategoryList(storeId),
         attributes: this.categoryService.getStoreAttributeList(storeId),
         tags: this.categoryService.getTagList()
-      }).subscribe({
-        next: ({ brands, store, categories, attributes, tags }) => {
-          this.tags.set(tags);
-          this.brands.set(brands);
-          this.warehouses.set(store.warehouse);
-          const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
-          this.categories.set(categoryData);
-          this.attributeOptions.set(attributes);
-          this.appStore.stopLoader();
+      }).pipe(takeUntil(this.destroy$), switchMap(({ brands, store, categories, attributes, tags }) => {
+        this.tags.set(tags);
+        this.brands.set(brands);
+        this.warehouses.set(store.warehouse);
+        this.categoryArr = categories;
+        const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
+        this.categories.set(categoryData);
+        this.attributeOptions.set(attributes);
+        this.appStore.stopLoader();
+        return this.translate.selectTranslateObject('category')
+      })).subscribe({
+        next: (translate) => {
+          this.translateObject = translate;
         },
         error: (err) => {
           this.appStore.stopLoader();
@@ -275,7 +286,20 @@ export class ProductCreate implements OnInit, OnDestroy {
     this.router.navigate(['pages/product/list'])
   }
 
+  getProductTranslatedName(translate: string, value: string): string {
+    if (translate.includes('.')) {
+      return value
+    }
+    return translate
+  }
+
+  isValidField(key: keyof typeof this.productForm.controls): string {
+    return this.productForm.controls[key].touched && this.productForm.controls[key].invalid ? 'ng-dirty ng-invalid' : ''
+  }
+
   ngOnDestroy(): void {
     this.appStore.stopLoader();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

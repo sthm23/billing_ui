@@ -15,24 +15,31 @@
             <div class="flex flex-wrap gap-3 w-full">
               <label for="store">{{'product.store' | transloco}}</label>
               <p-select id="store" formControlName="store" [options]="stores()" optionLabel="name"
-                [class]="productForm.controls.store.touched && productForm.controls.store.invalid ? 'ng-dirty ng-invalid' : ''" />
+                [class]="isValidField('store')" />
             </div>
             }
             <div class="flex flex-wrap gap-3 w-full">
               <label for="warehouse">{{'product.warehouse' | transloco}}</label>
               <p-select id="warehouse" formControlName="warehouse" [options]="warehouses()" optionLabel="name"
-                [class]="productForm.controls.warehouse.touched && productForm.controls.warehouse.invalid ? 'ng-dirty ng-invalid' : ''" />
+                [class]="isValidField('warehouse')" />
             </div>
             <div class="flex flex-wrap gap-2 w-full">
               <label for="category">{{'product.category' | transloco}}</label>
-              <p-treeselect id="category" class="w-full" formControlName="category" [options]="categories()"
+              <p-treeselect id="category" class="w-full" formControlName="category"
+                [options]="categories() | translatePipe:translateObject:categoryArr" [class]="isValidField('category')"
                 [placeholder]="'product.categoryPlaceholder'|transloco" />
             </div>
 
             <div class="flex flex-wrap gap-2 w-full">
               <label for="brand">{{'product.brand' | transloco}}</label>
               <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
-                [class]="productForm.controls.brand.touched && productForm.controls.brand.invalid ? 'ng-dirty ng-invalid' : ''" />
+                [class]="isValidField('brand')">
+                <ng-template let-brand #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ getProductTranslatedName((`brand.${brand.name}` | transloco), brand.name) }}</span>
+                  </div>
+                </ng-template>
+              </p-select>
             </div>
           </div>
           <div class="flex flex-col md:flex-row gap-6">
@@ -44,7 +51,12 @@
                 class="w-full md:w-80">
                 <ng-template let-group #group>
                   <div class="flex items-center">
-                    <span>{{ group.name }}</span>
+                    <span>{{ getProductTranslatedName((`tag.${group.name}` | transloco), group.name) }}</span>
+                  </div>
+                </ng-template>
+                <ng-template let-item #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ getProductTranslatedName((`tagValue.${item.value}` | transloco), item.value) }}</span>
                   </div>
                 </ng-template>
               </p-multiselect>
@@ -54,14 +66,18 @@
               <label for="attributes">{{'product.attribute' | transloco}}</label>
               <p-multiselect id="attributes" formControlName="attributes"
                 [placeholder]="'product.attributePlaceholder' | transloco" [options]="attributeOptions()"
-                optionLabel="name" [maxSelectedLabels]="3"
-                [class]="productForm.controls.attributes.touched && productForm.controls.attributes.invalid ? 'ng-dirty ng-invalid' : ''" />
+                optionLabel="name" [maxSelectedLabels]="3" [class]="isValidField('attributes')">
+                <ng-template let-attribute #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ `attribute.${attribute.name}` | transloco }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
             </div>
 
             <div class="flex flex-wrap gap-3 w-full">
               <label for="name">{{'product.name' | transloco}}</label>
-              <input pInputText id="name" type="text" formControlName="name"
-                [class]="productForm.controls.name.touched && productForm.controls.name.invalid ? 'ng-dirty ng-invalid' : ''" />
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
             </div>
           </div>
 

@@ -128,7 +128,7 @@
 
             <ul class="list-none p-0 m-0">
               @if(stockMovements().length === 0) {
-              <p class="text-center text-muted-foreground">{{'profile.noRecentActivities' | transloco}}</p>
+              <p class="text-center text-muted-foreground">{{'profile.activitiesEmpty' | transloco}}</p>
               }@else {
               <p-virtualScroller [items]="stockMovements()" [itemSize]="80" scrollHeight="400px"
                 (onScrollIndexChange)="handleScroll($event)">

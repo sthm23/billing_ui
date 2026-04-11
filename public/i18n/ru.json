@@ -231,7 +231,9 @@
       "DEBT": "Долг",
       "CREATED": "Создано",
       "COMPLETED": "Завершено",
-      "CANCELLED": "Отменено"
+      "CANCELLED": "Отменено",
+      "REFUNDED": "Возврат",
+      "CREDIT": "Кредит"
     },
     "paymentMethod": {
       "name": "Способ оплаты",

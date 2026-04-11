@@ -59,15 +59,21 @@
                   </ng-template>
                 </p-multiselect>
                 }@else {
+                @if(product.tags && product.tags.length) {
+
                 @for (tag of productTags.values(); track $index) {
                 <div>
-                  {{getProductTranslate((`tag.${tag.name}` | transloco), tag.name)}}:@for(item of tag.values; track
-                  $index) {
+                  {{getProductTranslate((`tag.${tag.name}` | transloco), tag.name)}}:
+                  @for(item of tag.values; track $index) {
                   <p-chip [label]="getProductTranslate((`tagValue.${item.value}` | transloco), item.value.toString())"
                     class="mr-2 mb-2" />
                   }
                 </div>
                 }
+                }@else {
+                <div>{{'product.tagNoPlaceholder'|transloco}}</div>
+                }
+
                 }
               </div>
               <div class="flex flex-wrap gap-2 w-full" [class.flex-col]="!editMode">

@@ -10,6 +10,7 @@ import { AuthService } from '../../../pages/auth/service/auth';
 import { TitleCasePipe } from '@angular/common';
 import { CurrentUserType } from '../../../models/auth.model';
 import { TranslocoService } from '@ngneat/transloco';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 @Component({
   selector: 'app-sidebar-header',
@@ -30,7 +31,7 @@ export class SidebarHeader implements OnInit {
   currentUser: CurrentUserType | null = null;
   constructor(
     private authService: AuthService,
-    private translate: TranslocoService
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {

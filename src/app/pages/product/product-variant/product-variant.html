@@ -61,7 +61,7 @@
             <div class="flex flex-wrap gap-4">
 
               @for (tag of product.tags; track tag) {
-              <p-tag [value]="tag.tagName" severity="info" />
+              <p-tag [value]="getProductTranslate(`tag.${tag.tagName}` | transloco, tag.tagName)" severity="info" />
               }
             </div>
             } @else {

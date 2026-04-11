@@ -12,6 +12,7 @@ import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { ListboxModule } from 'primeng/listbox';
 import { TranslocoService } from '@ngneat/transloco';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 @Component({
   selector: 'app-topbar',
@@ -57,7 +58,7 @@ export class Topbar implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     private authService: AuthService,
     private router: Router,
-    private translocoService: TranslocoService
+    private translocoService: TranslateService
   ) { }
 
   ngOnInit() {
@@ -114,7 +115,6 @@ export class Topbar implements OnInit, OnDestroy {
   }
 
   setActiveLang(lang: string) {
-    localStorage.setItem('my_billing_lang', lang);
     document.documentElement.lang = lang;
     this.translocoService.setActiveLang(lang)
   }

@@ -231,7 +231,9 @@
       "DEBT": "Debt",
       "CREATED": "Created",
       "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded",
+      "CREDIT": "Credit"
     },
     "paymentMethod": {
       "name": "Payment method",

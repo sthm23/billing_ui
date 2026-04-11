@@ -20,6 +20,7 @@ import { forkJoin, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { Category } from '../../../models/product.model';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 
 @Component({
@@ -71,7 +72,7 @@ export class OrgCreate implements OnInit, OnDestroy {
     private storeService: StoreService,
     private categoryService: CategoryService,
     private messageService: MessageService,
-    private translate: TranslocoService
+    private translate: TranslateService
   ) {
   }
 

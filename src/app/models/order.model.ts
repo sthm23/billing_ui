@@ -17,7 +17,8 @@ export enum OrderStatus {
   COMPLETED = 'COMPLETED',
   DEBT = 'DEBT',
   HOLD = 'HOLD',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED'
 }
 
 export interface OrderResponse extends BaseListResponse {
