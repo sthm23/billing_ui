@@ -9,6 +9,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { MessageModule } from 'primeng/message';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 type PaymentMethod = 'CASH' | 'CARD';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
@@ -31,7 +32,8 @@ export interface PaymentDialogOutput {
     SelectButtonModule,
     ReactiveFormsModule,
     MessageModule,
-    FloatLabelModule
+    FloatLabelModule,
+    TranslocoPipe
   ],
   templateUrl: './return-payment-dialog.html',
   styleUrl: './return-payment-dialog.css',

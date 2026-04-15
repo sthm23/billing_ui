@@ -1,16 +1,12 @@
 import { Injectable, OnDestroy, OnInit } from "@angular/core";
 import { TranslocoService } from "@ngneat/transloco";
 import { PrimeNG } from "primeng/config";
-import { BehaviorSubject } from "rxjs";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TranslateService {
-
-  currentLang$ = new BehaviorSubject<string>('ru');
-  defaultLanguage = 'ru';
 
   constructor(
     private translocoService: TranslocoService,
@@ -28,7 +24,6 @@ export class TranslateService {
   }
 
   setActiveLang(lang: string) {
-    this.currentLang$.next(lang);
     this.translocoService.setActiveLang(lang);
     this.setLocale(this.config, lang);
     localStorage.setItem('my_billing_lang', lang);

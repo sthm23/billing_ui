@@ -107,7 +107,7 @@ export class OrderId implements OnInit {
           const searchResults = res.data.map(variant => {
             return {
               ...variant,
-              name: `${variant.sku} - ${variant.barCode} - ${variant.quantity} in stock - SUM${variant.price}`
+              name: `${variant.sku} - ${variant.barCode}`
             };
           }).filter(variant => variant.name.toLowerCase().includes(text.toLowerCase()));
 

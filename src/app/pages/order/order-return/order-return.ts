@@ -1,7 +1,7 @@
 import { Component, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { OrderDetail, OrderItemCard, OrderPaymentPayload, PaymentType, ReturnOrderItemPayload } from '../../../models/order.model';
+import { OrderDetail, OrderItemCard, OrderPaymentPayload, OrderStatus, PaymentType, ReturnOrderItemPayload } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { OrderItem, OrderItemAmountChange } from '../../../shared/components/order-item/order-item';
 import { ButtonModule } from 'primeng/button';
@@ -14,6 +14,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { ReturnPaymentData, ReturnPaymentDialog } from '../../../shared/components/return-payment-dialog/return-payment-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 @Component({
   selector: 'app-order-return',
@@ -53,7 +54,8 @@ export class OrderReturn implements OnInit {
     private route: ActivatedRoute,
     private orderService: OrderService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private translate: TranslateService
   ) {
     effect(() => {
       this.totalAmount.set(this.orderItems().reduce((total, item) => total + (item.price * item.quantity), 0));
@@ -150,18 +152,19 @@ export class OrderReturn implements OnInit {
   }
 
   confirmSave(data: ReturnOrderItemPayload) {
+    const translate = this.translate.translateObject('order');
     this.confirmationService.confirm({
       message: 'Are you confirm this order return?',
-      header: 'Confirm Save',
+      header: translate['confirmTitle'],
       icon: 'pi pi-exclamation-triangle',
-      rejectLabel: 'Cancel',
+      rejectLabel: translate['cancel'],
       rejectButtonProps: {
-        label: 'Cancel',
+        label: translate['cancel'],
         severity: 'secondary',
         outlined: true
       },
       acceptButtonProps: {
-        label: 'Return',
+        label: translate['return'],
         severity: 'danger'
       },
       accept: () => {
@@ -203,8 +206,33 @@ export class OrderReturn implements OnInit {
   returnAmount() {
     const order = this.currentOrder()
     if (order && order.status === 'DEBT') {
-      return this.totalAmount() - this.saleAmount() - this.debt();
+      const returnAmount = this.totalAmount() - this.saleAmount() - this.debt();
+      return returnAmount < 0 ? 0 : returnAmount;
     }
     return this.totalAmount() - this.saleAmount();
+  }
+
+  translateOrderText(translate: string, text: string) {
+    if (translate.includes('.')) {
+      return text
+    }
+    return translate
+  }
+
+  getSeverity(status: OrderStatus) {
+    switch (status) {
+      case OrderStatus.HOLD:
+        return 'contrast';
+      case OrderStatus.CREATED:
+        return 'info';
+      case OrderStatus.COMPLETED:
+        return 'success';
+      case OrderStatus.DEBT:
+        return 'danger';
+      case OrderStatus.REFUNDED:
+        return 'warn';
+      default:
+        return null;
+    }
   }
 }

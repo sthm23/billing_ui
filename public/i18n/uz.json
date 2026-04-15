@@ -278,7 +278,13 @@
     "customer": "Mijoz",
     "paymentTitle": "Bo'lib to'lash uchun bir nechta to'lov usullarini tanlashingiz mumkin.",
     "noResults": "Qidiruvingizga mos keladigan {{item}} topilmadi.",
-    "products": "Tovarlar"
+    "products": "Tovarlar",
+    "returnOrder": "Zakazni qaytarish",
+    "confirmReturn": "Siz ushbu zakazni qaytarishni xohlaysizmi?",
+    "confirmTitle": "Qaytarishni tasdiqlash",
+    "debt": "Qarz",
+    "returned": "Qaytarilgan",
+    "save": "Saqlash"
   },
   "user": {
     "name": "To'liq ism",

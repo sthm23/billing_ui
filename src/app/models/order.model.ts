@@ -66,6 +66,9 @@ export interface Order {
   createdAt: string
   itemsCount: number
   paymentsCount: number
+  returnedAmount: number
+  isReturned: boolean
+  returnedAt: string | null
 }
 
 export interface OrderDetail extends Order {

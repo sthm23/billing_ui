@@ -278,7 +278,13 @@
     "customer": "Customer",
     "paymentTitle": "You can select multiple payment methods for split payment.",
     "noResults": "No {{item}} found matching your search.",
-    "products": "Products"
+    "products": "Products",
+    "returnOrder": "Return order",
+    "confirmReturn": "Are you sure you want to return this order?",
+    "confirmTitle": "Confirm return",
+    "debt": "Debt",
+    "returned": "Returned",
+    "save": "Save"
   },
   "user": {
     "name": "Full name",

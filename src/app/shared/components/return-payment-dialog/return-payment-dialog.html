@@ -10,7 +10,7 @@
         <p-inputgroup>
           <p-floatlabel>
             <p-inputnumber id="cash" placeholder="Cash" formControlName="CASH" [invalid]="isValid('CASH')" />
-            <label for="cash">Cash</label>
+            <label for="cash">{{'order.paymentMethod.CASH' | transloco}}</label>
           </p-floatlabel>
           <p-inputgroup-addon>
             <i class="pi pi-money-bill"></i>
@@ -24,7 +24,7 @@
         <p-inputgroup>
           <p-floatlabel>
             <p-inputnumber id="card" placeholder="Card" formControlName="CARD" [invalid]="isValid('CARD')" />
-            <label for="card">Card</label>
+            <label for="card">{{'order.paymentMethod.CARD' | transloco}}</label>
           </p-floatlabel>
           <p-inputgroup-addon><i class="pi pi-credit-card"></i></p-inputgroup-addon>
         </p-inputgroup>
@@ -39,8 +39,8 @@
     </div>
 
     <div class="flex justify-end gap-2">
-      <p-button label="Cancel" severity="secondary" (click)="closeModal(false)" />
-      <p-button label="Save" (click)="save()" />
+      <p-button [label]="'order.cancel' | transloco" severity="secondary" (click)="closeModal(false)" />
+      <p-button [label]="'order.save' | transloco" (click)="save()" />
     </div>
   </form>
 </p-dialog>
