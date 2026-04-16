@@ -35,7 +35,7 @@ export class Menu {
             {
               label: res['profile'],
               icon: 'pi pi-fw pi-user',
-              routerLink: ['/pages/settings/profile'],
+              routerLink: ['/pages/profile'],
             },
           ]
         },

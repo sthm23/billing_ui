@@ -284,7 +284,10 @@
     "confirmTitle": "Confirm return",
     "debt": "Debt",
     "returned": "Returned",
-    "save": "Save"
+    "save": "Save",
+    "deleteTitle": "Disable Confirmation",
+    "deleteText": "Do you want to delete this record?",
+    "delete": "Delete"
   },
   "user": {
     "name": "Full name",

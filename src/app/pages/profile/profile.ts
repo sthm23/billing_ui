@@ -3,15 +3,15 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
-import { AuthService } from '../../auth/service/auth';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { UserService } from '../../user/service/user.service';
-import { UserInfo, UserStockMovement } from '../../../models/user.model';
 import { Divider } from "primeng/divider";
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { UserInfo, UserStockMovement } from '../../models/user.model';
+import { AuthService } from '../auth/service/auth';
+import { UserService } from '../user/service/user.service';
 
 @Component({
   selector: 'app-profile',

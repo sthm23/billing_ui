@@ -7,27 +7,27 @@
       <ng-template #caption>
         <div class="flex justify-start items-center">
           <p-button icon="pi pi-arrow-left" text (onClick)="goToDashboard()" />
-          <h2 class="text-2xl font-bold">Attributes</h2>
+          <h2 class="text-2xl font-bold">{{'product.attribute' | transloco}}</h2>
         </div>
         <div class="flex justify-end gap-2">
-          <p-button label="Create user" icon="pi pi-plus" (onClick)="createAttribute()" />
+          <p-button [label]="'product.create' | transloco" icon="pi pi-plus" (onClick)="createAttribute()" />
         </div>
       </ng-template>
       <ng-template #header>
         <tr>
           <th style="width:25%">Id</th>
-          <th style="width:25%">Name</th>
-          <th style="width:25%">Type</th>
-          <th style="width:25%">Action</th>
+          <th style="width:25%">{{'product.name' | transloco}}</th>
+          <th style="width:25%">{{'user.type' | transloco}}</th>
+          <th style="width:25%">{{'product.action' | transloco}}</th>
         </tr>
       </ng-template>
       <ng-template #body let-attribute>
         <tr [pSelectableRow]="attribute">
           <td>{{ attribute.id }}</td>
-          <td>{{ attribute.name }}</td>
+          <td>{{ getTranslate(`attribute.${attribute.name}` | transloco, attribute.name) }}</td>
           <td>{{ attribute.type }}</td>
           <td>
-            <p-button label="Edit" icon="pi pi-pencil" class="p-button-text" (onClick)="selectAttribute(attribute)" />
+            <p-button icon="pi pi-pencil" outlined="true" (onClick)="selectAttribute(attribute)" />
           </td>
         </tr>
       </ng-template>

@@ -78,8 +78,9 @@
       }
     </div>
     <div class="flex gap-2 justify-end mt-4">
-
+      @if(order && !order.isReturned) {
       <p-button [label]="'order.submit' | transloco" (onClick)="submit()" />
+      }
     </div>
   </div>
 </div>

@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { AttributeDetail } from '../../../../models/product.model';
+import { TranslocoPipe } from '@ngneat/transloco';
+import { Tag } from "primeng/tag";
 
 
 @Component({
@@ -12,6 +14,8 @@ import { AttributeDetail } from '../../../../models/product.model';
   imports: [
     ToastModule,
     ButtonModule,
+    TranslocoPipe,
+    Tag
   ],
   templateUrl: './attribute-view.html',
   styleUrl: './attribute-view.css',
@@ -55,5 +59,12 @@ export class AttributeView implements OnInit {
 
   backToList() {
     this.router.navigate(['pages/settings/attribute/list']);
+  }
+
+  getTranslate(translate: string, text: string | number | boolean) {
+    if (translate.includes('.')) {
+      return text
+    }
+    return translate
   }
 }

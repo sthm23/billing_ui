@@ -284,7 +284,10 @@
     "confirmTitle": "Qaytarishni tasdiqlash",
     "debt": "Qarz",
     "returned": "Qaytarilgan",
-    "save": "Saqlash"
+    "save": "Saqlash",
+    "deleteTitle": "O'chirishni tasdiqlash",
+    "deleteText": "Siz ushbu yozuvni o'chirishni xohlaysizmi?",
+    "delete": "O'chirish"
   },
   "user": {
     "name": "To'liq ism",

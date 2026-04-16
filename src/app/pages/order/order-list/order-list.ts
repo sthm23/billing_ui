@@ -22,6 +22,7 @@ import { SelectModule } from 'primeng/select';
 import { Warehouse } from '../../../models/store.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 
 @Component({
@@ -77,6 +78,7 @@ export class OrderList implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private confirmService: ConfirmationService,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit() {
@@ -191,19 +193,20 @@ export class OrderList implements OnInit {
   }
 
   confirmDeleteOrder(event: Event, item: Order) {
+    const translate = this.translateService.translateObject('order');
     this.confirmService.confirm({
       target: event.target as EventTarget,
-      message: 'Do you want to delete this record?',
-      header: 'Disable Confirmation',
+      message: translate['deleteText'],
+      header: translate['deleteTitle'],
       icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
+      rejectLabel: translate['cancel'],
       rejectButtonProps: {
-        label: 'Cancel',
+        label: translate['cancel'],
         severity: 'secondary',
         outlined: true
       },
       acceptButtonProps: {
-        label: 'Delete',
+        label: translate['delete'],
         severity: 'danger'
       },
 
@@ -241,6 +244,9 @@ export class OrderList implements OnInit {
         return;
       case OrderStatus.HOLD:
         this.router.navigate(['/pages/order', order.id])
+        return;
+      case OrderStatus.REFUNDED:
+        this.router.navigate(['/pages/order/return', order.id])
         return;
       default:
         return;

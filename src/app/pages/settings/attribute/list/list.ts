@@ -5,12 +5,14 @@ import { AppStore } from '../../../../store/app.store';
 import { Router } from '@angular/router';
 import { Attribute } from '../../../../models/product.model';
 import { CategoryService } from '../../../../shared/services/category.service';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-attribute-list',
   imports: [
     TableModule,
-    ButtonModule
+    ButtonModule,
+    TranslocoPipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
@@ -61,5 +63,12 @@ export class AttributeList implements OnInit {
 
   createAttribute() {
     this.router.navigate(['pages/settings/attribute/create']);
+  }
+
+  getTranslate(translate: string, text: string) {
+    if (translate.includes('.')) {
+      return text
+    }
+    return translate
   }
 }

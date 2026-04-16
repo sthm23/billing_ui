@@ -22,6 +22,7 @@ import { AuthService } from '../../auth/service/auth';
 import { Store } from '../../../models/store.model';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateService } from '../../../shared/services/translate.service';
 @Component({
   selector: 'app-user-create',
   imports: [
@@ -64,7 +65,7 @@ export class UserCreate implements OnInit, OnDestroy {
   storeList = signal<Store[]>([]);
   warehouses = signal<SelectType[]>([]);
 
-  translate = inject(TranslocoService);
+  translate = inject(TranslateService);
   messageService = inject(MessageService);
   userService = inject(UserService);
   storeService = inject(StoreService);
@@ -215,10 +216,10 @@ export class UserCreate implements OnInit, OnDestroy {
           ],
         },
         {
-          label: translations.staff || 'Staff', items: [
+          label: translations.staff.label || 'Staff', items: [
             { label: translations.staff.manager || 'Manager', value: StaffRole.MANAGER },
-            { label: translations.staff.sales || 'Seller', value: StaffRole.SELLER },
-            { label: translations.staff.stock || 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: translations.staff.seller || 'Seller', value: StaffRole.SELLER },
+            { label: translations.staff.warehouse || 'Warehouse', value: StaffRole.WAREHOUSE },
             { label: translations.staff.cashier || 'Cashier', value: StaffRole.CASHIER },
           ]
         }
@@ -228,8 +229,8 @@ export class UserCreate implements OnInit, OnDestroy {
         {
           label: translations.staff.label || 'Staff', items: [
             { label: translations.staff.manager || 'Manager', value: StaffRole.MANAGER },
-            { label: translations.staff.sales || 'Seller', value: StaffRole.SELLER },
-            { label: translations.staff.stock || 'Warehouse', value: StaffRole.WAREHOUSE },
+            { label: translations.staff.seller || 'Seller', value: StaffRole.SELLER },
+            { label: translations.staff.warehouse || 'Warehouse', value: StaffRole.WAREHOUSE },
             { label: translations.staff.cashier || 'Cashier', value: StaffRole.CASHIER },
           ]
         }
