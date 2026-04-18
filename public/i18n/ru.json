@@ -291,7 +291,8 @@
     "additionalServices": "Дополнительные услуги",
     "serviceName": "Название услуги",
     "servicePrice": "Цена услуги",
-    "serviceDescription": "Описание услуги"
+    "serviceDescription": "Описание услуги",
+    "add": "Добавить"
   },
   "user": {
     "name": "Польная имя",

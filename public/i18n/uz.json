@@ -291,7 +291,8 @@
     "additionalServices": "Qo'shimcha xizmatlar",
     "serviceName": "Xizmat nomi",
     "servicePrice": "Xizmat narxi",
-    "serviceDescription": "Xizmat tavsifi"
+    "serviceDescription": "Xizmat tavsifi",
+    "add": "Qo'shish"
   },
   "user": {
     "name": "To'liq ism",

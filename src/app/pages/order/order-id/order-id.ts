@@ -45,6 +45,7 @@ export class OrderId implements OnInit {
 
   totalAmount = signal<number>(0);
   saleAmount = signal<number>(0);
+  additionalServiceAmount = signal<number>(0);
   orderItems = signal<OrderItemCard[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
@@ -110,6 +111,18 @@ export class OrderId implements OnInit {
           }));
           this.orderItems.set(items)
         }
+        if (res.services && res.services.length > 0) {
+          const services = res.services.map(service => new FormGroup({
+            id: new FormControl({ value: service.id, disabled: false }),
+            name: new FormControl({ value: service.name, disabled: false }, { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
+            price: new FormControl({ value: +service.price, disabled: false }, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
+            description: new FormControl({ value: service.description, disabled: false }, { nonNullable: true })
+          }));
+          this.additionalServices.clear();
+          services.forEach(service => this.additionalServices.push(service));
+          this.isActive.setValue(true);
+          this.additionalServiceAmount.set(res.services.reduce((total, service) => total + +service.price, 0));
+        }
       },
       error: (err) => {
         console.error(err);
@@ -118,13 +131,23 @@ export class OrderId implements OnInit {
     });
   }
 
+  get isActive() {
+    return this.additionalServiceForm.get('isActive') as FormControl<boolean>;
+  }
+
+  get additionalServices() {
+    return this.additionalServiceForm.get('services') as FormArray<FormGroup>;
+  }
+
   handleAdditionalServiceChanges() {
-    this.additionalServiceForm.get('isActive')!.valueChanges.subscribe(value => {
-      const isActive = value;
-      // if (isActive) {
-      const services = this.additionalServiceForm.get('services')!.value;
-      console.log('Active services:', services);
-      // }
+    this.additionalServices.valueChanges.subscribe(value => {
+
+      if (this.isActive.value) {
+        const totalAdditionalServiceAmount = value.reduce((total, service) => total + +service.price, 0);
+        this.additionalServiceAmount.set(totalAdditionalServiceAmount);
+      } else {
+        this.additionalServiceAmount.set(0);
+      }
     })
   }
 
@@ -253,7 +276,7 @@ export class OrderId implements OnInit {
       return;
     }
     if (this.additionalServiceForm.valid) {
-      const additionalServices = this.additionalServiceForm.get('services')!.value as { name: string, price: number, description: string }[];
+      const additionalServices = this.additionalServices.value as { id?: string, name: string, price: number, description: string }[];
       const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
         itemId: item.itemId || undefined,
         variantId: item.id,
@@ -269,7 +292,13 @@ export class OrderId implements OnInit {
       const payload: CreateOrderItemPayload = {
         orderId: order.id,
         customerId: null,
-        items: orderItems
+        items: orderItems,
+        additionalServices: additionalServices.map(service => ({
+          id: service.id ?? undefined,
+          name: service.name,
+          price: service.price,
+          description: service.description
+        }))
       }
       return this.orderService.createOrderItems(payload);
     } else {
@@ -309,5 +338,13 @@ export class OrderId implements OnInit {
   resetDiscount() {
     const items = this.orderItems().map(item => ({ ...item, sale: 0 }));
     this.orderItems.set(items);
+  }
+
+  countTotal() {
+    if (this.isActive.value) {
+      return this.totalAmount() - this.saleAmount() + this.additionalServiceAmount();
+    } else {
+      return this.totalAmount() - this.saleAmount();
+    }
   }
 }

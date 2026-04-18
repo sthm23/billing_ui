@@ -6,7 +6,8 @@
         <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
       </ng-template>
     </p-toggleswitch>
-    <p-button [disabled]="!isActive.value" (click)="addService()" icon="pi pi-plus" />
+    <p-button [disabled]="!isActive.value" size="small" (click)="addService()" [label]="'order.add' | transloco"
+      icon="pi pi-plus" />
   </div>
   <div formArrayName="services" class="flex flex-col">
     @for (item of additionalServices.controls; track item; let i = $index) {

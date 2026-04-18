@@ -74,6 +74,7 @@ export interface Order {
 export interface OrderDetail extends Order {
   payments: OrderPayment[]
   items: OrderDetailItem[]
+  services: OrderAdditionalService[]
 }
 
 export interface OrderPayment {
@@ -122,10 +123,22 @@ export interface OrderItemPayload {
   sale: number
   costAtSale: number
 }
+export interface OrderAdditionalServicePayload {
+  id?: string
+  name: string
+  price: number
+  description: string
+}
+
+export interface OrderAdditionalService extends OrderAdditionalServicePayload {
+  id: string
+  orderId: string
+}
 export interface CreateOrderItemPayload {
   orderId: string
   customerId: string | null
   items: OrderItemPayload[]
+  additionalServices?: OrderAdditionalServicePayload[]
 }
 
 export interface ReturnOrderItemPayload {

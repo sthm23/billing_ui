@@ -291,7 +291,8 @@
     "additionalServices": "Additional services",
     "serviceName": "Service name",
     "servicePrice": "Service price",
-    "serviceDescription": "Service description"
+    "serviceDescription": "Service description",
+    "add": "Add"
   },
   "user": {
     "name": "Full name",
