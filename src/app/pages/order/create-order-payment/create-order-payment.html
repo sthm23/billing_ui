@@ -161,8 +161,9 @@
 
   <div class="card flex justify-center gap-4 flex-wrap m-0!">
     <div class="flex flex-col">
+      <div>{{'order.products' | transloco}}:</div>
       @for (item of orderItems(); track item.id) {
-      <div class="border-b p-4">
+      <div class="p-4">
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <div>
@@ -178,6 +179,22 @@
           </div>
         </div>
       </div>
+      @if(!$last) {
+      <p-divider class="my-0!" />
+      }
+      }
+      @if(order.services && order.services.length > 0) {
+      <p-divider class="my-0!" />
+      <div class="mt-4">{{'order.additionalServices' | transloco}}:</div>
+      @for (service of order.services; track service.id) {
+      <div class="flex flex-wrap items-center p-4">
+        <div class="font-semibold">
+          <div>{{service.name}}</div>
+          <div>{{service?.description}}</div>
+        </div>
+        <div class="ml-auto flex flex-wrap items-center gap-4">{{service.price | currency: " ": "code":"0.0"}} UZS</div>
+      </div>
+      }
       }
     </div>
   </div>
