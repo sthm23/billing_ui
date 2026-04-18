@@ -287,7 +287,11 @@
     "save": "Сохранить",
     "deleteTitle": "Подтверждение удаления",
     "deleteText": "Вы уверены, что хотите удалить эту запись?",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "additionalServices": "Дополнительные услуги",
+    "serviceName": "Название услуги",
+    "servicePrice": "Цена услуги",
+    "serviceDescription": "Описание услуги"
   },
   "user": {
     "name": "Польная имя",

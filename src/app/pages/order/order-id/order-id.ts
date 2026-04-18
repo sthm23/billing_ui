@@ -10,12 +10,13 @@ import { ProductService } from '../../product/service/product.service';
 import { ProductVariant } from '../../../models/product.model';
 import { AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/types/autocomplete';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { FormsModule } from "@angular/forms";
+import { FormArray, FormControl, FormGroup, FormsModule, Validators } from "@angular/forms";
 import { FluidModule } from 'primeng/fluid';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-dialog/sale-dialog';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { AdditionalService } from './additional-service/additional-service';
 
 
 
@@ -31,7 +32,8 @@ import { TranslocoPipe } from '@ngneat/transloco';
     FormsModule,
     ToastModule,
     SaleDialog,
-    TranslocoPipe
+    TranslocoPipe,
+    AdditionalService
   ],
   templateUrl: './order-id.html',
   styleUrl: './order-id.css',
@@ -48,6 +50,23 @@ export class OrderId implements OnInit {
   currentOrder = signal<OrderDetail | null>(null);
 
   saleDialogVisible = false;
+
+  additionalServiceForm = new FormGroup({
+    isActive: new FormControl(false),
+    services: new FormArray([
+      new FormGroup({
+        name: new FormControl({
+          disabled: true,
+          value: ''
+        }, { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
+        price: new FormControl({ value: 0, disabled: true }, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
+        description: new FormControl({
+          disabled: true,
+          value: ''
+        }, { nonNullable: true })
+      })
+    ])
+  })
 
   constructor(
     private router: Router,
@@ -67,6 +86,7 @@ export class OrderId implements OnInit {
     const orderId = this.route.snapshot.paramMap.get('id');
     if (orderId) {
       this.loadOrder(orderId);
+      this.handleAdditionalServiceChanges();
     } else {
       console.error('No order ID provided in route');
       this.router.navigate(['/pages/order/list']);
@@ -96,6 +116,16 @@ export class OrderId implements OnInit {
         this.router.navigate(['/pages/order/list']);
       }
     });
+  }
+
+  handleAdditionalServiceChanges() {
+    this.additionalServiceForm.get('isActive')!.valueChanges.subscribe(value => {
+      const isActive = value;
+      // if (isActive) {
+      const services = this.additionalServiceForm.get('services')!.value;
+      console.log('Active services:', services);
+      // }
+    })
   }
 
   search(event: AutoCompleteCompleteEvent) {
@@ -222,24 +252,30 @@ export class OrderId implements OnInit {
     if (!order) {
       return;
     }
-    const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
-      itemId: item.itemId || undefined,
-      variantId: item.id,
-      quantity: item.quantity,
-      retailPrice: +item.price,
-      sale: item.sale,
-      costAtSale: item.costAtSale
-    }));
-    if (orderItems.length === 0) {
-      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
-      return;
+    if (this.additionalServiceForm.valid) {
+      const additionalServices = this.additionalServiceForm.get('services')!.value as { name: string, price: number, description: string }[];
+      const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
+        itemId: item.itemId || undefined,
+        variantId: item.id,
+        quantity: item.quantity,
+        retailPrice: +item.price,
+        sale: item.sale,
+        costAtSale: item.costAtSale
+      }));
+      if (orderItems.length === 0) {
+        this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });
+        return;
+      }
+      const payload: CreateOrderItemPayload = {
+        orderId: order.id,
+        customerId: null,
+        items: orderItems
+      }
+      return this.orderService.createOrderItems(payload);
+    } else {
+      this.additionalServiceForm.markAllAsDirty();
+      return
     }
-    const payload: CreateOrderItemPayload = {
-      orderId: order.id,
-      customerId: null,
-      items: orderItems
-    }
-    return this.orderService.createOrderItems(payload);
   }
 
   handleSaleDialogChange(event: SaleDialogOutput) {

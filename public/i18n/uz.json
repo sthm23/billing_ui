@@ -287,7 +287,11 @@
     "save": "Saqlash",
     "deleteTitle": "O'chirishni tasdiqlash",
     "deleteText": "Siz ushbu yozuvni o'chirishni xohlaysizmi?",
-    "delete": "O'chirish"
+    "delete": "O'chirish",
+    "additionalServices": "Qo'shimcha xizmatlar",
+    "serviceName": "Xizmat nomi",
+    "servicePrice": "Xizmat narxi",
+    "serviceDescription": "Xizmat tavsifi"
   },
   "user": {
     "name": "To'liq ism",

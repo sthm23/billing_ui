@@ -15,7 +15,7 @@
         fluid />
       <p-button icon="pi pi-qrcode" [label]="'order.scan' | transloco" />
     </div>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 mb-4">
       @if(orderItems().length === 0) {
       <div class="flex flex-col items-center gap-4 mt-8">
         <i class="pi pi-shopping-cart text-6xl text-gray-400"></i>
@@ -27,8 +27,10 @@
         (amountChange)="handleAmountChange($event, item.id)" />
       }
     </div>
+
+    <app-additional-service [additionalServicesForm]="additionalServiceForm" />
   </div>
-  <div class="flex-3 card flex flex-col justify-between gap-2 p-4">
+  <div class="flex-3 card flex flex-col gap-2 p-4">
     <div class="flex flex-col justify-between gap-2 mt-4">
       <div class="flex flex-col justify-between gap-1">
         <div>{{'order.totalAmount' | transloco}}:</div>
