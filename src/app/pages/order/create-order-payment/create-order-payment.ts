@@ -22,7 +22,6 @@ import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-
 type PaymentMethod = 'CASH' | 'CARD';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
 
@@ -67,9 +66,9 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   customerData: DialogData = { name: '', phone: '' };
 
   paymentOptions = [
-    { label: 'Cash', value: 'CASH', icon: 'pi pi-money-bill' },
-    { label: 'Card', value: 'CARD', icon: 'pi pi-credit-card' },
-  ];
+    { label: 'CASH', value: 'CASH', icon: 'pi pi-money-bill' },
+    { label: 'CARD', value: 'CARD', icon: 'pi pi-credit-card' },
+  ]
 
   paymentForm = new FormGroup({
     paymentMethod: new FormControl<string[]>(['CASH'], { nonNullable: true }),

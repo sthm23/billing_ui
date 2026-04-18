@@ -3,7 +3,11 @@
   <form class="py-2" [formGroup]="paymentForm" (ngSubmit)="save()">
     <div class="flex items-center gap-4 mb-4">
       <p-selectbutton [options]="stateOptions" [multiple]="true" formControlName="paymentMethod" optionLabel="label"
-        optionValue="value" aria-labelledby="basic" />
+        optionValue="value" aria-labelledby="basic">
+        <ng-template #item let-item>
+          <div>{{`order.paymentMethod.${item.value}` | transloco}}</div>
+        </ng-template>
+      </p-selectbutton>
     </div>
     <div class="flex flex-col gap-4 mb-4" formGroupName="method">
       <div class="flex flex-col gap-4 pt-4">
