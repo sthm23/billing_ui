@@ -35,6 +35,10 @@
   "attribute": {
     "Color": "Color",
     "Size": "Size",
+    "DSP": "DSP",
+    "slate": "Slate",
+    "plywood": "Plywood",
+    "hardboard": "Hardboard",
     "Number Size": "Number Size",
     "Wood Species": "Wood Species",
     "Lumber Size": "Lumber Size",
@@ -43,6 +47,7 @@
   "attributeValue": {
     "Pine": "Pine",
     "Spruce": "Spruce",
+    "Leaf": "Leaf tree",
     "Oak": "Oak",
     "Walnut": "Walnut",
     "Red": "Red",
@@ -65,6 +70,9 @@
   "category": {
     "Lumber": "Lumber",
     "Beam": "Beam",
+    "Timber": "Timber",
+    "Roofing": "Roofing",
+    "Wood Panels": "Wood Panels",
     "Batten": "Batten",
     "Electronics": "Electronics",
     "Phones": "Phones",

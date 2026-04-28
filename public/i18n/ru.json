@@ -35,6 +35,10 @@
   "attribute": {
     "Color": "Цвет",
     "Size": "Размер",
+    "DSP": "ДСП",
+    "slate": "Шифер",
+    "plywood": "Фанера",
+    "hardboard": "Оргалит",
     "Number Size": "Числовой размер",
     "Wood Species": "Вид древесины",
     "Lumber Size": "Размер пиломатериалов",
@@ -42,7 +46,8 @@
   },
   "attributeValue": {
     "Pine": "Сосна",
-    "Spruce": "Ель",
+    "Spruce": "Елка",
+    "Leaf": "Листвяк",
     "Oak": "Дуб",
     "Walnut": "Орех",
     "Black": "Черный",
@@ -64,7 +69,10 @@
   },
   "category": {
     "Lumber": "Древесины",
-    "Beam": "Балка брус",
+    "Beam": "Балка",
+    "Timber": "Брус",
+    "Roofing": "Кровельные материалы",
+    "Wood Panels": "Древесные плиты",
     "Batten": "Рейка",
     "Electronics": "Электроника",
     "Phones": "Телефоны",

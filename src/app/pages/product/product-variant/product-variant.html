@@ -29,7 +29,7 @@
             @if (attributes() && attributes().length) {
             <div class="flex flex-col flex-wrap gap-4">
               @for (attr of attributes(); track attr.id) {
-              <div class="flex gap-2">
+              <div class="flex gap-2 flex-wrap">
                 <strong>{{ `attribute.${attr.name}` | transloco }}:</strong>
                 @for (item of attrGroup.controls[attr.id].value; track $index; let i = $index; let last = $last) {
                 <p-tag icon="pi pi-info-circle" [value]="(getProductTranslate(
@@ -129,11 +129,6 @@
                   <label [for]="'quantity-' + i">{{'product.quantity' | transloco}}</label>
                   <p-inputnumber [inputId]="'quantity-' + i" formControlName="quantity"
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
-                </div>
-
-                <div class="flex flex-col gap-2 w-full">
-                  <label [for]="'barcode-' + i">{{'product.barcode' | transloco}}</label>
-                  <input pInputText [id]="'barcode-' + i" formControlName="barCode" />
                 </div>
 
                 <div class="flex flex-col gap-2 w-full">

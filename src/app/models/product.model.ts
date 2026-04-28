@@ -161,7 +161,6 @@ export interface AttributeValue {
   value: string;
 }
 export interface ProductVariantPayload {
-  barCode?: string;
   retailPrice: number;
   costPrice: number;
   quantity: number;

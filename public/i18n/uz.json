@@ -35,13 +35,18 @@
   "attribute": {
     "Color": "Rang",
     "Size": "Razmer",
+    "DSP": "ДСП",
+    "hardboard": "Арголет",
+    "slate": "Шиферлар",
+    "plywood": "Фонерлар",
     "Number Size": "Son razmer",
     "Wood Species": "Yog'och turlari",
     "Lumber Size": "Yog'och o'lchamlari",
     "Length (m)": "Uzunligi (m)"
   },
   "attributeValue": {
-    "Pine": "Qarag'ay",
+    "Pine": "Qarag'ay (Сосна)",
+    "Leaf": "Лесвак",
     "Spruce": "Archa",
     "Oak": "Eman",
     "Walnut": "Yong'oq",
@@ -64,7 +69,10 @@
   },
   "category": {
     "Lumber": "Yog'och mahsulotlari",
-    "Beam": "Balka brus ustunlar",
+    "Beam": "Balkalar",
+    "Timber": "Брус",
+    "Roofing": "Том ёпиш материаллари",
+    "Wood Panels": "Yog'och panellar",
     "Batten": "Reyka",
     "Electronics": "Elektronika",
     "Phones": "Telefonlar",

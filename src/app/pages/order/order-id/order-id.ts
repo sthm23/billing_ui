@@ -1,7 +1,7 @@
 import { Component, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { CreateOrderItemPayload, OrderDetail, OrderItemCard, OrderItemPayload } from '../../../models/order.model';
+import { CreateOrderItemPayload, OrderAdditionalServicePayload, OrderDetail, OrderItemCard, OrderItemPayload } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { OrderItem, OrderItemAmountChange } from '../../../shared/components/order-item/order-item';
 import { ButtonModule } from 'primeng/button';
@@ -276,7 +276,13 @@ export class OrderId implements OnInit {
       return;
     }
     if (this.additionalServiceForm.valid) {
-      const additionalServices = this.additionalServices.value as { id?: string, name: string, price: number, description: string }[];
+      ;
+      const additionalServices = (this.additionalServices.value as OrderAdditionalServicePayload[]).map(service => ({
+        id: service.id ?? undefined,
+        name: service.name,
+        price: service.price,
+        description: service.description
+      }));
       const orderItems: OrderItemPayload[] = this.orderItems().map(item => ({
         itemId: item.itemId || undefined,
         variantId: item.id,
@@ -293,12 +299,7 @@ export class OrderId implements OnInit {
         orderId: order.id,
         customerId: null,
         items: orderItems,
-        additionalServices: additionalServices.map(service => ({
-          id: service.id ?? undefined,
-          name: service.name,
-          price: service.price,
-          description: service.description
-        }))
+        additionalServices: this.isActive.value ? additionalServices : []
       }
       return this.orderService.createOrderItems(payload);
     } else {

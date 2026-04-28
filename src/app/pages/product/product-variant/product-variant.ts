@@ -37,7 +37,6 @@ type VariantForm = {
   quantity: FormControl<number | null>;
   price: FormControl<number | null>;
   salePrice: FormControl<number | null>;
-  barCode: FormControl<string | null>;
 };
 @Component({
   selector: 'app-product-variant',
@@ -232,8 +231,7 @@ export class ProductVariant implements OnInit, OnDestroy {
       attrs: new FormControl<VariantAttr[]>(attrs, { nonNullable: true }),
       quantity: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
       price: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      salePrice: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      barCode: new FormControl<string | null>(null)
+      salePrice: new FormControl<number | null>(null, [Validators.required, Validators.min(0)])
     });
   }
 
@@ -273,8 +271,7 @@ export class ProductVariant implements OnInit, OnDestroy {
         })),
         quantity: v.controls.quantity.value!,
         costPrice: v.controls.price.value!,
-        retailPrice: v.controls.salePrice.value!,
-        barCode: v.controls.barCode.value || undefined
+        retailPrice: v.controls.salePrice.value!
       }));
 
       const createProductVariantPayload: CreateProductVariantPayload = {

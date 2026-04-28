@@ -164,10 +164,18 @@
               <td>
                 {{ variant.sku }}
               </td>
-              <td>{{ getProductTranslate((`attributeValue.${variant.attributes[0].value}` | transloco),
-                variant.attributes[0].value) }} -
-                {{getProductTranslate((`attributeValue.${variant.attributes[1].value}` | transloco),
-                variant.attributes[1].value) }}
+              <td>
+                @for(attr of variant.attributes; track $index; let i = $index) {
+                {{
+                getProductTranslate((`attributeValue.${variant.attributes[i].value}` | transloco),
+                variant.attributes[i].value)
+
+                }}
+                @if(!$last) {
+                -
+                }
+                }
+
               </td>
               <td> {{ variant.price | currency: ' ' : "code": "0.0" }}</td>
               <td>
@@ -185,8 +193,9 @@
                   <h5>{{'product.stockMovement'| transloco:{
                     attribute: getProductTranslate((`attributeValue.${variant.attributes[0].value}` | transloco),
                     variant.attributes[0].value),
-                    value: getProductTranslate((`attributeValue.${variant.attributes[1].value}` | transloco),
-                    variant.attributes[1].value)
+                    value: variant.attributes[1] ? getProductTranslate((`attributeValue.${variant.attributes[1].value}`
+                    | transloco),
+                    variant.attributes[1].value) : ''
                     } }} </h5>
                   <p-table [value]="variant.stockMovements" dataKey="id">
                     <ng-template #header>
