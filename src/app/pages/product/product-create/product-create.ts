@@ -220,18 +220,14 @@ export class ProductCreate implements OnInit, OnDestroy {
         })
       } else {
         const uploadImages = data.images?.map(file => {
-          return this.fileUploadService.uploadImagesToS3(file.url, file.file);
-        }) as Observable<null>[];
-        forkJoin(uploadImages)
-          .pipe(
-            switchMap((res) => {
-              return this.productService.createProduct(product)
-            })
-          )
-          .subscribe({
+          return this.fileUploadService.uploadImagesToS3WithFetch(file.url, file.file);
+        });
+        Promise.all(uploadImages || []).then(() => {
+          this.productService.createProduct(product).subscribe({
             next: this.handleCreatingProduct.bind(this),
             error: this.handleError.bind(this),
-          })
+          });
+        })
       }
     } else {
       this.productForm.markAllAsTouched();

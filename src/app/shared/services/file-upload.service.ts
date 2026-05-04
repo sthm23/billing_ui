@@ -17,11 +17,13 @@ export class FileUploadService {
     });
   }
 
-  uploadImagesToS3(url: string, file: File) {
-    return this.http.put<null>(url, file, {
+  uploadImagesToS3WithFetch(url: string, file: File) {
+    return fetch(url, {
+      method: 'PUT',
       headers: {
-        'Content-Type': file.type
-      }
+        'Content-Type': file.type,
+      },
+      body: file,
     });
   }
 }
