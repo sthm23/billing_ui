@@ -30,7 +30,12 @@
       </div>
     </div>
     <div class="flex justify-end gap-2">
-      <p-button label="Add" icon="pi pi-pencil" />
+      <form [formGroup]="attrValueForm">
+        <input type="text" pInputText name="newAttributeValue" formControlName="name"
+          [placeholder]="'order.add' | transloco" />
+
+        <p-button label="Add" icon="pi pi-add" (click)="addAttributeValue()" />
+      </form>
     </div>
 
   </div>

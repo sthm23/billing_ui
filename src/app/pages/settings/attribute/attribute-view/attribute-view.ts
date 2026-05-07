@@ -7,6 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { AttributeDetail } from '../../../../models/product.model';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { Tag } from "primeng/tag";
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @Component({
@@ -15,7 +17,9 @@ import { Tag } from "primeng/tag";
     ToastModule,
     ButtonModule,
     TranslocoPipe,
-    Tag
+    Tag,
+    InputTextModule,
+    ReactiveFormsModule
   ],
   templateUrl: './attribute-view.html',
   styleUrl: './attribute-view.css',
@@ -26,6 +30,9 @@ export class AttributeView implements OnInit {
   attributeId: string | null = null;
   attributeName: string | null = null;
   currentAttributeValues = signal<AttributeDetail | null>(null);
+  attrValueForm = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  })
 
   constructor(
     private messageService: MessageService,
@@ -66,5 +73,24 @@ export class AttributeView implements OnInit {
       return text
     }
     return translate
+  }
+
+  addAttributeValue() {
+    if (this.attrValueForm.valid && this.attributeId) {
+      const newValue = this.attrValueForm.value.name!;
+      const payload = { attributeId: this.attributeId, value: newValue };
+      this.categoryService.createAttributeValue(payload).subscribe({
+        next: (res) => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Attribute value added successfully' });
+          this.fetchAttribute(this.attributeId!);
+          this.attrValueForm.reset();
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add attribute value' });
+        }
+      });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please enter a valid attribute value' });
+    }
   }
 }

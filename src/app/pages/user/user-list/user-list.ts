@@ -48,9 +48,7 @@ export class UserList implements OnInit, OnDestroy {
   fetchUsers(page = 1, pageSize = 10) {
     this.appStore.startLoader();
     this.userService.getUsers(page, pageSize)
-      .pipe(
-        delay(1500)
-      ).subscribe({
+      .subscribe({
         next: (response) => {
           this.appStore.stopLoader();
           this.users = response.data;

@@ -93,9 +93,7 @@ export class OrderList implements OnInit {
   }
 
   private loadOrders(page = 1, pageSize = 10) {
-    this.orderService.getOrders(page, pageSize).pipe(
-      delay(500) // Simulate network delay
-    ).subscribe({
+    this.orderService.getOrders(page, pageSize).subscribe({
       next: (res) => {
         this.loader.set(false);
         this.orders.set(res.data)
@@ -157,9 +155,7 @@ export class OrderList implements OnInit {
       warehouseId,
       channel: OrderChannel.POS,
     }
-    this.orderService.createOrder(payload).pipe(
-      delay(500) // Simulate network delay
-    ).subscribe({
+    this.orderService.createOrder(payload).subscribe({
       next: (res) => {
         console.log('Order created successfully', res)
         this.router.navigate(['/pages/order', res.id])

@@ -1,9 +1,10 @@
 <p-toast />
 <p-confirmdialog />
 <div class="p-4">
-  <p-table [lazy]="true" [loading]="appStore.isLoading()" [value]="products()" [tableStyle]="{ 'min-width': '50rem' }"
-    selectionMode="single" [metaKeySelection]="true" dataKey="id" [paginator]="true"
-    (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
+  <p-table #dt [lazy]="true" [loading]="appStore.isLoading()" [value]="products()"
+    [tableStyle]="{ 'min-width': '50rem' }" selectionMode="single" [metaKeySelection]="true" dataKey="id"
+    [paginator]="true" (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows"
+    (onPage)="pageChange($event)">
     <ng-template #caption>
       <div class="flex justify-end gap-2">
         <p-button [label]="'product.create'|transloco" icon="pi pi-plus" (onClick)="goToCreateProduct()" />

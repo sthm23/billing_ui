@@ -64,9 +64,7 @@ export class OrgList implements OnInit, OnDestroy {
   fetchStores(page = 1, pageSize = 10) {
     this.appStore.startLoader();
     this.storeService.getStores(page, pageSize)
-      .pipe(
-        delay(1500)
-      ).subscribe({
+      .subscribe({
         next: (response) => {
           this.appStore.stopLoader();
           this.stores.set(response.data);

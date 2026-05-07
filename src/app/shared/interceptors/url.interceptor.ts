@@ -8,6 +8,7 @@ export class BaseUrlInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
     const baseUrl = 'http://localhost:4000';
+    // const baseUrl = 'http://89.126.221.135';
     if (req.url.includes('/i18n/')) {
       return handler.handle(req);
     }

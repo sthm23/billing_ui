@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Category, TagList, Attribute, Brand, AttributeItem, AttributeDetail } from "../../models/product.model";
+import { Category, TagList, Attribute, Brand, AttributeItem, AttributeDetail, AttributeValuePayload, AttributePayload } from "../../models/product.model";
 
 
 @Injectable({
@@ -62,6 +62,18 @@ export class CategoryService {
 
   getTagList() {
     return this.http.get<TagList[]>(`/api/category/tag`, {
+      withCredentials: true,
+    });
+  }
+
+  createAttribute(body: AttributePayload) {
+    return this.http.post<Attribute>(`/api/category/attribute`, body, {
+      withCredentials: true,
+    });
+  }
+
+  createAttributeValue(body: AttributeValuePayload) {
+    return this.http.post<AttributeItem>(`/api/category/attribute/value`, body, {
       withCredentials: true,
     });
   }

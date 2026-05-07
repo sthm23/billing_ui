@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProductResponse, CreateProduct, Product, ProductDetail, CreateProductVariantPayload, SearchProductResponse } from '../../../models/product.model';
+import { ProductResponse, CreateProduct, Product, ProductDetail, CreateProductVariantPayload, SearchProductResponse, AddInventoryPayload } from '../../../models/product.model';
 
 
 @Injectable({
@@ -44,6 +44,12 @@ export class ProductService {
 
   archiveProduct(productId: string) {
     return this.http.delete(`/api/product/${productId}`, {
+      withCredentials: true,
+    });
+  }
+
+  addInventory(warehouseId: string, body: AddInventoryPayload) {
+    return this.http.post<{ message: string }>(`/api/warehouse/${warehouseId}/inventory`, body, {
       withCredentials: true,
     });
   }

@@ -22,7 +22,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-type PaymentMethod = 'CASH' | 'CARD';
+type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
 
 @Component({
@@ -68,6 +68,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   paymentOptions = [
     { label: 'CASH', value: 'CASH', icon: 'pi pi-money-bill' },
     { label: 'CARD', value: 'CARD', icon: 'pi pi-credit-card' },
+    { label: 'CLICK', value: 'ONLINE', icon: 'pi pi-credit-card' },
   ]
 
   paymentForm = new FormGroup({
@@ -75,6 +76,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     method: new FormGroup<PaymentMethodGroup>({
       CASH: new FormControl<number>({ value: 0, disabled: false }, { nonNullable: true }),
       CARD: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
+      ONLINE: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
     }),
   });
 
@@ -122,7 +124,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
   private paymentChanged() {
     const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
-    const validMethods: PaymentMethod[] = ['CASH', 'CARD'];
+    const validMethods: PaymentMethod[] = ['CASH', 'CARD', 'ONLINE'];
     this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
       validMethods.forEach(method => {
         methodControls.get(method)!.disable({ onlySelf: true });
@@ -158,7 +160,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
 
   submit() {
-    console.log(this.paymentForm.value);
     if (this.paymentForm.valid) {
       const order = this.currentOrder();
       if (!order) {
@@ -175,19 +176,17 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       }
 
       const payments = paymentMethod!.map(m => {
-        const type = m === 'CASH' ? PaymentType.CASH : m === 'CARD' ? PaymentType.CARD : PaymentType.DEBT;
+        const type = m === 'CASH' ? PaymentType.CASH : m === 'CARD' ? PaymentType.CARD : PaymentType.ONLINE;
         const amount = method![m as keyof PaymentMethodGroup]!;
         const paymentPayload: OrderPaymentPayload = {
           type,
           amount
         }
         return paymentPayload;
-      }).filter(p => p.type !== PaymentType.DEBT);
+      }).filter(p => p.amount > 0);
       paymentData.payments = payments;
 
       if (order.payments && order.payments.length > 0) {
-        console.log(paymentData);
-
         this.orderService.addPaymentToOrder(order.id, paymentData).subscribe({
           next: (res) => {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });

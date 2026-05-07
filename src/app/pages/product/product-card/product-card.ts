@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant, TagList } from '../../../models/product.model';
+import { AddInventoryPayload, Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant, TagList } from '../../../models/product.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
@@ -30,11 +30,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { MultiSelectType, SelectType } from '../../../models/app.models';
-import { DialogComponent } from '../../../shared/components/dialog/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { ChipModule } from 'primeng/chip';
 import { AvatarModule } from 'primeng/avatar';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { VariantData, VariantDialog } from '../../../shared/components/variant-dialog/variant-dialog';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -82,11 +82,11 @@ type VariantForm = {
     RouterModule,
     TreeSelectModule,
     MultiSelectModule,
-    DialogComponent,
     ChipModule,
     TextareaModule,
     AvatarModule,
-    TranslocoPipe
+    TranslocoPipe,
+    VariantDialog
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -147,8 +147,8 @@ export class ProductCard implements OnInit, OnDestroy {
 
   fetchProductById(productId: string) {
     this.productService.getProductById(productId)
-      .pipe(
-        switchMap((product: ProductDetail) => {
+      .subscribe({
+        next: (product: ProductDetail) => {
           if (!product) throw new Error('Product not found');
 
           this.productForm.patchValue({
@@ -192,27 +192,6 @@ export class ProductCard implements OnInit, OnDestroy {
           const attributeList = product.attributes.map(attr => ({ ...attr, items: [] } as AttrItemList));
           this.attributes.set(attributeList);
 
-          const attributeIds = product.attributes.map(attr => attr.id);
-
-          // return this.categoryService.getAttributeItems(attributeIds.join(','));
-          return of(null).pipe(delay(1000)); // имитация запроса, удалить после реализации получения атрибутов
-        }),
-      )
-      .subscribe({
-        next: (items) => {
-          // наполняем items для каждого атрибута
-          // const map = new Map<string, AttributeItem[]>();
-          // items.forEach(item => {
-          //   const existing = map.get(item.attributeId) || [];
-          //   map.set(item.attributeId, [...existing, item]);
-          // });
-
-          // const updList = this.attributes().map(attr => {
-          //   const attrItems = map.get(attr.id) || [];
-          //   return { ...attr, items: attrItems } as AttrItemList;
-          // });
-          // this.attributes.set(updList);
-
         },
         error: (err) => {
           console.error('Error fetching product:', err);
@@ -221,8 +200,13 @@ export class ProductCard implements OnInit, OnDestroy {
       })
   }
 
-  addVariants(variants: ProductVariant[]) {
-    this.visibleAddVariants = false;
+  goToCreateVariant(id: string) {
+    this.router.navigate(['/pages/product', id, 'variant']);
+  }
+
+  addVariantItem(variant: ProductVariant) {
+    console.log('Add variant item for variant:', variant);
+    this.visibleAddVariants = true;
   }
 
   getSeverity(variants: number) {
@@ -249,6 +233,32 @@ export class ProductCard implements OnInit, OnDestroy {
   isControlValid(controlName: string): string {
     const control = this.productForm.get(controlName);
     return control && control.touched && control.invalid ? 'ng-dirty ng-invalid' : '';
+  }
+
+  handleAdd(data: VariantData) {
+    const product = this.productCard();
+    if (!product) {
+      console.error('Product data is not available');
+      return;
+    }
+    const warehouseId = product.warehouseId;
+    const payload: AddInventoryPayload = {
+      warehouseId,
+      variantId: data.variantId,
+      quantity: data.quantity,
+      costPrice: data.costPrice,
+      price: data.price
+    };
+    this.productService.addInventory(warehouseId, payload).subscribe({
+      next: (res) => {
+        this.visibleAddVariants = false;
+        this.messageService.add({ severity: 'success', summary: 'Variant added', detail: `Quantity: ${data.quantity}, Cost price: ${data.costPrice}, Sale Price: ${data.price}` });
+      },
+      error: (err) => {
+        console.error('Error adding inventory:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add inventory' });
+      }
+    })
   }
 
 

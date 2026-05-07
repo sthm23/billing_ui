@@ -59,9 +59,7 @@ export class ProductList implements OnInit, OnDestroy {
   fetchProducts(page = 1, pageSize = 10) {
     this.appStore.startLoader();
     this.productService.getProducts(page, pageSize)
-      .pipe(
-        delay(1500)
-      ).subscribe({
+      .subscribe({
         next: (response) => {
           this.appStore.stopLoader();
           this.products.set(response.data);

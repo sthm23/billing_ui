@@ -4,8 +4,7 @@ import { UserRole, UserType } from "./user.model"
 export enum PaymentType {
   CASH = 'CASH',
   CARD = 'CARD',
-  DEBT = 'DEBT',
-  INSTALLMENT = 'INSTALLMENT' // рассрочка
+  ONLINE = 'ONLINE',
 }
 export enum OrderChannel {
   POS = 'POS',

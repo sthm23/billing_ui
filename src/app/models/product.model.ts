@@ -180,3 +180,21 @@ export interface Inventory {
   variantId: string
   warehouseId: string
 }
+
+export interface AttributePayload {
+  name: string;
+  type: AttributeType;
+}
+
+export interface AttributeValuePayload {
+  attributeId: string;
+  value: string | number | boolean;
+}
+
+export interface AddInventoryPayload {
+  warehouseId: string;
+  variantId: string;
+  quantity: number;
+  costPrice: number;
+  price: number;
+}

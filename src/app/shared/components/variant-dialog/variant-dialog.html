@@ -1,0 +1,26 @@
+<p-dialog [header]="title" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }"
+  (visibleChange)="visibleChange.emit($event)">
+
+  <form [formGroup]="formData" class="flex flex-col gap-4">
+    <span class="p-text-secondary block">{{subtitle}}</span>
+    <div class="flex flex-col gap-2 w-full">
+      <label for="quantity">{{'product.quantity' | transloco}}</label>
+      <p-inputnumber [className]="isValid('quantity')" inputId="quantity" formControlName="quantity" />
+    </div>
+
+    <div class="flex flex-col gap-2 w-full">
+      <label for="costPrice">{{'product.incomingPrice' | transloco}}</label>
+      <p-inputnumber [className]="isValid('costPrice')" inputId="costPrice" formControlName="costPrice" />
+    </div>
+
+    <div class="flex flex-col gap-2 w-full">
+      <label for="price">{{'product.retailPrice' | transloco}}</label>
+      <p-inputnumber [className]="isValid('price')" inputId="price" formControlName="price" />
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" severity="secondary" (click)="hideDialog()" />
+      <p-button label="Save" (click)="submit()" />
+    </div>
+  </form>
+</p-dialog>
