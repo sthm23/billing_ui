@@ -1,0 +1,39 @@
+<div class="card min-h-[80vh]">
+  <p-table #dt [lazy]="true" [value]="users" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
+    [paginator]="true" [totalRecords]="total()" [rows]="rows" selectionMode="single"
+    (selectionChange)="selectUser($event)" [metaKeySelection]="true" dataKey="id" (onPage)="pageChange($event)">
+    <ng-template #caption>
+      <div class="flex justify-end gap-2">
+        <div>
+          <input pInputText type="text" [placeholder]="'user.search' | transloco"
+            (input)="dt.filterGlobal($event.target.value, 'contains')" class="w-full" />
+        </div>
+        <p-button [label]="'user.create' | transloco" icon="pi pi-plus" (onClick)="createUser()" />
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width:25%">{{'user.name' | transloco}}</th>
+        <th style="width:25%">{{'user.phone' | transloco}}</th>
+        <th style="width:25%">{{'user.createdAt' | transloco}}</th>
+        <th style="width:25%">{{'user.role' | transloco}}</th>
+        <th style="width:25%">{{'user.action' | transloco}}</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-user>
+      <tr [pSelectableRow]="user">
+        <td>{{ user.fullName }}</td>
+        <td>{{ normalizePhoneNumber(user.phone) }}</td>
+        <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+        <td><p-tag [value]="`user.staff.${getUserRole(user)}` | transloco" [severity]="getSeverity(user)" /></td>
+        <td>
+          @if(user.role === 'ADMIN') {
+          <span>-</span>
+          }@else {
+          <p-button icon="pi pi-trash" severity="danger" outlined (click)="deleteUser(user)"></p-button>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

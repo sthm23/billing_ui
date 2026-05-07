@@ -1,0 +1,273 @@
+@let product = productCard();
+<p-toast />
+<p-fluid>
+  @if (product) {
+  <div class="flex flex-col justify-content-center p-4">
+    <div class="flex-1 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <p-button icon="pi pi-arrow-left" text (onClick)="goBack()" />
+        <h4 class="font-semibold text-xl">{{'product.editTitle'|transloco}}</h4>
+      </div>
+      <div class="flex flex-wrap justify-end gap-2">
+        <p-button [label]="'product.edit'|transloco" (onClick)="editMode = !editMode"></p-button>
+      </div>
+    </div>
+    <div class="flex-1" [formGroup]="productForm">
+      <p-fluid>
+        <div class="flex ">
+          <div class="p-6 flex flex-col gap-6 w-full">
+            <div class="flex flex-col md:flex-row gap-6">
+              <div class="flex flex-wrap gap-3 w-full">
+                <label for="name">{{'product.name'|transloco}}</label>
+                <input pInputText id="name" type="text" formControlName="name" readonly
+                  [class]="isControlValid('name')" />
+              </div>
+              <div class="flex flex-wrap gap-2 w-full">
+                <label for="category">{{'product.category'|transloco}}</label>
+                @if(editMode) {
+                <p-treeselect id="category" class="w-full" formControlName="category" [options]="categories()"
+                  placeholder="{{'product.categoryPlaceholder'|transloco}}" />
+                }@else {
+                <input type="text" id="category"
+                  [value]="getProductTranslate((`category.${productForm.controls.category.value?.label}` | transloco), productForm.controls.category.value?.label!)"
+                  readonly pInputText [class]="isControlValid('category')" />
+                }
+              </div>
+              <div class="flex flex-wrap gap-2 w-full">
+                <label for="brand">{{'product.brand'|transloco}}</label>
+                @if(editMode) {
+                <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
+                  [class]="isControlValid('brand')" />
+                }@else {
+                <input type="text" id="brand" pInputText
+                  [value]="getProductTranslate((`brand.${productForm.controls.brand.value?.name}` | transloco), productForm.controls.brand.value?.name!)"
+                  readonly [class]="isControlValid('brand')" />
+                }
+              </div>
+            </div>
+            <div class="flex flex-col md:flex-row gap-6">
+              <div class="flex flex-wrap gap-2 w-full" [class.flex-col]="!editMode">
+                <label for="tags">{{'product.tag'|transloco}}</label>
+                @if(editMode) {
+                <p-multiselect id="tags" optionGroupLabel="name" optionLabel="value" optionGroupChildren="values"
+                  [options]="tags()" [group]="true" formControlName="tags" placeholder="Select tags"
+                  scrollHeight="250px" display="chip" class="w-full md:w-80">
+                  <ng-template let-group #group>
+                    <div class="flex items-center">
+                      <span>{{ getProductTranslate((`tagValue.${group.name}`| transloco),group.name) }}</span>
+                    </div>
+                  </ng-template>
+                </p-multiselect>
+                }@else {
+                @if(product.tags && product.tags.length) {
+
+                @for (tag of productTags.values(); track $index) {
+                <div>
+                  {{getProductTranslate((`tag.${tag.name}` | transloco), tag.name)}}:
+                  @for(item of tag.values; track $index) {
+                  <p-chip [label]="getProductTranslate((`tagValue.${item.value}` | transloco), item.value.toString())"
+                    class="mr-2 mb-2" />
+                  }
+                </div>
+                }
+                }@else {
+                <div>{{'product.tagNoPlaceholder'|transloco}}</div>
+                }
+
+                }
+              </div>
+              <div class="flex flex-wrap gap-2 w-full" [class.flex-col]="!editMode">
+                <label for="attributes">{{'product.attribute'|transloco}}</label>
+                @if(editMode) {
+                <p-multiselect id="attributes" formControlName="attributes"
+                  placeholder="{{'product.attributePlaceholder'|transloco}}" [options]="attributes()" optionLabel="name"
+                  [maxSelectedLabels]="3" [class]="isControlValid('attributes')" />
+
+                }@else {
+                @for (attr of productAttributes.values(); track $index) {
+                <div>
+                  {{getProductTranslate((`attribute.${attr.name}` | transloco), attr.name)}}:@for(item of attr.items;
+                  track $index)
+                  {
+                  <p-chip
+                    [label]="getProductTranslate((`attributeValue.${item.value}` | transloco), item.value.toString())"
+                    class="mr-2 mb-2" />
+                  }
+                </div>
+                }
+                }
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6">
+              <div class="flex flex-wrap gap-2 w-full">
+                <label for="description">{{'product.description'|transloco}}</label>
+                <textarea id="description" formControlName="description" rows="5" cols="30" pTextarea readonly
+                  [autoResize]="true"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-span-full lg:col-span-6">
+          <div class="p-6 pt-0">
+            <h5>{{'product.img'|transloco}}</h5>
+            <div class="flex flex-wrap items-center gap-4">
+              @if(product.images.length === 0) {
+              <div class="flex flex-col items-center gap-2">
+                <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20"
+                  size="xlarge" shape="square" />
+                <p>{{'product.imgNoPlaceHolder'|transloco}}</p>
+              </div>
+              }@else {
+              @for (item of product.images; track $index) {
+              <p-image [preview]="true" [src]="item.url" [alt]="product.name" width="200"
+                class="shadow-lg object-cover" />
+              }
+              }
+            </div>
+          </div>
+        </div>
+      </p-fluid>
+    </div>
+
+    <div class="flex-1">
+      <h5 class="px-4 m-0!">{{'product.variant'|transloco}}</h5>
+      <div class="p-4">
+        <p-table [value]="product.variants" dataKey="id" showGridlines [lazy]="true" [loading]="appStore.isLoading()"
+          [tableStyle]="{ 'min-width': '50rem' }" [expandedRowKeys]="expandedRows">
+          <ng-template #caption>
+            <div class="flex justify-end gap-2">
+              <p-button [label]="'product.addVariant'|transloco" icon="pi pi-plus" [outlined]="true"
+                (onClick)="goToCreateVariant(product.id)" />
+            </div>
+          </ng-template>
+          <ng-template #header>
+            <tr>
+              <th style="width: 5rem"></th>
+              <th pResizableColumn>{{'product.barcode'|transloco}}</th>
+              <th pResizableColumn>{{'product.sku'|transloco}}</th>
+              <th pResizableColumn>{{'product.attribute'|transloco}}</th>
+              <th pResizableColumn>{{'product.retailPrice'|transloco}}</th>
+              <th pResizableColumn>{{'product.quantity'|transloco}}</th>
+              <th style="width: 5rem"></th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-variant let-expanded="expanded">
+            <tr>
+              <td>
+                <p-button type="button" pRipple [pRowToggler]="variant" [text]="true" severity="secondary"
+                  [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+              </td>
+              <td>{{ variant.barCode }}</td>
+              <td>
+                {{ variant.sku }}
+              </td>
+              <td>
+                @for(attr of variant.attributes; track $index; let i = $index) {
+                {{
+                getProductTranslate((`attributeValue.${variant.attributes[i].value}` | transloco),
+                variant.attributes[i].value)
+
+                }}
+                @if(!$last) {
+                -
+                }
+                }
+
+              </td>
+              <td> {{ variant.price | currency: ' ' : "code": "0.0" }}</td>
+              <td>
+                <p-tag [value]="variant.quantity" [severity]="getSeverity(variant.quantity)" />
+              </td>
+              <td>
+                <p-button type="button" icon="pi pi-plus" [outlined]="true" (onClick)="addVariantItem(variant)" />
+                <app-variant-dialog title="Skladga qushish" [subtitle]="variant.sku" [variantId]="variant.id"
+                  (dataChange)="handleAdd($event)" [(visible)]="visibleAddVariants" />
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #expandedrow let-variant>
+            <tr>
+              <td colspan="7">
+                <div class="p-4">
+                  <h5>{{'product.stockMovement'| transloco:{
+                    attribute: getProductTranslate((`attributeValue.${variant.attributes[0].value}` | transloco),
+                    variant.attributes[0].value),
+                    value: variant.attributes[1] ? getProductTranslate((`attributeValue.${variant.attributes[1].value}`
+                    | transloco),
+                    variant.attributes[1].value) : ''
+                    } }} </h5>
+                  <p-table [value]="variant.stockMovements" dataKey="id">
+                    <ng-template #header>
+            <tr>
+              <th pSortableColumn="createdAt">
+                <div class="flex items-center gap-2">
+                  {{'product.createAt'|transloco}}
+                  <p-sortIcon field="createdAt" />
+                </div>
+              </th>
+              <th pSortableColumn="type">
+                <div class="flex items-center gap-2">
+                  {{'product.inOut'|transloco}}
+                  <p-sortIcon field="type" />
+                </div>
+              </th>
+              <th pSortableColumn="reason">
+                <div class="flex items-center gap-2">
+                  {{'product.reason'|transloco}}
+                  <p-sortIcon field="reason" />
+                </div>
+              </th>
+              <th pSortableColumn="createdBy">
+                <div class="flex items-center gap-2">
+                  {{'product.createBy'|transloco}}
+                  <p-sortIcon field="createdBy" />
+                </div>
+              </th>
+              <th pSortableColumn="quantity">
+                <div class="flex items-center gap-2">
+                  {{'product.quantity'|transloco}}
+                  <p-sortIcon field="quantity" />
+                </div>
+              </th>
+              <th pSortableColumn="price">
+                <div class="flex items-center gap-2">
+                  {{'product.incomingPrice'|transloco}}
+                  <p-sortIcon field="price" />
+                </div>
+              </th>
+
+            </tr>
+          </ng-template>
+          <ng-template #body let-stockMovement>
+            <tr>
+              <td>{{ stockMovement.createdAt | date:'dd-MM-yyyy' }}</td>
+              <td>{{ ('product.stockMovementType.' + stockMovement.type) | transloco }}
+                <p-tag [value]="stockMovement.type === 'IN' ? 'IN' : 'OUT'"
+                  [severity]="stockMovement.type === 'IN' ? 'success' : 'danger'" class="ml-2" />
+              </td>
+              <td>{{ ('product.reasonType.' + stockMovement.reason) | transloco }}</td>
+              <td>{{ stockMovement.createdBy.user.fullName }}</td>
+              <td>{{ stockMovement.quantity }}</td>
+              <td>{{ stockMovement.unitCost | currency: ' ' : 'code': '0.0' }}</td>
+
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="6">{{ 'product.noOrders' | transloco }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      </td>
+      </tr>
+      </ng-template>
+      </p-table>
+    </div>
+  </div>
+  </div>
+  }
+</p-fluid>

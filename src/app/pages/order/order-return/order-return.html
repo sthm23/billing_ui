@@ -1,0 +1,129 @@
+<p-toast />
+@let order = currentOrder();
+<div class="flex flex-wrap flex-col gap-4 md:flex-row">
+  <div class="flex-10">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
+      <h4 class="filter">{{'order.returnOrder' | transloco}}</h4>
+
+      @if(order && order.status) {
+      <p-tag [severity]="getSeverity(order.status)"
+        [value]="translateOrderText(`order.status.${order.status}` | transloco, order.status)" />
+      }
+    </div>
+    <div class="flex flex-col gap-4">
+      @for (item of orderItems(); track item.id; let i = $index) {
+      <app-order-item type="RETURN" [orderItem]="item" (amountChange)="handleAmountChange($event, item.id)" />
+      }
+    </div>
+  </div>
+  <div class="flex-3 card flex flex-col justify-between gap-2 p-4">
+
+    <div>
+      <div class="flex flex-col justify-between gap-2">
+        <div class="flex flex-col justify-between gap-1">
+          <div>{{'order.totalAmount' | transloco}}:</div>
+          <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
+        </div>
+        <div class="flex flex-col justify-between gap-1">
+          <div>{{'order.sale' | transloco}}:</div>
+          <div class="flex items-center gap-4">
+            <p class="flex items-center mb-0! text-xl text-(--p-button-text-danger-color)">
+              {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
+            </p>
+          </div>
+        </div>
+
+      </div>
+      <p-divider />
+      <div class="flex items-center gap-4 justify-between">
+        <h5 class="m-0!">{{'order.debt' | transloco}}:</h5>
+        <div class="text-(--p-red-600)">{{debt() | currency: " ": "code": "0.0"}} UZS</div>
+      </div>
+      <div class="flex items-center gap-4 justify-between">
+        <h5 class="m-0!">{{'order.payment' | transloco}}:</h5>
+        <div class="text-(--p-green-600)">+{{customerPayment() | currency: " ": "code": "0.0"}} UZS</div>
+        <p-button outlined icon="pi pi-wallet" [disabled]="!(returnAmount() > 0)" (onClick)="setReturnPayment()" />
+      </div>
+      @let payments = returnPayments();
+      @if(payments.length) {
+
+      <p-divider />
+      @for (item of payments; track $index) {
+
+      <div class="flex flex-col items-end sm:items-start">
+        <div>{{`order.paymentMethod.${item.type}` | transloco}}: </div>
+        <div class="flex items-center gap-2">
+          <p class="text-xl font-bold mb-0!">{{ item.amount | currency: " ": "code": "0.0"}} UZS
+          </p>
+        </div>
+      </div>
+      }
+      }
+    </div>
+    <p-divider />
+    <div class="flex flex-col items-end sm:items-start">
+      <div>{{'order.return' | transloco}}: </div>
+      @if(returnAmount() > 0) {
+      <div class="flex items-center gap-2">
+        <p class="text-xl font-bold mb-0!">{{ returnAmount() | currency: " ": "code":
+          "0.0"}} UZS
+        </p>
+      </div>
+      }@else {
+      <div class="flex items-center gap-2">
+        <p class="text-xl font-bold mb-0!">0 UZS
+        </p>
+      </div>
+      }
+    </div>
+    <div class="flex gap-2 justify-end mt-4">
+      @if(order && !order.isReturned) {
+      <p-button [label]="'order.submit' | transloco" (onClick)="submit()" />
+      }
+    </div>
+  </div>
+</div>
+<p-confirmdialog>
+  <ng-template #message let-message>
+    <div class="flex flex-col items-center gap-4">
+      <i class="pi pi-exclamation-triangle text-(--p-red-600) text-6xl!"></i>
+      <div class="text-lg font-bold">{{'order.confirmReturn' | transloco}}</div>
+      <div class="card flex justify-center gap-4 flex-wrap m-0!">
+        <div class="flex flex-col">
+          @for (item of orderItems(); track item.id; let last = $last) {
+          @if(item.quantity > 0) {
+          <div class="flex items-center flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+              <div>
+                <div class="font-semibold">{{item.name}}</div>
+                <div class="text-sm text-gray-500">{{'order.price' | transloco}}: {{ item.price| currency: " ": "code":
+                  "0.0" }} UZS</div>
+              </div>
+            </div>
+            <div class="ml-auto flex flex-wrap items-center gap-4">
+              <span>{{ item.quantity }} x {{ (item.price - item.sale) | currency: " ": "code": "0.0" }}
+                UZS</span>
+              <span>=</span>
+              <span>{{ (item.quantity * (item.price - item.sale)) | currency: " ": "code": "0.0" }} UZS</span>
+            </div>
+          </div>
+          <p-divider />
+          }
+          }
+          <div>{{'order.total' | transloco}}: {{(totalAmount() - saleAmount()) | currency: " ": "code": "0.0"}} UZS
+          </div>
+          @if(order && order.status === 'DEBT') {
+          <div>{{'order.debt' | transloco}}: -{{debt() | currency: " ": "code": "0.0"}} UZS</div>
+          }
+          <div>{{'order.return' | transloco}}: {{returnAmount() | currency: " ": "code": "0.0"}} UZS</div>
+          <p-divider />
+          <div>{{'order.returned' | transloco}}: {{cashierPayment() | currency: " ": "code": "0.0"}} UZS</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmdialog>
+
+<app-return-payment-dialog [visible]="returnPaymentDialogVisible" (close)="returnPaymentDialogVisible = $event"
+  (data)="handleReturnPaymentDialogChange($event)" [returnAmount]="returnAmount()" />

@@ -1,0 +1,49 @@
+<p-toast />
+<p-confirmdialog />
+<div class="p-4">
+  <p-table #dt [lazy]="true" [loading]="appStore.isLoading()" [value]="products()"
+    [tableStyle]="{ 'min-width': '50rem' }" selectionMode="single" [metaKeySelection]="true" dataKey="id"
+    [paginator]="true" (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows"
+    (onPage)="pageChange($event)">
+    <ng-template #caption>
+      <div class="flex justify-end gap-2">
+        <p-button [label]="'product.create'|transloco" icon="pi pi-plus" (onClick)="goToCreateProduct()" />
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width:8%">{{'product.img'|transloco}}</th>
+        <th style="width:12%">{{'product.name'|transloco}}</th>
+        <th style="width:13%">{{'product.brand'|transloco}}</th>
+        <th style="width:10%">{{'product.category'|transloco}}</th>
+        <th style="width:15%">{{'product.warehouse'|transloco}}</th>
+        <th style="width:10%">{{'product.inStock'|transloco}}</th>
+        <th style="width:15%">{{'product.priceRange'|transloco}}</th>
+        <th style="width:5%">{{'product.action'|transloco}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr [pSelectableRow]="product">
+
+        <td>
+          @if(product.images && product.images.length > 0) {
+          <p-image [src]="product.images[0].url" [alt]="product.name" width="50"
+            class="shadow-lg object-cover h-[40px]" />
+          }@else {
+          <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded size-20" size="normal"
+            shape="square" />
+          }
+        </td>
+        <td>{{ product.name }}</td>
+        <td>{{ getProductTranslate((`brand.${product.brand}`|transloco), product.brand)}}</td>
+        <td>{{ getProductTranslate((`category.${product.category}`|transloco), product.category) }}</td>
+        <td>{{ product.warehouse.name }}</td>
+        <td> <p-badge [value]="productQuantity(product)" [severity]="getSeverity(productQuantity(product))" /></td>
+        <td>{{ product.priceRange.min | currency: " " : 'code' : '0.0'}}</td>
+        <td>
+          <p-button (click)="archive($event, product)" [outlined]="true" severity="danger" icon="pi pi-trash" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

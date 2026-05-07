@@ -1,0 +1,63 @@
+<p-toast />
+<div class="bg-muted flex min-h-50vh flex-col items-center justify-center gap-6 p-6 md:p-10 sm:min-h-screen">
+  <div class="flex w-full max-w-sm flex-col gap-6">
+    <a routerLink="/" class="flex items-center gap-2 self-center font-medium">
+      <div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+        <i class="pi pi-box"></i>
+      </div>
+      My billing
+    </a>
+
+    <div class="flex flex-col">
+      <div class="card">
+        <h2 class="text-center">{{'login.title' | transloco }}</h2>
+        <!-- <p class="text-center"> {{'login.subTitle' | transloco }}</p> -->
+        <div class="card-content">
+          <form [formGroup]="loginForm" (ngSubmit)="login()">
+            <!-- <div class="flex flex-col">
+              <p-button class="mt-4" [label]="'login.withApple' | transloco" icon="pi pi-apple" type="button"
+                variant="outlined" fluid />
+              <p-button class="mt-4" [label]="'login.withGoogle' | transloco" icon="pi pi-google" type="button"
+                variant="outlined" fluid />
+            </div> -->
+            <!-- <p-divider>
+              <b>{{'login.withSubTitle' | transloco}}</b>
+            </p-divider> -->
+            <div class="flex flex-col">
+              <label for="email">{{'login.email' | transloco}}</label>
+              <input formControlName="login" class="mt-2" pInputText id="email" autocomplete="off"
+                placeholder="m@example.com" required fluid />
+            </div>
+
+            <div class="flex flex-col mt-4">
+              <div class="flex items-center">
+                <label for="password">{{'login.password' | transloco}}</label>
+                <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">
+                  {{'login.forgotPassword' | transloco}}
+                </a>
+              </div>
+              <input formControlName="password" class="mt-2" pInputText id="password" type="password" required />
+            </div>
+            <div class="flex flex-col gap-2 mt-4">
+              <p-button type="submit" [label]="'login.loginButton' | transloco" class="w-full" styleClass="w-full"
+                fluid />
+
+              <p class="text-center">
+                {{'login.signUptext' | transloco}} <a routerLink="/auth/sign-up" class="underline">{{'login.signUp' |
+                  transloco}}</a>
+              </p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <p class="text-center">
+        {{'login.termsAgreement' | transloco:{
+        termsOfService: 'login.termsOfService'| transloco,
+        privacyPolicy: 'login.privacyPolicy'| transloco
+        } }}
+      </p>
+    </div>
+
+  </div>
+</div>

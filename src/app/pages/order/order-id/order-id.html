@@ -1,0 +1,78 @@
+@let order = currentOrder();
+@if(order) {
+<p-toast />
+<div class="flex flex-wrap flex-col gap-4 md:flex-row">
+  <div class="flex-10">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
+      <h4 class="filter">{{'order.order' | transloco}}</h4>
+    </div>
+    <div class="flex flex-col gap-4 items-end sm:items-start sm:flex-row justify-between mb-4">
+      <p-autocomplete class="w-full" [placeholder]="'order.searchPlaceholder' | transloco" [delay]="500"
+        [emptyMessage]="'order.noResults' | transloco:{ item: 'order.products' | transloco }" [minQueryLength]="3"
+        panelStyleClass="autocomplete-panel-wrap" optionLabel="name" [(ngModel)]="searchValue"
+        [suggestions]="searchResults()" (onSelect)="selectSearchOption($event)" (completeMethod)="search($event)"
+        fluid />
+      <p-button icon="pi pi-qrcode" [label]="'order.scan' | transloco" />
+    </div>
+    <div class="flex flex-col gap-4 mb-4">
+      @if(orderItems().length === 0) {
+      <div class="flex flex-col items-center gap-4 mt-8">
+        <i class="pi pi-shopping-cart text-6xl text-gray-400"></i>
+        <p class="text-gray-500">{{'order.orderItemEmpty' | transloco}}</p>
+      </div>
+      }
+      @for (item of orderItems(); track item.id; let i = $index) {
+      <app-order-item [orderItem]="item" (delete)="removeItem(item.id)"
+        (amountChange)="handleAmountChange($event, item.id)" />
+      }
+    </div>
+
+    <app-additional-service [additionalServicesForm]="additionalServiceForm" />
+  </div>
+  <div class="flex-3 card flex flex-col gap-2 p-4">
+    <div class="flex flex-col justify-between gap-2 mt-4">
+      <div class="flex flex-col justify-between gap-1">
+        <div>{{'order.totalAmount' | transloco}}:</div>
+        <p class="text-xl">{{ totalAmount() | currency: " ": "code": "0.0"}} UZS</p>
+      </div>
+      <div class="flex flex-col justify-between gap-1">
+        <div>{{'order.sale' | transloco}}:</div>
+        <div class="flex items-center gap-4">
+          <p class="flex items-center mb-0! text-xl text-(--p-button-text-danger-color)">
+            {{saleAmount() > 0 ? '- ' : ''}}{{ saleAmount() | currency: " ": "code": "0.0" }} UZS
+          </p>
+          <p-button [disabled]="saleAmount() === 0" icon="pi pi-trash" severity="danger" outlined
+            (click)="resetDiscount()" />
+        </div>
+      </div>
+      @if(isActive.value) {
+      <div class="flex flex-col justify-between gap-4">
+        <div>{{'order.additionalServices' | transloco}}:</div>
+        <p>{{additionalServiceAmount() | currency: " ": "code": "0.0"}} UZS</p>
+      </div>
+      }
+    </div>
+    <p-divider class="my-2" />
+    <div class="flex flex-col items-end sm:items-start">
+      <div>{{'order.total' | transloco}}: </div>
+      <div class="flex items-center gap-2">
+        <p class="text-xl font-bold mb-0!">{{ countTotal() | currency:
+          " ": "code":
+          "0.0"}} UZS
+        </p>
+        <p-button outlined icon="pi pi-pencil" [disabled]="orderItems().length === 0" (onClick)="setPriceSale()" />
+      </div>
+    </div>
+    <div class="flex gap-2 justify-end mt-4">
+      <p-button icon="pi pi-clock" class="submit-btn" [label]="'order.hold' | transloco" severity="secondary"
+        (onClick)="holdOrder()" />
+      <p-button icon="pi pi-wallet" class="submit-btn" [label]="'order.payment' | transloco"
+        (onClick)="goToPayment()" />
+    </div>
+  </div>
+</div>
+
+<app-sale-dialog [(visible)]="saleDialogVisible" (visibleChange)="handleSaleDialogChange($event)"
+  [price]="totalAmount()" [sale]="saleAmount()" />
+}

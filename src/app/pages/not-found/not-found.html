@@ -1,0 +1,15 @@
+<div class="px-6 py-20 md:px-12 lg:px-20 min-h-svh">
+  <div class="card h-[70vh] text-center flex flex-col items-center justify-center gap-4">
+    <h1 class="text-6xl!">404</h1>
+    <h5> {{'notFound.title' | transloco}}</h5>
+    <div>
+      <div class="w-[50%] m-auto text-surface-400">{{'notFound.description' | transloco}}</div>
+    </div>
+    <p-button class="mt-4" size="large" icon="pi pi-arrow-left" [label]="'notFound.goHome' | transloco"
+      routerLink="/" />
+    <div class="text-primary font-bold leading-tight">
+      <i class="pi pi-telegram"></i>
+      <span class="ml-2">{{'notFound.contactSupport' | transloco}}</span>
+    </div>
+  </div>
+</div>

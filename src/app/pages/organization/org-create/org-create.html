@@ -1,0 +1,74 @@
+<p-toast />
+<div class="card" [formGroup]="storeForm">
+  <div class="font-semibold text-xl">{{'organization.createTitle' | transloco}}</div>
+
+  <app-loader [loading]="false">
+    <p-fluid>
+      <div class="flex ">
+        <div class="p-4 flex flex-col gap-6 w-full">
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="name">{{'organization.storeName' | transloco}}</label>
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
+            </div>
+
+            <div class="flex flex-wrap gap-3 w-full" formGroupName="wareHouse">
+              <label for="name">{{'organization.warehouseName' | transloco}}</label>
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
+            </div>
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="ownerId">{{'organization.owner' | transloco}}</label>
+              <p-select id="ownerId" formControlName="ownerId" [options]="ownerList()" optionLabel="name"
+                [placeholder]="'organization.ownerPlaceholder' | transloco" class="w-full"
+                [class]="isValidField('ownerId')"></p-select>
+            </div>
+
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="categoryId">{{'organization.category' | transloco}}</label>
+              <p-treeselect id="categoryId" class="w-full" formControlName="categoryId"
+                [class]="isValidField('categoryId')"
+                [options]="categoryList() | translatePipe:translateObject:categoryArr"
+                [placeholder]="'organization.categoryPlaceholder' | transloco" />
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="brands">{{'organization.brand' | transloco}}</label>
+              <p-multiselect [options]="brandList()" formControlName="brands" optionLabel="name"
+                [placeholder]="'organization.brandPlaceholder' | transloco" [maxSelectedLabels]="3"
+                class="w-full md:w-80" [class]="isValidField('brands')">
+                <ng-template let-brand #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ getStoreTranslatedName((`brand.${brand.name}` | transloco), brand.name) }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="attributeIds">{{'organization.attribute' | transloco}}</label>
+              <p-multiselect [options]="attributeList()" formControlName="attributeIds" optionLabel="name"
+                [placeholder]="'organization.attributePlaceholder' | transloco" [maxSelectedLabels]="3"
+                class="w-full md:w-80" [class]="isValidField('attributeIds')">
+                <ng-template let-attribute #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ `attribute.${attribute.name}` | transloco }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button [label]="'organization.cancel' | transloco" variant="outlined" (onClick)="clearForm()"></p-button>
+        <p-button [label]="'organization.submit' | transloco" severity="contrast" (onClick)="submitForm()"></p-button>
+      </div>
+    </p-fluid>
+  </app-loader>
+</div>

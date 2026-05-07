@@ -1,0 +1,44 @@
+@let attribute = currentAttributeValues();
+@if(attribute) {
+<p-toast />
+<div class="flex flex-wrap flex-col gap-4 p-4">
+  <div class="flex">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (click)="backToList()" />
+      <h4 class="filter">{{'product.attribute' | transloco}}</h4>
+    </div>
+  </div>
+  <div class="card flex flex-col justify-between gap-2 p-4">
+    <div class="flex gap-2">
+      <div class="flex-1 flex flex-col gap-4">
+        <div class="flex gap-4">
+          <h5 class="font-bold">{{'product.name' | transloco}}:</h5>
+          <p>{{ getTranslate(`attribute.${attribute.name}` | transloco, attribute.name) }}</p>
+        </div>
+        <div class="flex gap-4">
+          <h5 class="font-bold">{{'user.type' | transloco}}:</h5>
+          <p>{{ attribute.type }}</p>
+        </div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <span class="font-bold">Values:</span>
+        <div class="flex gap-2 flex-wrap">
+          @for (item of attribute.values; track $index; let i = $index; let last = $last) {
+          <p-tag [value]="getTranslate(`attributeValue.${item.value}` | transloco, item.value).toString()" />
+          }
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2">
+      <form [formGroup]="attrValueForm">
+        <input type="text" pInputText name="newAttributeValue" formControlName="name"
+          [placeholder]="'order.add' | transloco" />
+
+        <p-button label="Add" icon="pi pi-add" (click)="addAttributeValue()" />
+      </form>
+    </div>
+
+  </div>
+</div>
+
+}

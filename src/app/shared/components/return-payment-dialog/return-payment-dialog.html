@@ -1,0 +1,50 @@
+<p-dialog header="Select Payment Method" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }"
+  (visibleChange)="closeModal($event)">
+  <form class="py-2" [formGroup]="paymentForm" (ngSubmit)="save()">
+    <div class="flex items-center gap-4 mb-4">
+      <p-selectbutton [options]="stateOptions" [multiple]="true" formControlName="paymentMethod" optionLabel="label"
+        optionValue="value" aria-labelledby="basic">
+        <ng-template #item let-item>
+          <div>{{`order.paymentMethod.${item.value}` | transloco}}</div>
+        </ng-template>
+      </p-selectbutton>
+    </div>
+    <div class="flex flex-col gap-4 mb-4" formGroupName="method">
+      <div class="flex flex-col gap-4 pt-4">
+        <p-inputgroup>
+          <p-floatlabel>
+            <p-inputnumber id="cash" placeholder="Cash" formControlName="CASH" [invalid]="isValid('CASH')" />
+            <label for="cash">{{'order.paymentMethod.CASH' | transloco}}</label>
+          </p-floatlabel>
+          <p-inputgroup-addon>
+            <i class="pi pi-money-bill"></i>
+          </p-inputgroup-addon>
+        </p-inputgroup>
+        @if(isValid('CASH')) {
+        <p-message severity="error" size="small" variant="simple">{{ getControlError('CASH') }}</p-message>
+        }
+      </div>
+      <div class="flex flex-col pt-4 gap-4">
+        <p-inputgroup>
+          <p-floatlabel>
+            <p-inputnumber id="card" placeholder="Card" formControlName="CARD" [invalid]="isValid('CARD')" />
+            <label for="card">{{'order.paymentMethod.CARD' | transloco}}</label>
+          </p-floatlabel>
+          <p-inputgroup-addon><i class="pi pi-credit-card"></i></p-inputgroup-addon>
+        </p-inputgroup>
+        @if(isValid('CARD')) {
+        <p-message severity="error" size="small" variant="simple">{{ getControlError('CARD') }}</p-message>
+        }
+      </div>
+
+      @if(showTotalError()) {
+      <p-message severity="error" size="small" variant="simple">{{ getTotalError() }}</p-message>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <p-button [label]="'order.cancel' | transloco" severity="secondary" (click)="closeModal(false)" />
+      <p-button [label]="'order.save' | transloco" (click)="save()" />
+    </div>
+  </form>
+</p-dialog>

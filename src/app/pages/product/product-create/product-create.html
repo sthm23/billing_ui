@@ -1,0 +1,111 @@
+<p-toast />
+<div class="card" [formGroup]="productForm">
+  <div class="flex items-center gap-4 flex-1">
+    <p-button text icon="pi pi-arrow-left" (onClick)="goToList()" />
+    <h4 class="m-0!">{{'product.title'| transloco}}</h4>
+  </div>
+
+  <app-loader [loading]="false">
+    <p-fluid>
+      <div class="flex ">
+        <div class="p-6 flex flex-col gap-6 w-full">
+
+          <div class="flex flex-col md:flex-row gap-6">
+            @if(authService.isAdmin()) {
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="store">{{'product.store' | transloco}}</label>
+              <p-select id="store" formControlName="store" [options]="stores()" optionLabel="name"
+                [class]="isValidField('store')" />
+            </div>
+            }
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="warehouse">{{'product.warehouse' | transloco}}</label>
+              <p-select id="warehouse" formControlName="warehouse" [options]="warehouses()" optionLabel="name"
+                [class]="isValidField('warehouse')" />
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="category">{{'product.category' | transloco}}</label>
+              <p-treeselect id="category" class="w-full" formControlName="category"
+                [options]="categories() | translatePipe:translateObject:categoryArr" [class]="isValidField('category')"
+                [placeholder]="'product.categoryPlaceholder'|transloco" />
+            </div>
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="brand">{{'product.brand' | transloco}}</label>
+              <p-select id="brand" formControlName="brand" [options]="brands()" optionLabel="name"
+                [class]="isValidField('brand')">
+                <ng-template let-brand #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ getProductTranslatedName((`brand.${brand.name}` | transloco), brand.name) }}</span>
+                  </div>
+                </ng-template>
+              </p-select>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="tags">{{'product.tag' | transloco}}</label>
+              <p-multiselect id="tags" optionGroupLabel="name" optionLabel="value" optionGroupChildren="values"
+                [options]="tags()" [group]="true" formControlName="tags"
+                [placeholder]="'product.tagPlaceholder'|transloco" scrollHeight="250px" display="chip"
+                class="w-full md:w-80">
+                <ng-template let-group #group>
+                  <div class="flex items-center">
+                    <span>{{ getProductTranslatedName((`tag.${group.name}` | transloco), group.name) }}</span>
+                  </div>
+                </ng-template>
+                <ng-template let-item #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ getProductTranslatedName((`tagValue.${item.value}` | transloco), item.value) }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="attributes">{{'product.attribute' | transloco}}</label>
+              <p-multiselect id="attributes" formControlName="attributes"
+                [placeholder]="'product.attributePlaceholder' | transloco" [options]="attributeOptions()"
+                optionLabel="name" [maxSelectedLabels]="3" [class]="isValidField('attributes')">
+                <ng-template let-attribute #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ `attribute.${attribute.name}` | transloco }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+            </div>
+
+            <div class="flex flex-wrap gap-3 w-full">
+              <label for="name">{{'product.name' | transloco}}</label>
+              <input pInputText id="name" type="text" formControlName="name" [class]="isValidField('name')" />
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+
+              <label for="description">{{'product.description' | transloco}}</label>
+              <textarea id="description" formControlName="description" rows="5" cols="30" pTextarea
+                [autoResize]="true"></textarea>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="col-span-full lg:col-span-6">
+        <div class="p-6">
+          <app-file-upload
+            [storeId]="authService.getCurrentUser()?.staff?.storeId ?? productForm.controls.store.value?.id"
+            [cancel]="uploadedFilesCancel$" (uploadComplete)="onUpload($event)" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button [label]="'product.cancel' | transloco" severity="secondary" (onClick)="clearForm()"></p-button>
+        <p-button [label]="'product.submit' | transloco" (onClick)="submit()"></p-button>
+      </div>
+    </p-fluid>
+  </app-loader>
+</div>

@@ -1,0 +1,10 @@
+<div class="layout-wrapper" [ngClass]="containerClass">
+  <app-sidebar />
+  <div class="layout-main-container">
+    <app-topbar />
+    <div class="layout-main p-2">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div class="layout-mask animate-fadein"></div>
+</div>

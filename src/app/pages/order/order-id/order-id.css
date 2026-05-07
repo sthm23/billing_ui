@@ -1,0 +1,3 @@
+:host ::ng-deep .p-autocomplete-option {
+    white-space: normal;
+}

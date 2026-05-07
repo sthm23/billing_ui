@@ -1,0 +1,73 @@
+<p-toast />
+<div class="font-semibold text-xl mb-4">{{'product.file.title' | transloco}}</div>
+<p-fileupload #fileUploader [customUpload]="true" [multiple]="true" accept="image/*" [maxFileSize]="maxFileSize"
+  mode="advanced" (uploadHandler)="customUpload($event)" (onSelect)="onSelectedFiles($event)">
+  <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback"
+    let-uploadCallback="uploadCallback">
+    <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
+      <div class="flex gap-2">
+        <p-button (onClick)="chooseCallback()" icon="pi pi-images" />
+        <p-button (onClick)="uploadCallback()" icon="pi pi-cloud-upload" severity="info"
+          [disabled]="!files || files.length === 0" />
+        <p-button (onClick)="clear(clearCallback)" icon="pi pi-times" severity="danger"
+          [disabled]="!files || files.length === 0" />
+      </div>
+      <div class="md:w-20rem h-1 w-full md:ml-auto">
+        <p-progressbar [value]="totalSizePercent" [showValue]="false" class="w-full md:w-20rem h-1 w-full md:ml-auto">
+          <ng-template #content let-value>
+            <span>{{ parseProgressValueIntoKb(value) }}kb / 4mb</span>
+          </ng-template>
+        </p-progressbar>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #content let-files let-uploadedFiles="uploadedFiles" let-removeFileCallback="removeFileCallback"
+    let-removeUploadedFileCallback="removeUploadedFileCallback">
+    @if(files.length > 0) {
+    @for (item of files; track $index; let i = $index) {
+
+    <div class="p-fileupload-file flex items-center">
+      <img role="presentation" class="p-fileupload-file-thumbnail"
+        [src]="item.objectURL['changingThisBreaksApplicationSecurity']" width="50" [alt]="item.name" />
+      <div class="p-fileupload-file-info">
+        <div class="p-fileupload-file-name">{{item.name}}</div><span class="p-fileupload-file-size">
+          {{formatSize(item.size)}}
+        </span>
+      </div>
+      <p-badge value="Pending" severity="warn" />
+      <div class="p-fileupload-file-actions">
+        <p-button icon="pi pi-times" class="item-grow"
+          (onClick)="onRemoveTemplatingFile($event, item, removeFileCallback, i)" text severity="danger" />
+      </div>
+    </div>
+    }
+    }
+    @if(uploadedFiles?.length > 0) {
+    @for (item of uploadedFiles; track $index; let i = $index) {
+
+    <div class="p-fileupload-file flex items-center">
+      <img role="presentation" class="p-fileupload-file-thumbnail" [src]="item.file.objectURL" width="50"
+        [alt]="item.file.name" />
+      <div class="p-fileupload-file-info">
+        <div class="p-fileupload-file-name">{{item.file.name}}</div>
+        <span class="p-fileupload-file-size">
+          {{formatSize(item.file.size)}}
+        </span>
+      </div>
+      <p-badge value="Completed" severity="success" />
+      <div class="p-fileupload-file-actions">
+        <p-button icon="pi pi-times" class="item-grow"
+          (click)="onRemoveTemplatingFile($event, item, removeUploadedFileCallback, i)" text severity="danger" />
+      </div>
+    </div>
+    }
+    }
+
+  </ng-template>
+  <ng-template #empty>
+    <div class="p-6 text-center">
+      <i class="pi pi-image text-4xl text-500"></i>
+      <p>{{'product.file.subTitle'|transloco}}</p>
+    </div>
+  </ng-template>
+</p-fileupload>

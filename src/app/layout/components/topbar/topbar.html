@@ -1,0 +1,49 @@
+<div class="layout-topbar">
+  <div class="layout-topbar-logo-container">
+    <p-button class="layout-menu-button layout-topbar-action" [text]="true" (click)="layoutService.onMenuToggle()"
+      size="small">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+        <path d="M9 3v18"></path>
+      </svg>
+    </p-button>
+    <p-divider layout="vertical" class="m-2" />
+    <p-breadcrumb class="max-w-full hidden sm:block" [model]="breadcrumbItems">
+      <ng-template #item let-item>
+        @if(item.icon) {
+        <span [ngClass]="[item.icon, 'text-color']"></span>
+        }@else {
+        <span class="text-color">{{ item.label | titlecase }}</span>
+        }
+      </ng-template>
+    </p-breadcrumb>
+  </div>
+
+
+  <div class="layout-topbar-actions">
+    <div class="layout-config-menu">
+      <div>
+        <p-menu #menu [model]="languages" [popup]="true">
+          <ng-template #item let-item>
+            <a pRipple class="flex items-center px-3 py-2 cursor-pointer" [class]="item.linkClass">
+              <img src="/icons/flags/{{item.value.toLowerCase()}}.svg" style="width: 18px" />
+              <span class="ms-2">{{ item.name }}</span>
+              @if(item.value === selectedLanguage['value']) {
+              <i class="pi pi-check ms-2"></i>
+              }
+            </a>
+          </ng-template>
+        </p-menu>
+        <p-button size="large" (click)="menu.toggle($event)" text>
+          <img src="/icons/flags/{{selectedLanguage['value'].toLowerCase()}}.svg" style="width: 18px" />
+        </p-button>
+      </div>
+      <p-button type="button" size="large" [icon]="layoutService.isDarkTheme() ? 'pi pi-moon' : 'pi pi-sun'"
+        [text]="true" (click)="toggleDarkMode()" />
+
+      <p-button type="button" [text]="true" (click)="handleExit()" icon="pi pi-power-off" size="large" />
+
+    </div>
+  </div>
+</div>

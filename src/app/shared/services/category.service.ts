@@ -1,0 +1,80 @@
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Category, TagList, Attribute, Brand, AttributeItem, AttributeDetail, AttributeValuePayload, AttributePayload } from "../../models/product.model";
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CategoryService {
+  constructor(private http: HttpClient) {
+  }
+
+  getCategoryList(page = 1, pageSize = 10) {
+    let url = `/api/category?pageSize=${pageSize}&currentPage=${page}`;
+    return this.http.get<Category[]>(url, {
+      withCredentials: true,
+    });
+  }
+
+  getStoreCategoryList(storeId: string) {
+    let url = `/api/category/${storeId}/categories`;
+    return this.http.get<Category[]>(url, {
+      withCredentials: true,
+    });
+  }
+
+  getStoreBrandList(storeId: string) {
+    return this.http.get<Brand[]>(`/api/category/brand/${storeId}`, {
+      withCredentials: true,
+    });
+  }
+
+  getBrandList(page = 1, pageSize = 10) {
+    return this.http.get<Brand[]>(`/api/category/brand?pageSize=${pageSize}&currentPage=${page}`, {
+      withCredentials: true,
+    });
+  }
+
+  getAttributeList(page = 1, pageSize = 10) {
+    return this.http.get<Attribute[]>(`/api/category/attributes?pageSize=${pageSize}&currentPage=${page}`, {
+      withCredentials: true,
+    });
+  }
+
+  getStoreAttributeList(storeId: string) {
+    return this.http.get<Attribute[]>(`/api/category/attributes/store/${storeId}`, {
+      withCredentials: true,
+    });
+  }
+
+  getAttributeItems(attributeIds: string) {
+    return this.http.get<AttributeItem[]>(`/api/category/attributes/items?attributeIds=${attributeIds}`, {
+      withCredentials: true,
+    });
+  }
+
+  getAttributeById(id: string) {
+    return this.http.get<AttributeDetail>(`/api/category/attributes/${id}`, {
+      withCredentials: true,
+    });
+  }
+
+  getTagList() {
+    return this.http.get<TagList[]>(`/api/category/tag`, {
+      withCredentials: true,
+    });
+  }
+
+  createAttribute(body: AttributePayload) {
+    return this.http.post<Attribute>(`/api/category/attribute`, body, {
+      withCredentials: true,
+    });
+  }
+
+  createAttributeValue(body: AttributeValuePayload) {
+    return this.http.post<AttributeItem>(`/api/category/attribute/value`, body, {
+      withCredentials: true,
+    });
+  }
+}

@@ -1,0 +1,4 @@
+.sale {
+  text-decoration: line-through;
+  color: var(--p-inputtext-invalid-placeholder-color);
+}

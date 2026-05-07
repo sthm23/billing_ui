@@ -1,0 +1,43 @@
+@if(orderItem) {
+<p-fluid>
+  <div class="card p-6!" [ngClass]="{'empty': orderItem.stock === 0}">
+    <div class="flex flex-col items-center gap-4 justify-between sm:flex-row">
+      <div class="flex-1 flex flex-col gap-2">
+        <app-counter [maxValue]="orderItem.stock" (countChange)="handleCounter($event)"
+          [initialCount]="orderItem.quantity" />
+      </div>
+      <div class="flex-6">
+        <p>{{orderItem.name}}</p>
+      </div>
+      <div class="flex-3 flex items-center gap-2 justify-end ">
+        <app-sale-dialog [(visible)]="isPriceChangeDialogVisible" [price]="price()" [sale]="sale()"
+          (visibleChange)="handlePrice($event)" />
+
+        <div>
+          <div [class.sale]="sale() > 0">{{price() | currency: ' ' : 'code' : '0.0'}} UZS</div>
+          @if(sale() > 0) {
+          <div class="text-(--p-button-text-danger-color)">
+            - {{ sale() | currency: " ": "code": "0.0" }} UZS
+          </div>
+          <div>
+            <p-tag [value]="((price() - sale()) | currency: ' ' : 'code' : '0.0') + ' UZS'" />
+          </div>
+          }
+        </div>
+        @if(type !== 'RETURN') {
+        <p-button icon="pi pi-pencil" severity="secondary" outlined type="button"
+          (click)="isPriceChangeDialogVisible = true" />
+        }
+
+
+      </div>
+      @if(type !== 'RETURN') {
+      <div class="flex justify-end">
+        <p-button type="button" [outlined]="true" icon="pi pi-trash" severity="danger"
+          (click)="removeItem()"></p-button>
+      </div>
+      }
+    </div>
+  </div>
+</p-fluid>
+}

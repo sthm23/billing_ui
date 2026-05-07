@@ -1,0 +1,175 @@
+@let user = currentUser();
+@if(!user) {
+<p class="text-center text-muted-foreground">{{'profile.notFound' | transloco}}</p>
+}@else {
+
+<div class="container mx-auto px-4 py-6 md:px-6 2xl:max-w-[1400px]">
+  <div class="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (onClick)="goToDashboard()" />
+      <h3 class="m-0!">{{'profile.title' | transloco}}</h3>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- <p-button icon="pi pi-pen-to-square" label="Edit profile" outlined="true" />
+        <p-button icon="pi pi-fw pi-cog" label="Settings" outlined="true" /> -->
+    </div>
+  </div>
+  <div class="grid gap-6 md:grid-cols-6">
+    <div class="md:col-span-2">
+      <div class="card flex flex-col gap-6 shadow-sm p-0">
+        <div data-slot="card-content" class="p-6">
+          <div class="flex flex-col items-center">
+            @if(user.image) {
+            <p-avatar [image]="user.image" class="relative flex shrink-0 overflow-hidden rounded-full size-20"
+              size="xlarge" shape="circle" />
+            }@else {
+            <p-avatar icon="pi pi-image" class="relative flex shrink-0 overflow-hidden rounded-full size-20"
+              size="xlarge" shape="circle" />
+            }
+
+            <h2 class="mt-4 text-lg font-semibold text-center">{{user.fullName}}</h2>
+            <p class="text-muted-foreground text-sm">{{'profile.type.' + user.type | transloco}}</p>
+            <p-tag
+              [value]="user.auth?.isActive ? ('profile.status.ACTIVE' | transloco) : ('profile.status.INACTIVE' | transloco)"
+              [severity]="user.auth?.isActive ? 'success' : 'danger'" class="mt-2" />
+            <p-button label="{{'profile.message' | transloco}}" icon="pi pi-telegram" class="mt-4" />
+          </div>
+          <div class="mt-6 space-y-4">
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">{{'profile.memberSince' | transloco}}</span>
+              <span>{{user.createdAt| date:'mediumDate'}}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">{{'profile.login' | transloco}}</span>
+              <span>{{user.auth?.login}}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">{{'profile.password' | transloco}}</span>
+              <strong class="bold">******</strong>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">{{'profile.role' | transloco}}</span>
+              <span>{{user.role}}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-muted-foreground">{{'profile.phone' | transloco}}</span>
+              <span>{{userPhone(user.phone)}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6 md:col-span-4">
+      <div class="grid gap-4 sm:grid-cols-3">
+
+        <div class="flex flex-col gap-6 p-0">
+          <div class="card mb-0 h-full">
+            <div class="flex justify-between mb-4">
+              <div>
+                <span class="block text-muted-color font-medium mb-4">{{'profile.orders' | transloco}}</span>
+                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                  {{totalOrders() | currency: " ": "code": "0.0" }} UZS
+                </div>
+              </div>
+              <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
+                style="width: 2.5rem; height: 2.5rem">
+                <i class="pi pi-shopping-cart text-blue-500 !text-xl"></i>
+              </div>
+            </div>
+            <span class="text-primary font-medium">{{orders().length}}</span>
+            <span class="text-muted-color"> {{'profile.orderText' | transloco}}</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-6 p-0">
+          <div class="card mb-0 h-full">
+            <div class="flex justify-between mb-4">
+              <div>
+                <span class="block text-muted-color font-medium mb-4">{{'profile.payments' | transloco}}</span>
+                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                  {{userPayments() | currency: " ": "code": "0.0"}} UZS
+                </div>
+              </div>
+              <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border"
+                style="width: 2.5rem; height: 2.5rem">
+                <i class="pi pi-dollar text-orange-500 !text-xl"></i>
+              </div>
+            </div>
+            <span class="text-primary font-medium">{{user.staff.payments.length}}+ </span>
+            <span class="text-muted-color">{{'profile.paymentText' | transloco}}</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-6 p-0 ">
+          <div class="card mb-0 h-full">
+            <div class="flex justify-between mb-4 ">
+              <div>
+                <span class="block text-muted-color font-medium mb-4">{{'profile.debt' | transloco}}</span>
+                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                  {{debt() | currency:" ": "code": "0.0"}} UZS
+                </div>
+              </div>
+              <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border"
+                style="width: 2.5rem; height: 2.5rem">
+                <i class="pi pi-users text-cyan-500 !text-xl"></i>
+              </div>
+            </div>
+            <span class="text-primary font-medium">
+              {{user.staff.orders.length - orders().length}}
+            </span>
+            <span class="text-muted-color">{{'profile.debtText' | transloco}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card flex flex-col gap-6 p-0">
+        <div class="p-6">
+          <h3 class="mb-4 text-lg font-semibold">{{'profile.lastActivities' | transloco}}</h3>
+          <div class="space-y-4">
+
+            <ul class="list-none p-0 m-0">
+              @if(stockMovements().length === 0) {
+              <p class="text-center text-muted-foreground">{{'profile.activitiesEmpty' | transloco}}</p>
+              }@else {
+              <p-virtualScroller [items]="stockMovements()" [itemSize]="80" scrollHeight="400px"
+                (onScrollIndexChange)="handleScroll($event)">
+                <ng-template let-stockMoves let-last="last" pTemplate="item">
+                  <div class="pr-4">
+                    <li class="flex md:flex-row md:flex-wrap md:items-center md:justify-between mb-6">
+                      <div>
+                        <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">
+                          {{stockMoves.variant.sku}}
+                        </span>
+                        <div class="flex items-center gap-2">
+                          <div class="mt-1 text-muted-color">
+                            <p-tag [icon]="!(stockMoves.type === 'IN') ? 'pi pi-arrow-up': 'pi pi-arrow-down'"
+                              [value]="stockMoves.type" [severity]="getSeverity(stockMoves)" class="mr-2" />
+                          </div>
+                          <div class="mt-1 text-muted-color">{{stockMoves.createdAt | date:'dd/MM/yyyy, hh:mm a'}}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-2 md:mt-0 flex items-center">
+                        <div
+                          class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24 hidden sm:block"
+                          style="height: 8px">
+                          <div class="bg-surface-500 h-full " style="width: 50%"></div>
+                        </div>
+                        <span class="text-surface-500 ml-4 font-medium">{{stockMoves.quantity}}</span>
+                      </div>
+                    </li>
+                    @if(!last) {
+                    <p-divider />
+                    }
+                  </div>
+                </ng-template>
+              </p-virtualScroller>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+}
