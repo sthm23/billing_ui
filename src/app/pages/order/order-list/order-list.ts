@@ -56,13 +56,6 @@ export class OrderList implements OnInit {
   warehouseId: string = '';
   storeId: string = '';
   warehouse = signal<Warehouse[]>([])
-  stateOptions = [
-    { label: 'All', value: 'ALL' },
-    { label: 'On hold', value: 'ON_HOLD' },
-    { label: 'Debt', value: 'DEPT' },
-    { label: 'Canceled', value: 'CANCELED' }
-  ];
-  selectedStatus: string = 'ALL';
 
   loader = signal(false);
   first = signal(1);

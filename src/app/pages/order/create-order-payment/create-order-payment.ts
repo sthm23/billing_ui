@@ -22,7 +22,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE';
+type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE' | 'TRANSFER';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
 
 @Component({
@@ -69,6 +69,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     { label: 'CASH', value: 'CASH', icon: 'pi pi-money-bill' },
     { label: 'CARD', value: 'CARD', icon: 'pi pi-credit-card' },
     { label: 'CLICK', value: 'ONLINE', icon: 'pi pi-credit-card' },
+    { label: 'PEREVOD', value: 'TRANSFER', icon: 'pi pi-calculator' },
   ]
 
   paymentForm = new FormGroup({
@@ -77,6 +78,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       CASH: new FormControl<number>({ value: 0, disabled: false }, { nonNullable: true }),
       CARD: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
       ONLINE: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
+      TRANSFER: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
     }),
   });
 
@@ -124,7 +126,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
   private paymentChanged() {
     const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
-    const validMethods: PaymentMethod[] = ['CASH', 'CARD', 'ONLINE'];
+    const validMethods: PaymentMethod[] = ['CASH', 'CARD', 'ONLINE', 'TRANSFER'];
     this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
       validMethods.forEach(method => {
         methodControls.get(method)!.disable({ onlySelf: true });
@@ -137,7 +139,8 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
   handleCustomerCreate(data: DialogData) {
     const phone = '+998' + data.phone?.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '').trim()
-    this.userService.createCustomer({ fullName: data.name, phone }).subscribe({
+    const orderId = this.currentOrder()?.id!;
+    this.userService.createCustomer({ fullName: data.name, phone, orderId }).subscribe({
       next: (res) => {
         const phoneTemplate = this.formatPhoneNumber(res.phone);
 
@@ -176,7 +179,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       }
 
       const payments = paymentMethod!.map(m => {
-        const type = m === 'CASH' ? PaymentType.CASH : m === 'CARD' ? PaymentType.CARD : PaymentType.ONLINE;
+        const type = m === 'CASH' ? PaymentType.CASH : m === 'CARD' ? PaymentType.CARD : m === 'TRANSFER' ? PaymentType.TRANSFER : PaymentType.ONLINE;
         const amount = method![m as keyof PaymentMethodGroup]!;
         const paymentPayload: OrderPaymentPayload = {
           type,
@@ -217,7 +220,16 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     const customerList = this.userSearchResult();
     const matchedUser = customerList.find(user => user.id === selectedUser.id);
     const phoneTemplate = this.formatPhoneNumber(matchedUser!.phone);
-    this.customer.set({ label: matchedUser?.name + ' ' + phoneTemplate, name: matchedUser?.name || selectedUser.name, id: selectedUser.id, phone: phoneTemplate });
+    const customerOrderPayload = {
+      orderId: this.currentOrder()!.id,
+      customerId: selectedUser.id
+    }
+    this.orderService.setCustomerToOrder(customerOrderPayload).subscribe({
+      next: (res) => {
+        this.customer.set({ label: matchedUser?.name + ' ' + phoneTemplate, name: matchedUser?.name || selectedUser.name, id: selectedUser.id, phone: phoneTemplate });
+      },
+      error: (err) => { }
+    });
   }
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query;

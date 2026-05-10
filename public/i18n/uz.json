@@ -152,6 +152,7 @@
     "signinText": "Accaountingiz bor bo'lsa?"
   },
   "product": {
+    "noFound": "Tovar topilmadi.",
     "img": "Rasm",
     "name": "Nomlanish",
     "brand": "Brand",

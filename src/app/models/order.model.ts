@@ -5,6 +5,7 @@ export enum PaymentType {
   CASH = 'CASH',
   CARD = 'CARD',
   ONLINE = 'ONLINE',
+  TRANSFER = 'TRANSFER'
 }
 export enum OrderChannel {
   POS = 'POS',

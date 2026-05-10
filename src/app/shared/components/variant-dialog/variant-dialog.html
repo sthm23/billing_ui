@@ -19,8 +19,8 @@
     </div>
 
     <div class="flex justify-end gap-2">
-      <p-button label="Cancel" severity="secondary" (click)="hideDialog()" />
-      <p-button label="Save" (click)="submit()" />
+      <p-button [label]="'product.cancel' | transloco" severity="secondary" (click)="hideDialog()" />
+      <p-button [label]="'order.save' | transloco" (click)="submit()" />
     </div>
   </form>
 </p-dialog>

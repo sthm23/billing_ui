@@ -5,7 +5,6 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule, Table } from 'primeng/table';
 import { User } from '../../../models/user.model';
 import { AppStore } from '../../../store/app.store';
-import { delay } from 'rxjs';
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@ngneat/transloco';
@@ -29,7 +28,7 @@ import { InputTextModule } from 'primeng/inputtext';
   providers: []
 })
 export class UserList implements OnInit, OnDestroy {
-  users: User[] = []
+  users = signal<User[]>([]);
   first = signal(0);
   rows = 10;
   total = signal(0);
@@ -51,7 +50,7 @@ export class UserList implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.appStore.stopLoader();
-          this.users = response.data;
+          this.users.set(response.data);
           this.total.set(response.total);
         },
         error: (err) => {

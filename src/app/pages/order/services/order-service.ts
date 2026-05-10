@@ -56,4 +56,10 @@ export class OrderService {
       withCredentials: true
     })
   }
+
+  setCustomerToOrder(body: { orderId: string, customerId: string }) {
+    return this.http.put<{ message: string }>(`/api/users/customers/set-to-order`, body, {
+      withCredentials: true
+    })
+  }
 }

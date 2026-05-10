@@ -187,6 +187,7 @@ export interface UserErrorResponse {
 }
 
 export interface CreateCustomer {
+  orderId: string
   fullName: string
   phone: string
 }

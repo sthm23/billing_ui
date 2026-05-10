@@ -1,5 +1,6 @@
 <p-toast />
 <p-confirmdialog />
+@if(products().length > 0) {
 <div class="p-4">
   <p-table #dt [lazy]="true" [loading]="appStore.isLoading()" [value]="products()"
     [tableStyle]="{ 'min-width': '50rem' }" selectionMode="single" [metaKeySelection]="true" dataKey="id"
@@ -47,3 +48,12 @@
     </ng-template>
   </p-table>
 </div>
+} @else {
+<div class="flex flex-col items-center gap-4 py-8">
+  <i class="pi pi-inbox text-6xl text-gray-400"></i>
+  <p class="text-gray-500">{{'product.noFound' | transloco}}</p>
+  <div class="flex justify-end gap-2">
+    <p-button [label]="'product.create'|transloco" icon="pi pi-plus" (onClick)="goToCreateProduct()" />
+  </div>
+</div>
+}

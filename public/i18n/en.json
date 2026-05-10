@@ -152,6 +152,7 @@
     "signinText": "Already have an account?"
   },
   "product": {
+    "noFound": "No product found.",
     "img": "Image",
     "name": "Name",
     "brand": "Brand",

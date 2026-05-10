@@ -184,6 +184,7 @@
               <td>
                 <p-button type="button" icon="pi pi-plus" [outlined]="true" (onClick)="addVariantItem(variant)" />
                 <app-variant-dialog title="Skladga qushish" [subtitle]="variant.sku" [variantId]="variant.id"
+                  [costPrice]="costPrice(variant.stockMovements)" [price]="variant.price"
                   (dataChange)="handleAdd($event)" [(visible)]="visibleAddVariants" />
               </td>
             </tr>
