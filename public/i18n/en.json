@@ -364,6 +364,10 @@
     "lastActivities": "Last activities",
     "activitiesEmpty": "No recent activities."
   },
+  "debitors": {
+    "noFound": "No debitor found.",
+    "clearFilter": "Clear filter"
+  },
   "notFound": {
     "title": "OOPS, THIS PAGE NOT FOUND!",
     "description": "The link may be corrupted or the page may have been removed.",

@@ -364,6 +364,10 @@
     "lastActivities": "So'nggi faoliyatlar",
     "activitiesEmpty": "So'nggi faoliyatlar mavjud emas."
   },
+  "debitors": {
+    "noFound": "Qarzdor topilmadi.",
+    "clearFilter": "Filtrni tozalash"
+  },
   "notFound": {
     "title": "VOY, BU SAHIFA TOPILMADI!",
     "description": "Havola buzilgan yoki sahifa olib tashlangan bo'lishi mumkin.",
