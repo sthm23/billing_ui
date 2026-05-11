@@ -78,6 +78,16 @@ export class Menu {
               icon: 'pi pi-fw pi-shopping-cart',
               routerLink: ['/pages/order/list']
             },
+            {
+              label: res['debitor'],
+              icon: 'pi pi-fw pi-user-minus',
+              routerLink: ['/pages/debitor/list']
+            },
+            {
+              label: res['payments'],
+              icon: 'pi pi-fw pi-money-bill',
+              routerLink: ['/pages/payments/list']
+            },
           ]
         },
         {

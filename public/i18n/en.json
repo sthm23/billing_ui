@@ -114,6 +114,8 @@
     "create": "Create",
     "user": "Staff",
     "order": "Order",
+    "debitor": "Debitor",
+    "payments": "Payments",
     "product": "Product",
     "profile": "Profile",
     "messages": "Messages",

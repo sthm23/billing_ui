@@ -9,6 +9,8 @@ export default [
   { path: 'user', loadChildren: () => import('./user/user.routes'), data: { expectedRole: ['ADMIN', 'OWNER'] }, canActivate: [hasAccessGuard] },
   { path: 'organization', loadChildren: () => import('./organization/organization.routes'), data: { expectedRole: ['ADMIN'] }, canActivate: [hasAccessGuard] },
   { path: 'order', loadChildren: () => import('./order/order.routes') },
+  { path: 'debitor', loadChildren: () => import('./debitors/debitors.routes') },
+  { path: 'payments', loadChildren: () => import('./payments/payment.routes') },
   { path: 'settings', loadChildren: () => import('./settings/setting.routes'), data: { expectedRole: ['ADMIN'] }, canActivate: [hasAccessGuard] },
   { path: '**', redirectTo: '/notfound' }
 ] as Routes;
