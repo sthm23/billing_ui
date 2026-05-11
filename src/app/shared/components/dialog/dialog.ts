@@ -4,6 +4,8 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslocoPipe } from '@ngneat/transloco';
 
 export enum DialogType {
   USER_CREATE = 'create',
@@ -26,7 +28,8 @@ export interface DialogData {
     DialogModule,
     InputTextModule,
     ButtonModule,
-    InputMaskModule
+    InputMaskModule,
+    TranslocoPipe
   ],
   templateUrl: './dialog.html',
   styleUrl: './dialog.css',

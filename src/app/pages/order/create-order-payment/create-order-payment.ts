@@ -245,7 +245,12 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   }
 
   clearCustomer() {
-    this.customer.set(null)
+    this.orderService.clearCustomerFromOrder(this.currentOrder()!.id).subscribe({
+      next: (res) => {
+        this.customer.set(null)
+      },
+      error: (err) => { },
+    });
   }
 
   backOrderList() {

@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { OrderService } from '../services/order-service';
-import { CreateOrderPayload, Order, OrderChannel, OrderStatus } from '../../../models/order.model';
+import { CreateOrderPayload, Order, OrderChannel, OrderParams, OrderStatus } from '../../../models/order.model';
 import { AuthService } from '../../auth/service/auth';
 import { UserRole } from '../../../models/user.model';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { Warehouse } from '../../../models/store.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { TranslateService } from '../../../shared/services/translate.service';
+import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 
 
 @Component({
@@ -43,7 +44,8 @@ import { TranslateService } from '../../../shared/services/translate.service';
     SelectModule,
     ConfirmDialogModule,
     TranslocoPipe,
-    DatePipe
+    DatePipe,
+    AutoCompleteModule,
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',
@@ -62,6 +64,10 @@ export class OrderList implements OnInit {
   rows = 10;
   total = signal(0);
 
+  today = new Date();
+  rangeDates: Date[] | null = null;
+
+  orderSearchResult = signal<{ createdAt: string, id: string, total: string }[]>([]);
 
   @ViewChild('dt') dataTable!: Table;
 
@@ -85,8 +91,23 @@ export class OrderList implements OnInit {
     this.loadOrders()
   }
 
-  private loadOrders(page = 1, pageSize = 10) {
-    this.orderService.getOrders(page, pageSize).subscribe({
+  private loadOrders(params: OrderParams = {}) {
+    const {
+      currentPage = this.first(),
+      pageSize = this.rows,
+      status = [OrderStatus.CREATED, OrderStatus.HOLD],
+      fromDate,
+      toDate,
+      search
+    } = params;
+    this.orderService.getOrders({
+      currentPage,
+      pageSize,
+      status,
+      fromDate,
+      toDate,
+      search
+    }).subscribe({
       next: (res) => {
         this.loader.set(false);
         this.orders.set(res.data)
@@ -105,7 +126,11 @@ export class OrderList implements OnInit {
     this.dataTable.reset();
     this.first.set(event.first);
     this.rows = event.rows;
-    this.loadOrders(this.first() / this.rows + 1, this.rows);
+    const params: OrderParams = {
+      currentPage: this.first() / this.rows + 1,
+      pageSize: this.rows
+    }
+    this.loadOrders(params);
   }
 
   createOrder() {
@@ -281,5 +306,49 @@ export class OrderList implements OnInit {
       return value
     }
     return translate
+  }
+
+  onRangeSelect() {
+    if (this.rangeDates && this.rangeDates[0] && this.rangeDates[1]) {
+      const [startDate, endDate] = this.rangeDates;
+      this.loadOrders({
+        fromDate: new Date(startDate.setHours(0, 0, 0, 0)),
+        toDate: new Date(endDate.setHours(23, 59, 59, 999))
+      });
+
+    }
+  }
+
+  selectSearchOption(option: AutoCompleteSelectEvent) {
+    const selectedOrder = option.value;
+    const orders = this.orderSearchResult();
+    const matchedOrder = orders.find(order => order.id === selectedOrder.id);
+    if (matchedOrder) {
+      this.selectOrder(matchedOrder as unknown as Order);
+    }
+  }
+  search(event: AutoCompleteCompleteEvent) {
+    const search = event.query;
+    this.orderService.searchOrders(
+      search
+    ).subscribe({
+      next: (res) => {
+        const orders = res.map((order, i) => {
+          return {
+            id: order.id,
+            createdAt: order.createdAt,
+            total: order.totalAmount.toLocaleString('en-US'),
+            status: order.status,
+            label: `${order.customer.user.fullName} - ${order.customer.user.phone} - ${new Date(order.createdAt).toLocaleDateString()} - ${(+order.totalAmount).toLocaleString(undefined, { compactDisplay: 'short' })}`
+          }
+        })
+        this.orderSearchResult.set(orders);
+      },
+      error: (err) => {
+        this.loader.set(false);
+        console.error(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+      }
+    })
   }
 }

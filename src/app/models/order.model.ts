@@ -21,6 +21,15 @@ export enum OrderStatus {
   REFUNDED = 'REFUNDED'
 }
 
+export interface OrderParams {
+  currentPage?: number
+  pageSize?: number
+  status?: OrderStatus[]
+  fromDate?: Date
+  toDate?: Date
+  search?: string
+}
+
 export interface OrderResponse extends BaseListResponse {
   data: Order[]
 }
@@ -64,8 +73,6 @@ export interface Order {
   totalAmount: number
   paidAmount: number
   createdAt: string
-  itemsCount: number
-  paymentsCount: number
   returnedAmount: number
   isReturned: boolean
   returnedAt: string | null
