@@ -1,0 +1,38 @@
+<nav
+  class="fixed bottom-1 left-1 right-1 z-10 h-[4rem] flex items-center gap-4 p-4 bg-white border-b border-surface-200 dark:bg-surface-900 dark:border-surface-700 animate-fadein">
+
+  <p-button severity="secondary" outlined="true" class="sm:hidden block">
+    <i class="pi pi-home"></i>
+    <span class="hidden little:block">Prd</span>
+  </p-button>
+  <p-button severity="secondary" outlined="true" class="sm:hidden block">
+    <i class="pi pi-shopping-cart"></i>
+    <span class="hidden little:block">Ord</span>
+  </p-button>
+  <p-button severity="secondary" outlined="true" class="sm:hidden block">
+    <i class="pi pi-user-minus"></i>
+    <span class="hidden little:block">Dbt</span>
+  </p-button>
+  <p-button severity="secondary" outlined="true" class="sm:hidden block">
+    <i class="pi pi-credit-card"></i>
+    <span class="hidden little:block">Pym</span>
+  </p-button>
+
+  <div>
+    <p-speeddial [model]="items" direction="up" [transitionDelay]="80"
+      [style]="{ position: 'absolute', bottom: '0.8rem', right: '0.3rem' }">
+      <ng-template #button let-toggleCallback="toggleCallback">
+        <p-button icon="pi pi-ellipsis-v" severity="secondary" (click)="toggleCallback($event)" outlined="true" />
+      </ng-template>
+      <ng-template #item let-item let-toggleCallback="toggleCallback">
+        <div (click)="toggleCallback($event, item)"
+          class="flex flex-col items-center justify-between gap-2 p-2 border rounded border-surface-200 dark:border-surface-700 w-20 cursor-pointer">
+          <span [class]="item.icon"></span>
+          <span>
+            {{ item.label }}
+          </span>
+        </div>
+      </ng-template>
+    </p-speeddial>
+  </div>
+</nav>

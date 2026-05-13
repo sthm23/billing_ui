@@ -5,7 +5,7 @@ import { AuthService } from '../../auth/service/auth';
 import { PaymentService } from '../payment-service';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Payment } from '../../../models/payment.model';
+import { CashboxStatus, Payment } from '../../../models/payment.model';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -138,18 +138,12 @@ export class PaymentList {
     return translate
   }
 
-  getSeverity(status: OrderStatus) {
+  getSeverity(status: CashboxStatus) {
     switch (status) {
-      case OrderStatus.HOLD:
-        return 'contrast';
-      case OrderStatus.CREATED:
-        return 'info';
-      case OrderStatus.COMPLETED:
+      case CashboxStatus.OPEN:
         return 'success';
-      case OrderStatus.DEBT:
-        return 'danger';
-      case OrderStatus.REFUNDED:
-        return 'warn';
+      case CashboxStatus.CLOSED:
+        return 'secondary';
       default:
         return null;
     }
@@ -158,5 +152,17 @@ export class PaymentList {
     this.rangeDates = null;
     this.debitorsSearchResult.set([]);
     this.loadOrders();
+  }
+  selectPayment(event: Payment) {
+    this.router.navigate(['pages/payments', event.id])
+  }
+  closCashbox(data: Payment) {
+    this.confirmService.confirm({
+      message: 'Are you sure you want to close this cashbox?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => { },
+      reject: () => { }
+    });
   }
 }

@@ -5,10 +5,11 @@ import { Topbar } from '../topbar/topbar';
 import { Sidebar } from '../sidebar/sidebar';
 import { Subscription, filter } from 'rxjs';
 import { LayoutService } from '../../service/layout.service';
+import { Navigation } from "../navigation/navigation";
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, Topbar, Sidebar, RouterModule],
+  imports: [CommonModule, Topbar, Sidebar, RouterModule, Navigation],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
