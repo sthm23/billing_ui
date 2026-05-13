@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload, ReturnOrderItemPayload, OrderStatus, OrderParams } from '../../../models/order.model';
+import { CreateOrderPayload, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload, ReturnOrderItemPayload, OrderStatus, OrderParams } from '../../../models/order.model';
+import { BaseListResponse } from '../../../models/app.models';
 
 
 @Injectable({
@@ -27,7 +28,7 @@ export class OrderService {
     if (search) {
       queryParams.append('search', search);
     }
-    return this.http.get<OrderResponse>(`/api/orders?${queryParams.toString()}`, {
+    return this.http.get<BaseListResponse<Order>>(`/api/orders?${queryParams.toString()}`, {
       withCredentials: true
     })
   }

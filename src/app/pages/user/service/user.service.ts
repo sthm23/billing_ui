@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { User, UserCreateRequest, UsersResponse, CreateCustomer, UserInfo, CustomersResponse, UserStockMovement } from "../../../models/user.model";
+import { User, UserCreateRequest, CreateCustomer, UserInfo, UserStockMovement } from "../../../models/user.model";
+import { BaseListResponse } from "../../../models/app.models";
 
 
 @Injectable({
@@ -16,13 +17,13 @@ export class UserService {
   }
 
   getUsers(page: number = 1, pageSize: number = 10) {
-    return this.http.get<UsersResponse>(`/api/users?currentPage=${page}&pageSize=${pageSize}`, {
+    return this.http.get<BaseListResponse<User>>(`/api/users?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }
 
   getOwners(page: number = 1, pageSize: number = 10) {
-    return this.http.get<UsersResponse>(`/api/users/owners?currentPage=${page}&pageSize=${pageSize}`, {
+    return this.http.get<BaseListResponse<User>>(`/api/users/owners?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true
     });
   }
@@ -40,7 +41,7 @@ export class UserService {
   }
 
   searchCustomers(text: string) {
-    return this.http.get<CustomersResponse>(`/api/users/customers?search=${text}`, {
+    return this.http.get<BaseListResponse<User>>(`/api/users/customers?search=${text}`, {
       withCredentials: true
     })
   }

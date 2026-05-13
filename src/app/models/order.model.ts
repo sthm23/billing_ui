@@ -1,4 +1,3 @@
-import { BaseListResponse } from "./app.models"
 import { UserRole, UserType } from "./user.model"
 
 export enum PaymentType {
@@ -28,10 +27,6 @@ export interface OrderParams {
   fromDate?: Date
   toDate?: Date
   search?: string
-}
-
-export interface OrderResponse extends BaseListResponse {
-  data: Order[]
 }
 export interface Order {
   id: string

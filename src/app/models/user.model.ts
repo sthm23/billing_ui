@@ -171,14 +171,6 @@ export interface UserCreateRequest {
   warehouseId?: string
 }
 
-export interface UsersResponse extends BaseListResponse {
-  data: User[]
-}
-
-export interface CustomersResponse extends BaseListResponse {
-  data: User[]
-}
-
 
 export interface UserErrorResponse {
   statusCode: number

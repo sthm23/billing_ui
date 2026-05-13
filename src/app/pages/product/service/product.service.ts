@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProductResponse, CreateProduct, Product, ProductDetail, CreateProductVariantPayload, SearchProductResponse, AddInventoryPayload } from '../../../models/product.model';
+import { CreateProduct, Product, ProductDetail, CreateProductVariantPayload, AddInventoryPayload, ProductVariant } from '../../../models/product.model';
+import { BaseListResponse } from '../../../models/app.models';
 
 
 @Injectable({
@@ -12,7 +13,7 @@ export class ProductService {
   ) { }
 
   getProducts(page = 1, pageSize = 10) {
-    return this.http.get<ProductResponse>(`/api/product?currentPage=${page}&pageSize=${pageSize}`, {
+    return this.http.get<BaseListResponse<Product>>(`/api/product?currentPage=${page}&pageSize=${pageSize}`, {
       withCredentials: true,
     });
   }
@@ -37,7 +38,7 @@ export class ProductService {
 
   searchProducts(warehouseId: string, text: string) {
     const url = `/api/product/search/${warehouseId}?text=${text}`;
-    return this.http.get<SearchProductResponse>(url, {
+    return this.http.get<BaseListResponse<ProductVariant>>(url, {
       withCredentials: true,
     });
   }
