@@ -251,7 +251,8 @@
       "CASH": "Наличные",
       "CARD": "Карта",
       "DEBT": "Долг",
-      "INSTALLMENT": "Рассрочка"
+      "TRANSFER": "Перечесления",
+      "ONLINE": "Клик"
     },
     "channel": {
       "name": "Способ оплаты",
@@ -367,6 +368,40 @@
   "debitors": {
     "noFound": "Дебитор не найден.",
     "clearFilter": "Очистить фильтр"
+  },
+  "payment": {
+    "noFound": "Платеж не найден.",
+    "detail": "Детали платежа.",
+    "closeCashbox": "Закрыть кассу",
+    "createPayment": "Доход",
+    "createOutgo": "Расход",
+    "edit": "Редактировать",
+    "amount": "Сумма",
+    "status": "Статус",
+    "createdAt": "Создано",
+    "createdBy": "Создано пользователем",
+    "transactions": "Транзакции",
+    "type": {
+      "name": "Тип",
+      "INCOME": "Приход",
+      "EXPENSE": "Расход"
+    },
+    "category": {
+      "name": "Категория",
+      "SALE": "Продажа",
+      "DEBT_PAYMENT": "Оплата долга",
+      "RENT": "Аренда",
+      "DELIVERY": "Доставка",
+      "SALARY": "Зарплата",
+      "PURCHASE": "Покупка",
+      "RETURN": "Возврат",
+      "OTHER": "Другое"
+    },
+    "cashboxStatus": {
+      "name": "Статус кассы",
+      "OPEN": "Открыта",
+      "CLOSED": "Закрыта"
+    }
   },
   "notFound": {
     "title": "Ой, страница не найдена!",

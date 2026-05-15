@@ -1,4 +1,5 @@
-import { User, UserRole } from "./user.model"
+import { Order, PaymentType } from "./order.model"
+import { Staff, User, UserRole } from "./user.model"
 
 
 export interface Payment {
@@ -11,7 +12,7 @@ export interface Payment {
   }
   status: CashboxStatus
   storeId: string
-  transactions: PaymentTransaction[]
+  transactions: CashboxTransaction[]
   warehouseId: string
   balance: number;
   createdAt: string;
@@ -22,11 +23,49 @@ export enum CashboxStatus {
   CLOSED = 'CLOSED',
 }
 
-export interface PaymentTransaction {
+export interface CashboxTransaction {
   id: string;
-  amount: number;
-  createdAt: string;
-  orderId: string;
-  paymentId: string;
-  type: 'PAYMENT' | 'REFUND';
+  cashboxId: string
+  createdById: string
+  type: CashTransactionType
+  category: CashTransactionCategory
+  paymentType: PaymentType
+  amount: number
+  comment: string | null
+  orderId?: string
+  createdAt: string
+
+  order?: Order
+  createdBy: Staff
+}
+export enum CashTransactionCategory {
+  SALE = 'SALE',
+  DEBT_PAYMENT = 'DEBT_PAYMENT',
+  RENT = 'RENT',
+  DELIVERY = 'DELIVERY',
+  SALARY = 'SALARY',
+  PURCHASE = 'PURCHASE',
+  RETURN = 'RETURN',
+  OTHER = 'OTHER',
+}
+
+export enum CashTransactionType {
+  INCOME = 'INCOME',
+  EXPENSE = 'EXPENSE',
+}
+
+export interface CashboxOpenPayload {
+  balance: number;
+  status: CashboxStatus;
+  storeId: string;
+  warehouseId: string;
+}
+
+export interface TransactionPayload {
+  type: CashTransactionType
+  category: CashTransactionCategory
+  paymentType: PaymentType
+  amount: number
+  comment: string
+  orderId?: string
 }

@@ -251,7 +251,8 @@
       "CASH": "Cash",
       "CARD": "Card",
       "DEBT": "Debt",
-      "INSTALLMENT": "Installment"
+      "TRANSFER": "Transfer",
+      "ONLINE": "Online"
     },
     "channel": {
       "name": "Channel",
@@ -367,6 +368,38 @@
   "debitors": {
     "noFound": "No debitor found.",
     "clearFilter": "Clear filter"
+  },
+  "payment": {
+    "noFound": "No payment found.",
+    "detail": "Payment detail",
+    "closeCashbox": "Close cashbox",
+    "edit": "Edit",
+    "amount": "Amount",
+    "status": "Status",
+    "createdAt": "Created At",
+    "createdBy": "Created By",
+    "transactions": "Transactions",
+    "type": {
+      "name": "Type",
+      "INCOME": "Income",
+      "EXPENSE": "Expense"
+    },
+    "category": {
+      "name": "Category",
+      "SALE": "Sale",
+      "DEBT_PAYMENT": "Debt payment",
+      "RENT": "Rent",
+      "DELIVERY": "Delivery",
+      "SALARY": "Salary",
+      "PURCHASE": "Purchase",
+      "RETURN": "Return",
+      "OTHER": "Other"
+    },
+    "cashboxStatus": {
+      "name": "Cashbox status",
+      "OPEN": "Open",
+      "CLOSED": "Closed"
+    }
   },
   "notFound": {
     "title": "OOPS, THIS PAGE NOT FOUND!",
