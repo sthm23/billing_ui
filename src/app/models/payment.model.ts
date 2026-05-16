@@ -67,5 +67,5 @@ export interface TransactionPayload {
   paymentType: PaymentType
   amount: number
   comment: string
-  orderId?: string
+  orderId: string | null
 }

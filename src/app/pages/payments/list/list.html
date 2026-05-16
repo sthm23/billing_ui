@@ -38,8 +38,8 @@
               </div>
             </ng-template>
           </p-drawer>
-          <p-button type="button" className="sm:align" [label]="'payment.create' | transloco" severity="primary"
-            icon="pi pi-plus" [disabled]="true" />
+          <p-button type="button" [label]="'payment.openCashbox' | transloco" severity="primary" icon="pi pi-plus"
+            (click)="openCashbox()" />
         </div>
       </div>
 
@@ -50,9 +50,9 @@
         <th>{{'order.createdAt' | transloco}}</th>
         <th>{{'user.name' | transloco}}</th>
         <th>{{'user.warehouse' | transloco}}</th>
-        <th>{{'order.status.name' | transloco}}</th>
+        <th>{{'payment.cashboxStatus.name' | transloco}}</th>
         <th>{{'order.total' | transloco}}</th>
-        <!-- <th>{{'order.action' | transloco}}</th> -->
+
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-payment>
@@ -61,7 +61,7 @@
         <td>{{ payment.seller.user.fullName }}</td>
         <td>{{ payment.warehouse.name }}</td>
         <td>
-          <p-tag [value]="getTranslatedText((`order.status.${payment.status}`|transloco), payment.status)"
+          <p-tag [value]="getTranslatedText((`payment.cashboxStatus.${payment.status}`|transloco), payment.status)"
             [severity]="getSeverity(payment.status)"></p-tag>
         </td>
         <td>{{ payment.balance | currency: " " : 'code' : '0.0' }}</td>

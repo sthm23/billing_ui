@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Payment, CashboxTransaction, CashTransactionType } from '../../../models/payment.model';
+import { Payment, CashboxTransaction, CashTransactionType, TransactionPayload, CashTransactionCategory } from '../../../models/payment.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../payment-service';
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -12,6 +12,9 @@ import { ToastModule } from 'primeng/toast';
 import { AppStore } from '../../../store/app.store';
 import { TableModule } from 'primeng/table';
 import { Divider } from "primeng/divider";
+import { PaymentType } from '../../../models/order.model';
+import { IncomingExpenseDialog } from './incoming-expense-dialog/incoming-expense-dialog';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
@@ -25,7 +28,10 @@ import { Divider } from "primeng/divider";
     ToastModule,
     DatePipe,
     TableModule,
-    Divider
+    Divider,
+    ToastModule,
+    IncomingExpenseDialog,
+    FormsModule
   ],
   templateUrl: './payment-by-id.html',
   styleUrl: './payment-by-id.css',
@@ -40,6 +46,8 @@ export class PaymentById implements OnInit {
 
   appStore = inject(AppStore)
 
+  visibleExpenseDialog = false;
+  transactionType: CashTransactionType = CashTransactionType.EXPENSE;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -114,7 +122,6 @@ export class PaymentById implements OnInit {
   pageChange(event: any) {
     // Handle pagination change if needed
   }
-  selectPayment(event: any) { }
 
   getTranslatedText(key: string): string {
     // Implement your translation logic here, for example using Transloco
@@ -124,26 +131,39 @@ export class PaymentById implements OnInit {
   confirmClose(event: Event) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Do you want to delete this record?',
-      header: 'Danger Zone',
+      message: 'Kassani yopishni hohlaysizmi?',
+      header: 'Kassani yopish',
       icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
+      rejectLabel: 'Bekor qilish',
       rejectButtonProps: {
-        label: 'Cancel',
+        label: 'Bekor qilish',
         severity: 'secondary',
         outlined: true
       },
       acceptButtonProps: {
-        label: 'Delete',
+        label: 'Kassani yopish',
         severity: 'danger'
       },
 
       accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted' });
+        this.messageService.add({ severity: 'info', summary: 'Tasdiqlandi', detail: 'Kassa yopildi' });
       },
       reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+        this.messageService.add({ severity: 'error', summary: 'Bekor qilindi', detail: 'Siz bekor qildingiz' });
       }
     });
   }
+
+  createExpense() {
+    this.transactionType = CashTransactionType.EXPENSE;
+    this.visibleExpenseDialog = true;
+    console.log(this.visibleExpenseDialog);
+
+  }
+
+  createIncome() {
+    this.transactionType = CashTransactionType.INCOME;
+    this.visibleExpenseDialog = true;
+  }
+
 }

@@ -1,5 +1,8 @@
 @let cashbox = currentCashbox();
 <p-confirmdialog />
+<p-toast />
+<app-incoming-expense-dialog [(visible)]="visibleExpenseDialog" [title]="'payment.detail' | transloco"
+  [type]="transactionType" />
 @if(cashbox) {
 <div class="flex items-center gap-4 w-full m-auto max-w-7xl">
   <div class="border-primary-300 rounded-xl border flex-1 sm:w-full">
@@ -55,17 +58,16 @@
   </div>
   <h3 class="mt-4 mb-2">{{'payment.transactions' | transloco}}</h3>
   <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="cashbox.transactions" [paginator]="true"
-    selectionMode="single" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()" [rows]="rows()"
-    (onPage)="pageChange($event)" (selectionChange)="selectPayment($event)">
+    [totalRecords]="total()" [rows]="rows()" (onPage)="pageChange($event)">
     <ng-template #caption>
       <div class=" flex items-center flex-wrap justify-between gap-4">
         <div class="flex gap-2 flex-1">
           <p-button type="button" [label]="'payment.type.EXPENSE' | transloco" severity="danger"
-            icon="pi pi-arrow-circle-up" [disabled]="true" />
+            icon="pi pi-arrow-circle-up" [disabled]="cashbox.status === 'CLOSED'" (onClick)="createExpense()" />
         </div>
         <div class="flex justify-end gap-2 flex-1">
           <p-button type="button" [label]="'payment.type.INCOME' | transloco" severity="primary"
-            icon="pi pi-arrow-circle-down" [disabled]="true" />
+            icon="pi pi-arrow-circle-down" [disabled]="cashbox.status === 'CLOSED'" (onClick)="createIncome()" />
         </div>
       </div>
 
@@ -82,7 +84,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-transaction>
-      <tr [pSelectableRow]="transaction">
+      <tr>
         <td>{{ transaction.createdAt | date:'dd.MM.yyyy-hh:mm' }}</td>
         <td>
           <p-tag [value]="(`payment.type.${transaction.type}`) | transloco"

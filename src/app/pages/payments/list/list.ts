@@ -148,21 +148,31 @@ export class PaymentList {
         return null;
     }
   }
+
   clearFilter() {
     this.rangeDates = null;
     this.debitorsSearchResult.set([]);
     this.loadOrders();
   }
+
   selectPayment(event: Payment) {
     this.router.navigate(['pages/payments', event.id])
   }
-  closCashbox(data: Payment) {
-    this.confirmService.confirm({
-      message: 'Are you sure you want to close this cashbox?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => { },
-      reject: () => { }
+
+  openCashbox() {
+    this.paymentService.openCashbox({
+      balance: 0,
+      storeId: this.storeId,
+      warehouseId: this.warehouseId,
+      status: CashboxStatus.OPEN
+    }).subscribe({
+      next: (res) => {
+        this.router.navigate(['pages/payments', res.id])
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to open cashbox' });
+      }
     });
   }
 }
