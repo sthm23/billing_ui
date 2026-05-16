@@ -1,4 +1,18 @@
 <p-toast />
+<p-drawer [header]="'order.warehouseTitle' | transloco" [dismissible]="false" [closable]="false" [modal]="false"
+  [visible]="visibleDrawer()" position="right">
+  <p-select [required]="true" [options]="warehouse()" [(ngModel)]="warehouseId" optionLabel="name" optionValue="id"
+    [placeholder]="'payment.warehousePlaceholder' | transloco" class="w-full md:w-56" />
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button [label]="'payment.cancel' | transloco" icon="pi pi-times" severity="danger" outlined
+        (click)="visibleDrawer.set(false)" />
+      <p-button [label]="'payment.submit' | transloco" icon="pi pi-check" outlined
+        (click)="openCashboxWithWarehouse(warehouseId)" />
+    </div>
+  </ng-template>
+</p-drawer>
 @if(payments().length > 0) {
 <div class="p-0 md:p-4">
   <h2 class="text-2xl font-bold mb-4">{{'sidebar.payments' | transloco}}</h2>
@@ -26,20 +40,7 @@
         </div>
 
         <div class="flex justify-end gap-2 flex-1">
-          <p-drawer [header]="'order.warehouseTitle' | transloco" [dismissible]="false" [closable]="false"
-            [modal]="false" [visible]="visibleDrawer()" position="right">
-            <p-select [required]="true" [options]="warehouse()" [(ngModel)]="warehouseId" optionLabel="name"
-              optionValue="id" [placeholder]="'payment.warehousePlaceholder' | transloco" class="w-full md:w-56" />
 
-            <ng-template #footer>
-              <div class="flex justify-end gap-2">
-                <p-button [label]="'payment.cancel' | transloco" icon="pi pi-times" severity="danger" outlined
-                  (click)="visibleDrawer.set(false)" />
-                <p-button [label]="'payment.submit' | transloco" icon="pi pi-check" outlined
-                  (click)="openCashboxWithWarehouse(warehouseId)" />
-              </div>
-            </ng-template>
-          </p-drawer>
           <p-button type="button" [label]="'payment.openCashbox' | transloco" severity="primary" icon="pi pi-plus"
             (click)="openCashbox()" />
         </div>
@@ -74,8 +75,8 @@
 } @else {
 <div class="flex flex-col items-center gap-4 py-8">
   <i class="pi pi-inbox text-6xl text-gray-400"></i>
-  <p class="text-gray-500">{{'debitors.noFound' | transloco}}</p>
-  <p-button type="button" [label]="'debitors.clearFilter' | transloco" severity="primary" icon="pi pi-plus"
-    (click)="clearFilter()" />
+  <p class="text-gray-500">{{'payment.noFound' | transloco}}</p>
+  <p-button type="button" [label]="'payment.openCashbox' | transloco" severity="primary" icon="pi pi-plus"
+    (click)="openCashbox()" />
 </div>
 }
