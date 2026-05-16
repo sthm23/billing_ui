@@ -31,7 +31,7 @@ export class Menu {
         {
           label: res['home'],
           items: [
-            { label: res['dashboard'], icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+            { label: res['dashboard'], icon: 'pi pi-chart-line', routerLink: ['/'], visible: this.authService.isOwner() || this.authService.isAdmin() },
             {
               label: res['profile'],
               icon: 'pi pi-fw pi-user',
@@ -64,17 +64,29 @@ export class Menu {
             {
               label: res['product'],
               icon: 'pi pi-fw pi-box',
-              routerLink: ['/pages/product/list']
+              routerLink: ['/pages/product/list'],
+              visible: this.authService.isOwner() || this.authService.isAdmin() || this.authService.isManager(),
             },
             {
               label: res['user'],
               icon: 'pi pi-fw pi-users',
+              visible: this.authService.isOwner() || this.authService.isAdmin(),
               routerLink: ['/pages/user/list']
             },
             {
               label: res['order'],
               icon: 'pi pi-fw pi-shopping-cart',
               routerLink: ['/pages/order/list']
+            },
+            {
+              label: res['debitor'],
+              icon: 'pi pi-fw pi-user-minus',
+              routerLink: ['/pages/debitor/list']
+            },
+            {
+              label: res['payments'],
+              icon: 'pi pi-fw pi-money-bill',
+              routerLink: ['/pages/payments/list']
             },
           ]
         },

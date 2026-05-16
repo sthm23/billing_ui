@@ -7,3 +7,6 @@
 @import "./assets/styles/common.css";
 @custom-variant dark (&:where(.app-dark, .app-dark *));
 
+@theme {
+  --breakpoint-little: 375px;
+}

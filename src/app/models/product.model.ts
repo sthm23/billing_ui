@@ -64,13 +64,6 @@ export interface StockMovement {
     }
   }
 }
-
-export interface SearchProductResponse extends BaseListResponse {
-  data: ProductVariant[]
-}
-export interface ProductResponse extends BaseListResponse {
-  data: Product[]
-}
 export interface CreateProduct {
   warehouseId: string
   name: string
@@ -87,17 +80,11 @@ export interface Category {
   parentId: string | null
   children?: Category[]
 }
-export interface CategoryResponse extends BaseListResponse {
-  data: Category[]
-}
 
 export interface Brand {
   id: string
   name: string,
   logoUrl: string | null
-}
-export interface BrandResponse extends BaseListResponse {
-  data: Brand[]
 }
 
 export interface UploadImageResponse {

@@ -1,0 +1,58 @@
+<p-dialog [header]="title" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }"
+  (visibleChange)="toggleDialog(false)">
+  <form [formGroup]="form">
+    <div class="flex items-center gap-4 mb-8">
+      <span class="font-semibold w-24">{{'payment.info' | transloco}}</span>
+      <p-tag [value]="(`payment.type.${type}` | transloco)" [severity]="type === 'EXPENSE'? 'danger' : 'success'" />
+    </div>
+    <div class="flex items-center gap-4 mb-8">
+      <label for="category" class="font-semibold w-24">{{'payment.category.name' | transloco}}</label>
+      <p-select id="category" [options]="categories" formControlName="category" optionLabel="label" optionValue="value"
+        placeholder="Select a category" class="w-full md:w-56">
+        <ng-template #selectedItem let-selectedOption>
+          @if(selectedOption) {
+          <div>{{ `payment.category.${selectedOption.label}` | transloco }}</div>
+          }@else {
+          <div>Select a category</div>
+          }
+        </ng-template>
+        <ng-template let-category #item>
+          <div>{{ `payment.category.${category.label}` | transloco }}</div>
+        </ng-template>
+      </p-select>
+    </div>
+    <div class="flex items-center gap-4 mb-8">
+      <label for="paymentType" class="font-semibold w-24">{{'payment.type.name' | transloco}}</label>
+      <p-select id="paymentType" [options]="types" formControlName="paymentType" optionLabel="label" optionValue="value"
+        placeholder="Select a payment type" class="w-full md:w-56">
+        <ng-template #selectedItem let-selectedOption>
+          @if(selectedOption) {
+          <div>{{ `order.paymentMethod.${selectedOption.label}` | transloco }}</div>
+          }@else {
+          <div>Select a payment type</div>
+          }
+        </ng-template>
+        <ng-template let-type #item>
+          <div>{{ `order.paymentMethod.${type.label}` | transloco }}</div>
+        </ng-template>
+      </p-select>
+    </div>
+    <div class="flex items-center gap-4 mb-4">
+      <label for="amount" class="font-semibold w-24">{{'payment.amount' | transloco}}</label>
+      <p-inputnumber id="amount" formControlName="amount" />
+    </div>
+    <div class="flex items-center gap-4 mb-8">
+      <label for="comment" class="font-semibold w-24">{{'payment.comment' | transloco}}</label>
+      <input pInputText id="comment" class="flex-auto" autocomplete="off" formControlName="comment" />
+    </div>
+
+    <div class="flex items-center gap-4 mb-8">
+      <label for="orderId" class="font-semibold w-24">{{'sidebar.order' | transloco}} ID</label>
+      <input pInputText id="orderId" class="flex-auto" autocomplete="off" formControlName="orderId" />
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button [label]="'order.cancel' | transloco" severity="secondary" (click)="toggleDialog(false)" />
+      <p-button [label]="'order.save' | transloco" (click)="toggleDialog(false)" />
+    </div>
+  </form>
+</p-dialog>

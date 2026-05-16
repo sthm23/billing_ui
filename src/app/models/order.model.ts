@@ -1,10 +1,10 @@
-import { BaseListResponse } from "./app.models"
 import { UserRole, UserType } from "./user.model"
 
 export enum PaymentType {
   CASH = 'CASH',
   CARD = 'CARD',
   ONLINE = 'ONLINE',
+  TRANSFER = 'TRANSFER'
 }
 export enum OrderChannel {
   POS = 'POS',
@@ -20,8 +20,13 @@ export enum OrderStatus {
   REFUNDED = 'REFUNDED'
 }
 
-export interface OrderResponse extends BaseListResponse {
-  data: Order[]
+export interface OrderParams {
+  currentPage?: number
+  pageSize?: number
+  status?: OrderStatus[]
+  fromDate?: Date
+  toDate?: Date
+  search?: string
 }
 export interface Order {
   id: string
@@ -63,8 +68,6 @@ export interface Order {
   totalAmount: number
   paidAmount: number
   createdAt: string
-  itemsCount: number
-  paymentsCount: number
   returnedAmount: number
   isReturned: boolean
   returnedAt: string | null

@@ -35,6 +35,7 @@ import { ChipModule } from 'primeng/chip';
 import { AvatarModule } from 'primeng/avatar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { VariantData, VariantDialog } from '../../../shared/components/variant-dialog/variant-dialog';
+import { StaffRole } from '../../../models/user.model';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -137,11 +138,24 @@ export class ProductCard implements OnInit, OnDestroy {
     this.route.paramMap.subscribe(params => {
       const productId = params.get('id');
       if (productId) {
-        this.fetchProductById(productId);
+        if (this.hasAccess()) {
+          this.fetchProductById(productId);
+        } else {
+          this.router.navigate(['/pages/product/list']);
+        }
       } else {
         this.router.navigate(['/pages/product/list']);
       }
     })
+  }
+
+  hasAccess() {
+    const role = this.authService.getCurrentUser()?.staff?.role;
+    if (this.authService.isAdmin()) {
+      return true;
+    } else {
+      return role === StaffRole.OWNER || role === StaffRole.MANAGER;
+    }
   }
 
 
@@ -241,6 +255,7 @@ export class ProductCard implements OnInit, OnDestroy {
       console.error('Product data is not available');
       return;
     }
+    this.appStore.startLoader();
     const warehouseId = product.warehouseId;
     const payload: AddInventoryPayload = {
       warehouseId,
@@ -249,8 +264,13 @@ export class ProductCard implements OnInit, OnDestroy {
       costPrice: data.costPrice,
       price: data.price
     };
-    this.productService.addInventory(warehouseId, payload).subscribe({
+    this.productService.addInventory(warehouseId, payload).pipe(
+      switchMap(() => this.productService.getProductById(product.id)),
+      takeUntil(this.destroyer$)
+    ).subscribe({
       next: (res) => {
+        this.productCard.set(res);
+        this.appStore.stopLoader();
         this.visibleAddVariants = false;
         this.messageService.add({ severity: 'success', summary: 'Variant added', detail: `Quantity: ${data.quantity}, Cost price: ${data.costPrice}, Sale Price: ${data.price}` });
       },
@@ -261,6 +281,13 @@ export class ProductCard implements OnInit, OnDestroy {
     })
   }
 
+  costPrice(stockMovements: { unitCost: number }[]): number {
+    if (!stockMovements || stockMovements.length === 0) {
+      return 0;
+    }
+    const lastStockMovement = stockMovements[stockMovements.length - 1];
+    return lastStockMovement.unitCost;
+  }
 
   ngOnDestroy(): void {
     this.destroyer$.next();

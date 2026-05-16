@@ -1,10 +1,11 @@
 <div class="layout-wrapper" [ngClass]="containerClass">
   <app-sidebar />
-  <div class="layout-main-container">
+  <div class="layout-main-container !pb-10 sm:!pb-[1rem]">
     <app-topbar />
     <div class="layout-main p-2">
       <router-outlet></router-outlet>
     </div>
   </div>
   <div class="layout-mask animate-fadein"></div>
+  <app-navigation class="sm:hidden block" />
 </div>

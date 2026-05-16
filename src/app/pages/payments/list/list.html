@@ -1,0 +1,81 @@
+<p-toast />
+@if(payments().length > 0) {
+<div class="p-0 md:p-4">
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.payments' | transloco}}</h2>
+  <p-table #dt [loading]="loader()" [lazy]="true" [value]="payments()" [paginator]="true" selectionMode="single"
+    [metaKeySelection]="true" dataKey="id" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)"
+    (selectionChange)="selectPayment($event)">
+    <ng-template #caption>
+      <div class=" flex items-center flex-wrap justify-between gap-4">
+        <div
+          class="flex flex-1 flex-wrap flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
+
+          <!-- <p-iconfield>
+            <p-inputicon class="pi pi-search" />
+            <p-autocomplete class="mr-4!" [placeholder]="'order.search' | transloco" inputId="seachInput"
+              optionLabel="label"
+              [emptyMessage]="'payment.noResults' | transloco:{ item: 'payment.search' | transloco }"
+              [suggestions]="debitorsSearchResult()" fluid />
+
+          </p-iconfield>
+          <div class="flex gap-x-2 flex-wrap gap-4">
+            <p-datepicker [focusTrap]="false" iconDisplay="input" [showIcon]="true" dateFormat="dd/mm/yy"
+              [placeholder]="'order.dateRange' | transloco" selectionMode="range" [readonlyInput]="true"
+              [maxDate]="today" [(ngModel)]="rangeDates" />
+          </div> -->
+        </div>
+
+        <div class="flex justify-end gap-2 flex-1">
+          <p-drawer [header]="'order.warehouseTitle' | transloco" [dismissible]="false" [closable]="false"
+            [modal]="false" [visible]="visibleDrawer()" position="right">
+            <p-select [required]="true" [options]="warehouse()" [(ngModel)]="warehouseId" optionLabel="name"
+              optionValue="id" [placeholder]="'payment.warehousePlaceholder' | transloco" class="w-full md:w-56" />
+
+            <ng-template #footer>
+              <div class="flex justify-end gap-2">
+                <p-button [label]="'payment.cancel' | transloco" icon="pi pi-times" severity="danger" outlined
+                  (click)="visibleDrawer.set(false)" />
+                <p-button [label]="'payment.submit' | transloco" icon="pi pi-check" outlined
+                  (click)="openCashboxWithWarehouse(warehouseId)" />
+              </div>
+            </ng-template>
+          </p-drawer>
+          <p-button type="button" [label]="'payment.openCashbox' | transloco" severity="primary" icon="pi pi-plus"
+            (click)="openCashbox()" />
+        </div>
+      </div>
+
+
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{'order.createdAt' | transloco}}</th>
+        <th>{{'user.name' | transloco}}</th>
+        <th>{{'user.warehouse' | transloco}}</th>
+        <th>{{'payment.cashboxStatus.name' | transloco}}</th>
+        <th>{{'order.total' | transloco}}</th>
+
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-payment>
+      <tr [pSelectableRow]="payment">
+        <td>{{ payment.createdAt | date:'dd.MM.yyyy' }}</td>
+        <td>{{ payment.seller.user.fullName }}</td>
+        <td>{{ payment.warehouse.name }}</td>
+        <td>
+          <p-tag [value]="getTranslatedText((`payment.cashboxStatus.${payment.status}`|transloco), payment.status)"
+            [severity]="getSeverity(payment.status)"></p-tag>
+        </td>
+        <td>{{ payment.balance | currency: " " : 'code' : '0.0' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+} @else {
+<div class="flex flex-col items-center gap-4 py-8">
+  <i class="pi pi-inbox text-6xl text-gray-400"></i>
+  <p class="text-gray-500">{{'debitors.noFound' | transloco}}</p>
+  <p-button type="button" [label]="'debitors.clearFilter' | transloco" severity="primary" icon="pi pi-plus"
+    (click)="clearFilter()" />
+</div>
+}

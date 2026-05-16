@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload, ReturnOrderItemPayload } from '../../../models/order.model';
+import { CreateOrderPayload, OrderDetail, Order, CreateOrderItemPayload, CreateOrderPaymentPayload, ReturnOrderItemPayload, OrderStatus, OrderParams } from '../../../models/order.model';
+import { BaseListResponse } from '../../../models/app.models';
 
 
 @Injectable({
@@ -9,8 +10,33 @@ import { CreateOrderPayload, OrderResponse, OrderDetail, Order, CreateOrderItemP
 export class OrderService {
   constructor(private http: HttpClient) { }
 
-  getOrders(page = 1, pageSize = 10) {
-    return this.http.get<OrderResponse>(`/api/orders?currentPage=${page}&pageSize=${pageSize}`, {
+  getOrders(params: OrderParams) {
+    const { currentPage = 1, pageSize = 10, status = [], fromDate, toDate, search } = params;
+    const statusParam = status.join(',');
+    const queryParams = new URLSearchParams();
+    queryParams.append('currentPage', currentPage.toString());
+    queryParams.append('pageSize', pageSize.toString());
+    if (status.length > 0) {
+      queryParams.append('status', statusParam);
+    }
+    if (fromDate) {
+      queryParams.append('fromDate', fromDate.toISOString());
+    }
+    if (toDate) {
+      queryParams.append('toDate', toDate.toISOString());
+    }
+    if (search) {
+      queryParams.append('search', search);
+    }
+    return this.http.get<BaseListResponse<Order>>(`/api/orders?${queryParams.toString()}`, {
+      withCredentials: true
+    })
+  }
+
+  searchOrders(search: string) {
+    const queryParams = new URLSearchParams();
+    queryParams.append('search', search);
+    return this.http.get<Order[]>(`/api/orders/search?${queryParams.toString()}`, {
       withCredentials: true
     })
   }
@@ -53,6 +79,18 @@ export class OrderService {
 
   deleteOrder(orderId: string) {
     return this.http.delete<{ message: string }>(`/api/orders/${orderId}`, {
+      withCredentials: true
+    })
+  }
+
+  setCustomerToOrder(body: { orderId: string, customerId: string }) {
+    return this.http.put<{ message: string }>(`/api/users/customers/set-to-order`, body, {
+      withCredentials: true
+    })
+  }
+
+  clearCustomerFromOrder(orderId: string) {
+    return this.http.patch(`/api/orders/${orderId}/clear-customer`, {}, {
       withCredentials: true
     })
   }

@@ -1,5 +1,7 @@
+@if(users() && users().length > 0) {
 <div class="card min-h-[80vh]">
-  <p-table #dt [lazy]="true" [value]="users" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.user' | transloco}}</h2>
+  <p-table #dt [lazy]="true" [value]="users()" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
     [paginator]="true" [totalRecords]="total()" [rows]="rows" selectionMode="single"
     (selectionChange)="selectUser($event)" [metaKeySelection]="true" dataKey="id" (onPage)="pageChange($event)">
     <ng-template #caption>
@@ -37,3 +39,14 @@
     </ng-template>
   </p-table>
 </div>
+}
+@else {
+<div class="flex flex-col items-center gap-4 py-8">
+  <i class="pi pi-inbox text-6xl text-gray-400"></i>
+  <p class="text-gray-500">{{'user.noFound' | transloco}}</p>
+  <div class="flex justify-end gap-2">
+    <p-button [disabled]="appStore.isLoading()" [label]="'user.create' | transloco" icon="pi pi-plus"
+      (onClick)="createUser()" />
+  </div>
+</div>
+}

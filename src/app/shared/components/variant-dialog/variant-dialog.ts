@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -25,13 +25,15 @@ export interface VariantData {
   templateUrl: './variant-dialog.html',
   styleUrl: './variant-dialog.css',
 })
-export class VariantDialog {
+export class VariantDialog implements OnChanges {
 
   @Input() visible: boolean = false;
 
   @Input() title: string = '';
   @Input() subtitle: string = '';
   @Input() variantId: string = '';
+  @Input() price: string = '';
+  @Input() costPrice: number = 0;
 
   formData = new FormGroup({
     quantity: new FormControl<number>(0, { nonNullable: true, validators: [Validators.min(1)] }),
@@ -41,6 +43,16 @@ export class VariantDialog {
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() dataChange = new EventEmitter<VariantData>();
+
+  ngOnChanges(changes: SimpleChanges) {
+    const { price, costPrice } = changes;
+    if (price && price.currentValue) {
+      this.formData.get('price')?.setValue(+price.currentValue);
+    }
+    if (costPrice && costPrice.currentValue) {
+      this.formData.get('costPrice')?.setValue(+costPrice.currentValue);
+    }
+  }
 
   hideDialog() {
     this.visibleChange.emit(!this.visible);

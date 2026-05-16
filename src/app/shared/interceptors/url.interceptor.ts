@@ -1,15 +1,14 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 
 @Injectable()
 export class BaseUrlInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
-    // const baseUrl = 'http://localhost:4000'; // local development
-    // const baseUrl = 'http://89.126.221.135'; // vps ip address
-    const baseUrl = 'https://sthm23.uz'; // production domain
+    const baseUrl = environment.apiUrl;
     if (req.url.includes('/i18n/')) {
       return handler.handle(req);
     }

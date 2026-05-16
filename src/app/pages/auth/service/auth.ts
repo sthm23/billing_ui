@@ -4,6 +4,7 @@ import { Observable, take, tap } from 'rxjs';
 import { AuthRequest, AuthResponse, CurrentUserType, LogoutRequest } from '../../../models/auth.model';
 import { Router } from '@angular/router';
 import { LOCALE_STORAGE_KEYS } from '../../../models/app.models';
+import { StaffRole } from '../../../models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +72,17 @@ export class AuthService {
     return user?.role === 'ADMIN';
   }
 
+  isManager(): boolean {
+    const user = this.getCurrentUser();
+    const role = user?.staff?.role;
+    return role === StaffRole.MANAGER;
+  }
+  isOwner(): boolean {
+    const user = this.getCurrentUser();
+    const role = user?.staff?.role;
+    return role === StaffRole.OWNER;
+  }
+
   getUserStoreId(): string | null {
     const user = this.getCurrentUser();
     if (user?.staff && user.staff.store) {
@@ -97,5 +109,9 @@ export class AuthService {
 
   redirectToLogin(): void {
     this.router.navigate(['auth/login']);
+  }
+
+  redirectToOrder() {
+    return this.router.navigate(['pages/order/list']);
   }
 }

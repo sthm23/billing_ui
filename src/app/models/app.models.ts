@@ -1,7 +1,8 @@
-export interface BaseListResponse {
+export interface BaseListResponse<T> {
   currentPage: number
   pageSize: number
   total: number
+  data: T[]
 }
 export interface TableColumn {
   field: string;

@@ -114,6 +114,8 @@
     "create": "Create",
     "user": "Staff",
     "order": "Order",
+    "debitor": "Debitor",
+    "payments": "Payments",
     "product": "Product",
     "profile": "Profile",
     "messages": "Messages",
@@ -152,6 +154,7 @@
     "signinText": "Already have an account?"
   },
   "product": {
+    "noFound": "No product found.",
     "img": "Image",
     "name": "Name",
     "brand": "Brand",
@@ -248,7 +251,8 @@
       "CASH": "Cash",
       "CARD": "Card",
       "DEBT": "Debt",
-      "INSTALLMENT": "Installment"
+      "TRANSFER": "Transfer",
+      "ONLINE": "Online"
     },
     "channel": {
       "name": "Channel",
@@ -361,6 +365,51 @@
     "lastActivities": "Last activities",
     "activitiesEmpty": "No recent activities."
   },
+  "debitors": {
+    "noFound": "No debitor found.",
+    "clearFilter": "Clear filter"
+  },
+  "payment": {
+    "noFound": "No payment found.",
+    "detail": "Payment detail",
+    "closeCashbox": "Close cashbox",
+    "openCashbox": "Open cashbox",
+    "edit": "Edit",
+    "amount": "Amount",
+    "comment": "Comment",
+    "status": "Status",
+    "createdAt": "Created At",
+    "createdBy": "Created By",
+    "transactions": "Transactions",
+    "info": "Payment information",
+    "type": {
+      "name": "Type",
+      "INCOME": "Income",
+      "EXPENSE": "Expense"
+    },
+    "category": {
+      "name": "Category",
+      "SALE": "Sale",
+      "DEBT_PAYMENT": "Debt payment",
+      "RENT": "Rent",
+      "DELIVERY": "Delivery",
+      "SALARY": "Salary",
+      "PURCHASE": "Purchase",
+      "RETURN": "Return",
+      "OTHER": "Other"
+    },
+    "cashboxStatus": {
+      "name": "Cashbox status",
+      "OPEN": "Open",
+      "CLOSED": "Closed"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Close cashbox",
+      "message": "Are you sure you want to close the cashbox? This action cannot be undone.",
+      "confirmButton": "Yes",
+      "cancelButton": "No"
+    }
+  },
   "notFound": {
     "title": "OOPS, THIS PAGE NOT FOUND!",
     "description": "The link may be corrupted or the page may have been removed.",
@@ -371,5 +420,19 @@
     "title": "Error",
     "loginFailed": "Login Failed",
     "invalidCredentials": "Invalid login or password"
+  },
+  "navigation": {
+    "dashboard": "DASH",
+    "stores": "STO",
+    "products": "PRD",
+    "orders": "ORD",
+    "staff": "STF",
+    "profile": "PRF",
+    "settings": "SET",
+    "organization": "ORG",
+    "user": "USR",
+    "debitor": "DEB",
+    "payments": "PAY",
+    "attribute": "ATTR"
   }
 }

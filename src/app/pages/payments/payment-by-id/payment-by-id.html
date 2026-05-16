@@ -1,0 +1,119 @@
+@let cashbox = currentCashbox();
+<p-confirmdialog />
+<p-toast />
+<app-incoming-expense-dialog [(visible)]="visibleExpenseDialog" [title]="'payment.detail' | transloco"
+  [type]="transactionType" (data)="handlePaymentTransaction($event)" />
+@if(cashbox) {
+<div class="flex items-center gap-4 w-full m-auto max-w-7xl">
+  <div class="border-primary-300 rounded-xl border flex-1 sm:w-full">
+    <div class="p-6 flex flex-row items-center justify-between space-y-0 pt-4 pb-2">
+      <div class="tracking-tight flex items-center gap-2 text-sm font-medium">
+        <i class="pi pi-arrow-circle-up text-red-500"></i>
+        {{'payment.type.EXPENSE' | transloco}}
+      </div>
+    </div>
+    <div class="p-6 pt-0 pb-4">
+      <div class="text-2xl font-bold">{{outgoTotal() | currency: " ": "code": "0.0" }}</div>
+    </div>
+  </div>
+
+  <div class="border-primary-300 rounded-xl border flex-1 sm:w-full">
+    <div class="p-6 flex flex-row items-center justify-between space-y-0 pt-4 pb-2">
+      <div class="tracking-tight flex items-center gap-2 text-sm font-medium">
+        <i class="pi pi-arrow-circle-down text-green-500"></i>
+        {{'payment.type.INCOME' | transloco}}
+      </div>
+    </div>
+    <div class="p-6 pt-0 pb-4">
+      <div class="text-2xl font-bold">{{incomeTotal() | currency: " ": "code": "0.0" }}</div>
+    </div>
+  </div>
+</div>
+<div class="m-auto max-w-7xl pb-4">
+  <div class="flex items-center gap-2 my-4">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" outlined="true" (click)="goBack()" />
+      <h4>{{'payment.detail' | transloco}}</h4>
+    </div>
+    <div class="flex-1 flex justify-end">
+      <p-button [label]="'payment.closeCashbox' | transloco" severity="danger" icon="pi pi-lock" outlined="true"
+        (click)="confirmClose($event)" [disabled]="cashbox.status === 'CLOSED'" />
+    </div>
+  </div>
+  <div class="flex items-center gap-2">
+    <div class="flex-1">
+      <p class="flex flex-col"><strong>{{'payment.status' | transloco}}:</strong> <p-tag
+          [value]="`${'payment.cashboxStatus.' + cashbox.status | transloco}`"
+          [severity]="getStatusSeverity(cashbox.status)" /></p>
+      <p class="flex flex-col"><strong>{{'payment.createdAt' | transloco}}:</strong> {{ cashbox.createdAt | date:
+        'dd/MM/yyyy' }}</p>
+      <p class="flex flex-col"><strong>{{'payment.createdBy' | transloco}}:</strong> {{ cashbox.seller.user.fullName }}
+      </p>
+    </div>
+    <p-divider layout="vertical" class="h-[stretch]" />
+    <div class="flex-1">
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.CASH' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.CASH) |
+        currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.CARD' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.CARD) |
+        currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.ONLINE' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.ONLINE) | currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.TRANSFER' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.TRANSFER) | currency: " ":"code": "0.0" }} UZS</p>
+
+    </div>
+  </div>
+  <h3 class="mt-4 mb-2">{{'payment.transactions' | transloco}}</h3>
+  <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="cashbox.transactions" [paginator]="true"
+    [totalRecords]="total()" [rows]="rows()" (onPage)="pageChange($event)">
+    <ng-template #caption>
+      <div class=" flex items-center flex-wrap justify-between gap-4">
+        <div class="flex gap-2 flex-1">
+          <p-button type="button" [label]="'payment.type.EXPENSE' | transloco" severity="danger"
+            icon="pi pi-arrow-circle-up" [disabled]="cashbox.status === 'CLOSED'" (onClick)="createExpense()" />
+        </div>
+        <div class="flex justify-end gap-2 flex-1">
+          <p-button type="button" [label]="'payment.type.INCOME' | transloco" severity="primary"
+            icon="pi pi-arrow-circle-down" [disabled]="cashbox.status === 'CLOSED'" (onClick)="createIncome()" />
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{'payment.createdAt' | transloco}}</th>
+        <th>{{'payment.type.name' | transloco}}</th>
+        <th>{{'payment.category.name' | transloco}}</th>
+        <th>{{'payment.cashboxStatus.name' | transloco}}</th>
+        <th>{{'payment.amount' | transloco}}</th>
+
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-transaction>
+      <tr>
+        <td>{{ transaction.createdAt | date:'dd.MM.yyyy-hh:mm' }}</td>
+        <td>
+          <p-tag [value]="(`payment.type.${transaction.type}`) | transloco"
+            [severity]="transaction.type === 'INCOME' ? 'success' : 'danger'" />
+        </td>
+        <td>{{ `payment.category.${transaction.category}` | transloco }}</td>
+        <td>
+          <p-tag [value]="(`order.paymentMethod.${transaction.paymentType}`) | transloco" severity="secondary" />
+        </td>
+        <td>{{ transaction.amount | currency: " " : 'code' : '0.0' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template #footer>
+      <tr>
+        <td colspan="4" class="text-right font-bold p-3 pb-0">{{'order.totalAmount' | transloco}}</td>
+        <td class="font-bold p-3 pb-0">{{ (+cashbox.balance) | currency: " ":"code": "0.0" }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+
+}

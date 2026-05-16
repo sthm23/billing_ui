@@ -21,7 +21,7 @@ export interface Store {
   // products:   Product[]
   // orders:     Order[]
 }
-export interface StoreResponse extends BaseListResponse {
+export interface StoreResponse extends BaseListResponse<Store> {
   data: Store[]
 }
 

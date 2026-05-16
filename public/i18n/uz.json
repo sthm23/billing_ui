@@ -107,13 +107,15 @@
   },
   "sidebar": {
     "home": "Asosiy",
-    "dashboard": "Boshqaruv paneli",
     "pages": "Sahifalar",
+    "dashboard": "Xisobot",
     "organization": "Magazinlar",
     "list": "Ro'yxat",
     "create": "Yaratish",
     "user": "Xodimlar",
     "order": "Buyurtma",
+    "debitor": "Qarzdorlar",
+    "payments": "To'lovlar",
     "product": "Mahsulot",
     "profile": "Profil",
     "messages": "Xabarlar",
@@ -152,6 +154,7 @@
     "signinText": "Accaountingiz bor bo'lsa?"
   },
   "product": {
+    "noFound": "Tovar topilmadi.",
     "img": "Rasm",
     "name": "Nomlanish",
     "brand": "Brand",
@@ -248,7 +251,8 @@
       "CASH": "Naqd",
       "CARD": "Karta",
       "DEBT": "Qarz",
-      "INSTALLMENT": "Bo'lib to'lash"
+      "TRANSFER": "O'tkazma",
+      "ONLINE": "Click"
     },
     "channel": {
       "name": "To'lov usuli",
@@ -361,6 +365,53 @@
     "lastActivities": "So'nggi faoliyatlar",
     "activitiesEmpty": "So'nggi faoliyatlar mavjud emas."
   },
+  "debitors": {
+    "noFound": "Qarzdor topilmadi.",
+    "clearFilter": "Filtrni tozalash"
+  },
+  "payment": {
+    "noFound": "To'lov topilmadi.",
+    "detail": "To'lov tafsilotlari.",
+    "closeCashbox": "Kassani yopish",
+    "openCashbox": "Kassani ochish",
+    "createPayment": "Daromad",
+    "createOutgo": "Xarajat",
+    "edit": "Tahrirlash",
+    "amount": "Summa",
+    "comment": "Izoh",
+    "status": "Status",
+    "createdAt": "Yaratilgan sana",
+    "createdBy": "Yaratgan foydalanuvchi",
+    "transactions": "Tranzaksiyalar",
+    "info": "To'lov haqida ma'lumot",
+    "type": {
+      "name": "To'lov turi",
+      "INCOME": "Kirim",
+      "EXPENSE": "Xarajat"
+    },
+    "category": {
+      "name": "Kategoriya",
+      "SALE": "Savdo",
+      "DEBT_PAYMENT": "Qarz to'lovi",
+      "RENT": "Ijaraga olish",
+      "DELIVERY": "Yetkazib berish",
+      "SALARY": "Maosh",
+      "PURCHASE": "Sotib olish",
+      "RETURN": "Qaytarish",
+      "OTHER": "Boshqa"
+    },
+    "cashboxStatus": {
+      "name": "Kassaning holati",
+      "OPEN": "Ochiq",
+      "CLOSED": "Yopiq"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Kassani yopish",
+      "message": "Siz kassani yopishni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.",
+      "confirmButton": "Ha",
+      "cancelButton": "Yo'q"
+    }
+  },
   "notFound": {
     "title": "VOY, BU SAHIFA TOPILMADI!",
     "description": "Havola buzilgan yoki sahifa olib tashlangan bo'lishi mumkin.",
@@ -371,5 +422,19 @@
     "title": "Xato",
     "loginFailed": "Kirish muvaffaqiyatsiz",
     "invalidCredentials": "Noto'g'ri login yoki parol"
+  },
+  "navigation": {
+    "dashboard": "DSH",
+    "stores": "MAG",
+    "products": "TOV",
+    "orders": "ZAK",
+    "staff": "XOD",
+    "profile": "PRF",
+    "settings": "SOZ",
+    "organization": "ORG",
+    "user": "USR",
+    "debitor": "QARZ",
+    "payments": "PUL",
+    "attribute": "ATTR"
   }
 }

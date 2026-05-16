@@ -107,13 +107,15 @@
   },
   "sidebar": {
     "home": "Главная",
-    "dashboard": "Панель управления",
+    "dashboard": "Отчеты",
     "pages": "Страницы",
     "organization": "Магазин",
     "list": "Список",
     "create": "Создать",
     "user": "Сотрудники",
     "order": "Заказ",
+    "debitor": "Дебитор",
+    "payments": "Платежи",
     "product": "Продукт",
     "profile": "Профиль",
     "messages": "Сообщения",
@@ -152,6 +154,7 @@
     "signinText": "Если уже сушествует аккаунт?"
   },
   "product": {
+    "noFound": "Товар не найден.",
     "img": "Фото",
     "name": "Названия",
     "brand": "Бренд",
@@ -248,7 +251,8 @@
       "CASH": "Наличные",
       "CARD": "Карта",
       "DEBT": "Долг",
-      "INSTALLMENT": "Рассрочка"
+      "TRANSFER": "Перечесления",
+      "ONLINE": "Клик"
     },
     "channel": {
       "name": "Способ оплаты",
@@ -361,6 +365,53 @@
     "lastActivities": "Последние действия",
     "activitiesEmpty": "Нет последних действий."
   },
+  "debitors": {
+    "noFound": "Дебитор не найден.",
+    "clearFilter": "Очистить фильтр"
+  },
+  "payment": {
+    "noFound": "Платеж не найден.",
+    "detail": "Детали платежа.",
+    "closeCashbox": "Закрыть кассу",
+    "openCashbox": "Открыть кассу",
+    "createPayment": "Доход",
+    "createOutgo": "Расход",
+    "edit": "Редактировать",
+    "amount": "Сумма",
+    "comment": "Комментарий",
+    "status": "Статус",
+    "createdAt": "Создано",
+    "createdBy": "Создано пользователем",
+    "transactions": "Транзакции",
+    "info": "Информация о платеже",
+    "type": {
+      "name": "Тип",
+      "INCOME": "Приход",
+      "EXPENSE": "Расход"
+    },
+    "category": {
+      "name": "Категория",
+      "SALE": "Продажа",
+      "DEBT_PAYMENT": "Оплата долга",
+      "RENT": "Аренда",
+      "DELIVERY": "Доставка",
+      "SALARY": "Зарплата",
+      "PURCHASE": "Покупка",
+      "RETURN": "Возврат",
+      "OTHER": "Другое"
+    },
+    "cashboxStatus": {
+      "name": "Статус кассы",
+      "OPEN": "Открыта",
+      "CLOSED": "Закрыта"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Закрыть кассу",
+      "message": "Вы уверены, что хотите закрыть кассу? Это действие нельзя отменить.",
+      "confirmButton": "Да",
+      "cancelButton": "Нет"
+    }
+  },
   "notFound": {
     "title": "Ой, страница не найдена!",
     "description": "Страница, которую вы ищете, не существует. Пожалуйста, проверьте URL или вернитесь на главную страницу.",
@@ -371,5 +422,19 @@
     "title": "Ошибка",
     "loginFailed": "Ошибка входа",
     "invalidCredentials": "Неверный логин или пароль"
+  },
+  "navigation": {
+    "dashboard": "ДШБ",
+    "stores": "МГЗ",
+    "products": "ТОВ",
+    "orders": "ЗАК",
+    "staff": "СОТ",
+    "profile": "ПРФ",
+    "settings": "НСТ",
+    "organization": "ОРГ",
+    "user": "ЮЗР",
+    "debitor": "ДБТ",
+    "payments": "ОПЛ",
+    "attribute": "АТР"
   }
 }
