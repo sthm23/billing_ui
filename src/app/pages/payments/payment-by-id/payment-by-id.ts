@@ -166,4 +166,18 @@ export class PaymentById implements OnInit {
     this.visibleExpenseDialog = true;
   }
 
+  handlePaymentTransaction(payload: TransactionPayload) {
+    const cashboxId = this.currentCashbox()!.id;
+    this.paymentService.addTransaction(cashboxId, payload).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Transaction added successfully' });
+        this.loadOrder(cashboxId);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add transaction' });
+      }
+    });
+  }
+
 }

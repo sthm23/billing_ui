@@ -2,7 +2,7 @@
 <p-confirmdialog />
 <p-toast />
 <app-incoming-expense-dialog [(visible)]="visibleExpenseDialog" [title]="'payment.detail' | transloco"
-  [type]="transactionType" />
+  [type]="transactionType" (data)="handlePaymentTransaction($event)" />
 @if(cashbox) {
 <div class="flex items-center gap-4 w-full m-auto max-w-7xl">
   <div class="border-primary-300 rounded-xl border flex-1 sm:w-full">

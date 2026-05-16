@@ -88,7 +88,14 @@ export class IncomingExpenseDialog implements OnChanges {
     const typeChanged = changes['type'];
     if (typeChanged && typeChanged.currentValue) {
       const type = typeChanged.currentValue as CashTransactionType;
-      this.form.patchValue({ type });
+      this.form.reset({
+        amount: 0,
+        comment: '',
+        type,
+        category: CashTransactionCategory.OTHER,
+        paymentType: PaymentType.CASH,
+        orderId: ''
+      })
     }
   }
 
