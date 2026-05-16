@@ -107,8 +107,8 @@
   },
   "sidebar": {
     "home": "Asosiy",
-    "dashboard": "Boshqaruv paneli",
     "pages": "Sahifalar",
+    "dashboard": "Xisobot",
     "organization": "Magazinlar",
     "list": "Ro'yxat",
     "create": "Yaratish",
@@ -422,5 +422,19 @@
     "title": "Xato",
     "loginFailed": "Kirish muvaffaqiyatsiz",
     "invalidCredentials": "Noto'g'ri login yoki parol"
+  },
+  "navigation": {
+    "dashboard": "DSH",
+    "stores": "MAG",
+    "products": "TOV",
+    "orders": "ZAK",
+    "staff": "XOD",
+    "profile": "PRF",
+    "settings": "SOZ",
+    "organization": "ORG",
+    "user": "USR",
+    "debitor": "QARZ",
+    "payments": "PUL",
+    "attribute": "ATTR"
   }
 }

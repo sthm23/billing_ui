@@ -420,5 +420,19 @@
     "title": "Error",
     "loginFailed": "Login Failed",
     "invalidCredentials": "Invalid login or password"
+  },
+  "navigation": {
+    "dashboard": "DASH",
+    "stores": "STO",
+    "products": "PRD",
+    "orders": "ORD",
+    "staff": "STF",
+    "profile": "PRF",
+    "settings": "SET",
+    "organization": "ORG",
+    "user": "USR",
+    "debitor": "DEB",
+    "payments": "PAY",
+    "attribute": "ATTR"
   }
 }

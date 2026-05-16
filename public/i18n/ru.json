@@ -107,7 +107,7 @@
   },
   "sidebar": {
     "home": "Главная",
-    "dashboard": "Панель управления",
+    "dashboard": "Отчеты",
     "pages": "Страницы",
     "organization": "Магазин",
     "list": "Список",
@@ -422,5 +422,19 @@
     "title": "Ошибка",
     "loginFailed": "Ошибка входа",
     "invalidCredentials": "Неверный логин или пароль"
+  },
+  "navigation": {
+    "dashboard": "ДШБ",
+    "stores": "МГЗ",
+    "products": "ТОВ",
+    "orders": "ЗАК",
+    "staff": "СОТ",
+    "profile": "ПРФ",
+    "settings": "НСТ",
+    "organization": "ОРГ",
+    "user": "ЮЗР",
+    "debitor": "ДБТ",
+    "payments": "ОПЛ",
+    "attribute": "АТР"
   }
 }
