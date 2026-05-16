@@ -4,6 +4,7 @@
 
   @if(orders().length > 0) {
   <div class="p-0 md:p-4">
+    <h2 class="text-2xl font-bold mb-4">{{'sidebar.order' | transloco}}</h2>
     <p-table #dt [loading]="loader()" [lazy]="true" [value]="orders()" [paginator]="true" selectionMode="single"
       (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()"
       [rows]="rows" (onPage)="pageChange($event)">

@@ -4,6 +4,7 @@
 
   @if(debitors().length > 0) {
   <div class="p-0 md:p-4">
+    <h2 class="text-2xl font-bold mb-4">{{'sidebar.debitor' | transloco}}</h2>
     <p-table #dt [loading]="loader()" [lazy]="true" [value]="debitors()" [paginator]="true" selectionMode="single"
       (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()"
       [rows]="rows" (onPage)="pageChange($event)">
@@ -81,6 +82,7 @@
     </p-table>
   </div>
   } @else {
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.debitor' | transloco}}</h2>
   <div class="flex flex-col items-center gap-4 py-8">
     <i class="pi pi-inbox text-6xl text-gray-400"></i>
     <p class="text-gray-500">{{'debitors.noFound' | transloco}}</p>

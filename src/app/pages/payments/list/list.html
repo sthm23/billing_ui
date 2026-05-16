@@ -1,6 +1,7 @@
 <p-toast />
 @if(payments().length > 0) {
 <div class="p-0 md:p-4">
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.payments' | transloco}}</h2>
   <p-table #dt [loading]="loader()" [lazy]="true" [value]="payments()" [paginator]="true" selectionMode="single"
     [metaKeySelection]="true" dataKey="id" [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)"
     (selectionChange)="selectPayment($event)">

@@ -1,5 +1,6 @@
 @if(users() && users().length > 0) {
 <div class="card min-h-[80vh]">
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.user' | transloco}}</h2>
   <p-table #dt [lazy]="true" [value]="users()" [tableStyle]="{ 'min-width': '50rem' }" [loading]="appStore.isLoading()"
     [paginator]="true" [totalRecords]="total()" [rows]="rows" selectionMode="single"
     (selectionChange)="selectUser($event)" [metaKeySelection]="true" dataKey="id" (onPage)="pageChange($event)">

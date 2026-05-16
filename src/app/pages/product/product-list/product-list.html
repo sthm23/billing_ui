@@ -2,6 +2,7 @@
 <p-confirmdialog />
 @if(products().length > 0) {
 <div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">{{'sidebar.product' | transloco}}</h2>
   <p-table #dt [lazy]="true" [loading]="appStore.isLoading()" [value]="products()"
     [tableStyle]="{ 'min-width': '50rem' }" selectionMode="single" [metaKeySelection]="true" dataKey="id"
     [paginator]="true" (selectionChange)="selectProduct($event)" [totalRecords]="total()" [rows]="rows"
