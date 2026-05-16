@@ -15,6 +15,7 @@ import { Divider } from "primeng/divider";
 import { PaymentType } from '../../../models/order.model';
 import { IncomingExpenseDialog } from './incoming-expense-dialog/incoming-expense-dialog';
 import { FormsModule } from '@angular/forms';
+import { TranslateService } from '../../../shared/services/translate.service';
 
 
 @Component({
@@ -48,12 +49,14 @@ export class PaymentById implements OnInit {
 
   visibleExpenseDialog = false;
   transactionType: CashTransactionType = CashTransactionType.EXPENSE;
+  paymentMethodTypes = PaymentType;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private paymentService: PaymentService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private translate: TranslateService
   ) {
 
   }
@@ -87,7 +90,11 @@ export class PaymentById implements OnInit {
   }
 
   incomeTotal() {
-    return this.incomingTransactions().reduce((total, t) => total + +t.amount, 0);
+    return this.incomingTransactions().filter(t => t.type === CashTransactionType.INCOME).reduce((total, t) => total + +t.amount, 0);
+  }
+
+  incomeTypeTotal(type: PaymentType) {
+    return this.incomingTransactions().filter(t => t.paymentType === type).reduce((total, t) => total + +t.amount, 0);
   }
 
   getStatusSeverity(status: string) {
@@ -129,24 +136,34 @@ export class PaymentById implements OnInit {
   }
 
   confirmClose(event: Event) {
+    const translate = this.translate.translateObject('payment.closeCashboxConfirmation');
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Kassani yopishni hohlaysizmi?',
-      header: 'Kassani yopish',
+      message: translate['message'],
+      header: translate['title'],
       icon: 'pi pi-info-circle',
-      rejectLabel: 'Bekor qilish',
+      rejectLabel: translate['cancelButton'],
       rejectButtonProps: {
-        label: 'Bekor qilish',
+        label: translate['cancelButton'],
         severity: 'secondary',
         outlined: true
       },
       acceptButtonProps: {
-        label: 'Kassani yopish',
+        label: translate['confirmButton'],
         severity: 'danger'
       },
 
       accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Tasdiqlandi', detail: 'Kassa yopildi' });
+        this.paymentService.closeCashbox(this.currentCashbox()!.id).subscribe({
+          next: (res) => {
+            this.messageService.add({ severity: 'info', summary: 'Tasdiqlandi', detail: 'Kassa yopildi' });
+            this.loadOrder(this.currentCashbox()!.id);
+          },
+          error: (err) => {
+            console.error(err);
+            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Kassani yopishda xatolik yuz berdi' });
+          }
+        })
       },
       reject: () => {
         this.messageService.add({ severity: 'error', summary: 'Bekor qilindi', detail: 'Siz bekor qildingiz' });
@@ -157,8 +174,6 @@ export class PaymentById implements OnInit {
   createExpense() {
     this.transactionType = CashTransactionType.EXPENSE;
     this.visibleExpenseDialog = true;
-    console.log(this.visibleExpenseDialog);
-
   }
 
   createIncome() {

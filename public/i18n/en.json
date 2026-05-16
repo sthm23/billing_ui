@@ -402,6 +402,12 @@
       "name": "Cashbox status",
       "OPEN": "Open",
       "CLOSED": "Closed"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Close cashbox",
+      "message": "Are you sure you want to close the cashbox? This action cannot be undone.",
+      "confirmButton": "Yes",
+      "cancelButton": "No"
     }
   },
   "notFound": {

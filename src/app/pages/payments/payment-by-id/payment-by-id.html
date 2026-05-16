@@ -37,7 +37,7 @@
     </div>
     <div class="flex-1 flex justify-end">
       <p-button [label]="'payment.closeCashbox' | transloco" severity="danger" icon="pi pi-lock" outlined="true"
-        (click)="confirmClose($event)" />
+        (click)="confirmClose($event)" [disabled]="cashbox.status === 'CLOSED'" />
     </div>
   </div>
   <div class="flex items-center gap-2">
@@ -45,15 +45,24 @@
       <p class="flex flex-col"><strong>{{'payment.status' | transloco}}:</strong> <p-tag
           [value]="`${'payment.cashboxStatus.' + cashbox.status | transloco}`"
           [severity]="getStatusSeverity(cashbox.status)" /></p>
-      <p class="flex flex-col"><strong>{{'payment.amount' | transloco}}:</strong> {{ cashbox.balance | currency: " ":
-        "code": "0.0" }}</p>
-    </div>
-    <p-divider layout="vertical" class="h-[stretch]" />
-    <div class="flex-1">
       <p class="flex flex-col"><strong>{{'payment.createdAt' | transloco}}:</strong> {{ cashbox.createdAt | date:
         'dd/MM/yyyy' }}</p>
       <p class="flex flex-col"><strong>{{'payment.createdBy' | transloco}}:</strong> {{ cashbox.seller.user.fullName }}
       </p>
+    </div>
+    <p-divider layout="vertical" class="h-[stretch]" />
+    <div class="flex-1">
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.CASH' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.CASH) |
+        currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.CARD' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.CARD) |
+        currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.ONLINE' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.ONLINE) | currency: " ":"code": "0.0" }} UZS</p>
+      <p class="flex flex-col"><strong>{{'order.paymentMethod.TRANSFER' | transloco}}:</strong> {{
+        incomeTypeTotal(paymentMethodTypes.TRANSFER) | currency: " ":"code": "0.0" }} UZS</p>
+
     </div>
   </div>
   <h3 class="mt-4 mb-2">{{'payment.transactions' | transloco}}</h3>
@@ -70,9 +79,8 @@
             icon="pi pi-arrow-circle-down" [disabled]="cashbox.status === 'CLOSED'" (onClick)="createIncome()" />
         </div>
       </div>
-
-
     </ng-template>
+
     <ng-template pTemplate="header">
       <tr>
         <th>{{'payment.createdAt' | transloco}}</th>
@@ -95,6 +103,13 @@
           <p-tag [value]="(`order.paymentMethod.${transaction.paymentType}`) | transloco" severity="secondary" />
         </td>
         <td>{{ transaction.amount | currency: " " : 'code' : '0.0' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template #footer>
+      <tr>
+        <td colspan="4" class="text-right font-bold p-3 pb-0">Totals</td>
+        <td class="font-bold p-3 pb-0">{{ (+cashbox.balance) | currency: " ":"code": "0.0" }}</td>
       </tr>
     </ng-template>
   </p-table>

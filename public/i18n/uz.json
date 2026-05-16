@@ -404,6 +404,12 @@
       "name": "Kassaning holati",
       "OPEN": "Ochiq",
       "CLOSED": "Yopiq"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Kassani yopish",
+      "message": "Siz kassani yopishni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.",
+      "confirmButton": "Ha",
+      "cancelButton": "Yo'q"
     }
   },
   "notFound": {

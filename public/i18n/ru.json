@@ -404,6 +404,12 @@
       "name": "Статус кассы",
       "OPEN": "Открыта",
       "CLOSED": "Закрыта"
+    },
+    "closeCashboxConfirmation": {
+      "title": "Закрыть кассу",
+      "message": "Вы уверены, что хотите закрыть кассу? Это действие нельзя отменить.",
+      "confirmButton": "Да",
+      "cancelButton": "Нет"
     }
   },
   "notFound": {
