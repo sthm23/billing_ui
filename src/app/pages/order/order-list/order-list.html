@@ -1,13 +1,17 @@
 <p-toast />
 <p-confirmdialog />
 <div class="card">
-
-  @if(orders().length > 0) {
+  <div class="flex justify-between mb-4">
+    <h2 class="text-2xl font-bold !mb-0">{{'sidebar.order' | transloco}}</h2>
+    <p-togglebutton [formControl]="checked" [onLabel]="'order.status.COMPLETED' | transloco"
+      [offLabel]="'order.status.COMPLETED' | transloco" [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="w-36"
+      ariaLabel="Do you confirm" />
+  </div>
+  @if(orders().length > 0 && !appStore.isLoading()) {
   <div class="p-0 md:p-4">
-    <h2 class="text-2xl font-bold mb-4">{{'sidebar.order' | transloco}}</h2>
-    <p-table #dt [loading]="loader()" [lazy]="true" [value]="orders()" [paginator]="true" selectionMode="single"
-      (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()"
-      [rows]="rows" (onPage)="pageChange($event)">
+    <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="orders()" [paginator]="true"
+      selectionMode="single" (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id"
+      [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
       <ng-template #caption>
         <div class="flex items-center flex-wrap justify-between gap-4">
           <div
@@ -19,8 +23,14 @@
                 optionLabel="label" [emptyMessage]="'order.noResults' | transloco:{ item: 'order.search' | transloco }"
                 [suggestions]="orderSearchResult()" (completeMethod)="search($event)"
                 (onSelect)="selectSearchOption($event)" fluid />
-
             </p-iconfield>
+            @if(checked.value) {
+            <div class="flex gap-x-2 flex-wrap gap-4">
+              <p-datepicker [focusTrap]="false" iconDisplay="input" [showIcon]="true" dateFormat="dd/mm/yy"
+                [placeholder]="'order.dateRange' | transloco" selectionMode="range" [readonlyInput]="true"
+                [maxDate]="today" [(ngModel)]="rangeDates" />
+            </div>
+            }
           </div>
 
           <div class="flex justify-end gap-2 flex-1">
@@ -77,7 +87,7 @@
       </ng-template>
     </p-table>
   </div>
-  } @else {
+  } @else if(orders().length === 0 && !appStore.isLoading()) {
   <div class="flex flex-col items-center gap-4 py-8">
     <i class="pi pi-inbox text-6xl text-gray-400"></i>
     <p class="text-gray-500">{{'order.noFound' | transloco}}</p>

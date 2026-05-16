@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { OrderService } from '../services/order-service';
 import { CreateOrderPayload, Order, OrderChannel, OrderParams, OrderStatus } from '../../../models/order.model';
 import { AuthService } from '../../auth/service/auth';
@@ -13,10 +13,10 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
 import { delay } from 'rxjs';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { DatePickerModule } from 'primeng/datepicker';
+import { DatePicker, DatePickerModule } from 'primeng/datepicker';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawerModule } from 'primeng/drawer';
 import { SelectModule } from 'primeng/select';
 import { Warehouse } from '../../../models/store.model';
@@ -24,7 +24,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { TranslateService } from '../../../shared/services/translate.service';
 import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
-
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { AppStore } from '../../../store/app.store';
 
 @Component({
   selector: 'app-order-list',
@@ -46,20 +47,22 @@ import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent 
     TranslocoPipe,
     DatePipe,
     AutoCompleteModule,
+    ToggleButtonModule,
+    ReactiveFormsModule,
+    DatePicker
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',
   providers: [MessageService, ConfirmationService]
 })
 export class OrderList implements OnInit {
+  appStore = inject(AppStore);
   orders = signal<Order[]>([])
   visibleDrawer = signal(false);
   selectedOrder: Order | null = null;
   warehouseId: string = '';
   storeId: string = '';
   warehouse = signal<Warehouse[]>([])
-
-  loader = signal(false);
   first = signal(1);
   rows = 10;
   total = signal(0);
@@ -68,6 +71,8 @@ export class OrderList implements OnInit {
   rangeDates: Date[] | null = null;
 
   orderSearchResult = signal<{ createdAt: string, id: string, total: string }[]>([]);
+
+  checked = new FormControl(false);
 
   @ViewChild('dt') dataTable!: Table;
 
@@ -78,10 +83,18 @@ export class OrderList implements OnInit {
     private messageService: MessageService,
     private confirmService: ConfirmationService,
     private translateService: TranslateService,
-  ) { }
+  ) {
+    this.checked.valueChanges.subscribe(value => {
+      if (value) {
+        this.loadOrders({ status: [OrderStatus.COMPLETED] })
+      } else {
+        this.loadOrders({ status: [OrderStatus.CREATED, OrderStatus.HOLD] })
+      }
+    });
+  }
 
   ngOnInit() {
-    this.loader.set(true);
+
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser.staff) {
       const warehouses = currentUser.staff.warehouse.map(w => ({ ...w.warehouse }));
@@ -92,6 +105,7 @@ export class OrderList implements OnInit {
   }
 
   private loadOrders(params: OrderParams = {}) {
+    this.appStore.startLoader();
     const {
       currentPage = this.first(),
       pageSize = this.rows,
@@ -109,12 +123,12 @@ export class OrderList implements OnInit {
       search
     }).subscribe({
       next: (res) => {
-        this.loader.set(false);
+        this.appStore.stopLoader();
         this.orders.set(res.data)
         this.total.set(+res.total);
       },
       error: (err) => {
-        this.loader.set(false);
+        this.appStore.stopLoader();
         console.error(err)
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
       }
@@ -122,13 +136,14 @@ export class OrderList implements OnInit {
   }
 
   pageChange(event: TablePageEvent) {
-    this.loader.set(true);
     this.dataTable.reset();
     this.first.set(event.first);
     this.rows = event.rows;
+    const status = this.checked.value ? [OrderStatus.COMPLETED] : [OrderStatus.CREATED, OrderStatus.HOLD];
     const params: OrderParams = {
       currentPage: this.first() / this.rows + 1,
-      pageSize: this.rows
+      pageSize: this.rows,
+      status
     }
     this.loadOrders(params);
   }
@@ -173,12 +188,15 @@ export class OrderList implements OnInit {
       warehouseId,
       channel: OrderChannel.POS,
     }
+    this.appStore.startLoader();
     this.orderService.createOrder(payload).subscribe({
       next: (res) => {
+        this.appStore.stopLoader();
         console.log('Order created successfully', res)
         this.router.navigate(['/pages/order', res.id])
       },
       error: (err) => {
+        this.appStore.stopLoader();
         console.error('Failed to create order', err)
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create order' })
       }
@@ -231,12 +249,15 @@ export class OrderList implements OnInit {
   }
 
   deleteOrder(order: Order) {
+    this.appStore.startLoader();
     this.orderService.deleteOrder(order.id).subscribe({
       next: (res) => {
+        this.appStore.stopLoader();
         this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Order deleted successfully' });
         this.loadOrders();
       },
       error: (err) => {
+        this.appStore.stopLoader();
         console.error(err);
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to delete order' });
       }
@@ -311,9 +332,11 @@ export class OrderList implements OnInit {
   onRangeSelect() {
     if (this.rangeDates && this.rangeDates[0] && this.rangeDates[1]) {
       const [startDate, endDate] = this.rangeDates;
+      const status = this.checked.value ? [OrderStatus.COMPLETED] : [OrderStatus.CREATED, OrderStatus.HOLD];
       this.loadOrders({
         fromDate: new Date(startDate.setHours(0, 0, 0, 0)),
-        toDate: new Date(endDate.setHours(23, 59, 59, 999))
+        toDate: new Date(endDate.setHours(23, 59, 59, 999)),
+        status: status
       });
 
     }
@@ -328,11 +351,13 @@ export class OrderList implements OnInit {
     }
   }
   search(event: AutoCompleteCompleteEvent) {
+    this.appStore.startLoader();
     const search = event.query;
     this.orderService.searchOrders(
       search
     ).subscribe({
       next: (res) => {
+        this.appStore.stopLoader();
         const orders = res.map((order, i) => {
           return {
             id: order.id,
@@ -345,7 +370,7 @@ export class OrderList implements OnInit {
         this.orderSearchResult.set(orders);
       },
       error: (err) => {
-        this.loader.set(false);
+        this.appStore.stopLoader();
         console.error(err)
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
       }

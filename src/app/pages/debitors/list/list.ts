@@ -290,7 +290,6 @@ export class DebitorList implements OnInit {
         fromDate: new Date(startDate.setHours(0, 0, 0, 0)),
         toDate: new Date(endDate.setHours(23, 59, 59, 999))
       });
-
     }
   }
 

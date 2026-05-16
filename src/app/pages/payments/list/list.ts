@@ -11,7 +11,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
-import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -20,7 +20,6 @@ import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
-import { OrderStatus } from '../../../models/order.model';
 
 @Component({
   selector: 'app-payment-list',
@@ -160,10 +159,19 @@ export class PaymentList {
   }
 
   openCashbox() {
+    const warehouses = this.warehouse();
+    if (warehouses.length > 1) {
+      this.visibleDrawer.set(true);
+      return;
+    }
+    this.openCashboxWithWarehouse(warehouses[0].id);
+  }
+
+  openCashboxWithWarehouse(warehouseId: string) {
     this.paymentService.openCashbox({
       balance: 0,
       storeId: this.storeId,
-      warehouseId: this.warehouseId,
+      warehouseId,
       status: CashboxStatus.OPEN
     }).subscribe({
       next: (res) => {

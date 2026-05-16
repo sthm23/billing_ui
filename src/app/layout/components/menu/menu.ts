@@ -31,7 +31,7 @@ export class Menu {
         {
           label: res['home'],
           items: [
-            { label: res['dashboard'], icon: 'pi pi-fw pi-home', routerLink: ['/'], visible: this.authService.isOwner() || this.authService.isAdmin() },
+            { label: res['dashboard'], icon: 'pi pi-chart-line', routerLink: ['/'], visible: this.authService.isOwner() || this.authService.isAdmin() },
             {
               label: res['profile'],
               icon: 'pi pi-fw pi-user',

@@ -10,7 +10,7 @@
         <div
           class="flex flex-1 flex-wrap flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
 
-          <p-iconfield>
+          <!-- <p-iconfield>
             <p-inputicon class="pi pi-search" />
             <p-autocomplete class="mr-4!" [placeholder]="'order.search' | transloco" inputId="seachInput"
               optionLabel="label"
@@ -22,7 +22,7 @@
             <p-datepicker [focusTrap]="false" iconDisplay="input" [showIcon]="true" dateFormat="dd/mm/yy"
               [placeholder]="'order.dateRange' | transloco" selectionMode="range" [readonlyInput]="true"
               [maxDate]="today" [(ngModel)]="rangeDates" />
-          </div>
+          </div> -->
         </div>
 
         <div class="flex justify-end gap-2 flex-1">
@@ -35,7 +35,8 @@
               <div class="flex justify-end gap-2">
                 <p-button [label]="'payment.cancel' | transloco" icon="pi pi-times" severity="danger" outlined
                   (click)="visibleDrawer.set(false)" />
-                <p-button [label]="'payment.submit' | transloco" icon="pi pi-check" outlined />
+                <p-button [label]="'payment.submit' | transloco" icon="pi pi-check" outlined
+                  (click)="openCashboxWithWarehouse(warehouseId)" />
               </div>
             </ng-template>
           </p-drawer>

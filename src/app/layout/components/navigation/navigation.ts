@@ -30,7 +30,7 @@ export class Navigation implements OnInit {
       this.items = [
         {
           label: res['dashboard'],
-          icon: 'pi pi-fw pi-home',
+          icon: 'pi pi-chart-line',
           visible: this.authService.isAdmin() || this.authService.isOwner(),
           command: () => this.goTo('dashboard')
         },
