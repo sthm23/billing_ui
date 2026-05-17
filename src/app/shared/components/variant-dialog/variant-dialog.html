@@ -7,7 +7,6 @@
       <label for="quantity">{{'product.quantity' | transloco}}</label>
       <p-inputnumber [className]="isValid('quantity')" inputId="quantity" formControlName="quantity" />
     </div>
-
     <div class="flex flex-col gap-2 w-full">
       <label for="costPrice">{{'product.incomingPrice' | transloco}}</label>
       <p-inputnumber [className]="isValid('costPrice')" inputId="costPrice" formControlName="costPrice" />
@@ -17,7 +16,6 @@
       <label for="price">{{'product.retailPrice' | transloco}}</label>
       <p-inputnumber [className]="isValid('price')" inputId="price" formControlName="price" />
     </div>
-
     <div class="flex justify-end gap-2">
       <p-button [label]="'product.cancel' | transloco" severity="secondary" (click)="hideDialog()" />
       <p-button [label]="'order.save' | transloco" (click)="submit()" />

@@ -201,7 +201,7 @@
     "reasonType": {
       "PURCHASE": "Sotib olish",
       "SALE": "Sotuv",
-      "ADJUSTMENT": "Korrektsiya",
+      "ADJUSTMENT": "Brak",
       "RETURN": "Qaytarilgan"
     },
     "noOrders": "Bu mahsulot uchun hali zakaz mavjud emas.",

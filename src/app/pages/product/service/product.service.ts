@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateProduct, Product, ProductDetail, CreateProductVariantPayload, AddInventoryPayload, ProductVariant } from '../../../models/product.model';
+import { CreateProduct, Product, ProductDetail, CreateProductVariantPayload, InventoryMovementPayload, ProductVariant } from '../../../models/product.model';
 import { BaseListResponse } from '../../../models/app.models';
 
 
@@ -49,7 +49,7 @@ export class ProductService {
     });
   }
 
-  addInventory(warehouseId: string, body: AddInventoryPayload) {
+  addInventory(warehouseId: string, body: InventoryMovementPayload) {
     return this.http.post<{ message: string }>(`/api/warehouse/${warehouseId}/inventory`, body, {
       withCredentials: true,
     });

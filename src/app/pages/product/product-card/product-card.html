@@ -1,6 +1,11 @@
 @let product = productCard();
 <p-toast />
 <p-fluid>
+  @if(dataForDialog) {
+  <app-variant-dialog [title]="dataForDialog.title" [subtitle]="dataForDialog.sku" [variantId]="dataForDialog.id"
+    [costPrice]="dataForDialog.costPrice" [price]="dataForDialog.price" [type]="dataForDialog.type"
+    (dataChange)="handleDialogData($event)" [(visible)]="visibleAddVariants" />
+  }
   @if (product) {
   <div class="flex flex-col justify-content-center p-4">
     <div class="flex-1 flex items-center justify-between">
@@ -9,7 +14,7 @@
         <h4 class="font-semibold text-xl">{{'product.editTitle'|transloco}}</h4>
       </div>
       <div class="flex flex-wrap justify-end gap-2">
-        <p-button [label]="'product.edit'|transloco" (onClick)="editMode = !editMode"></p-button>
+        <p-button [label]="'product.edit'|transloco" disabled="true" (onClick)="editMode = !editMode"></p-button>
       </div>
     </div>
     <div class="flex-1" [formGroup]="productForm">
@@ -182,10 +187,12 @@
                 <p-tag [value]="variant.quantity" [severity]="getSeverity(variant.quantity)" />
               </td>
               <td>
-                <p-button type="button" icon="pi pi-plus" [outlined]="true" (onClick)="addVariantItem(variant)" />
-                <app-variant-dialog title="Skladga qushish" [subtitle]="variant.sku" [variantId]="variant.id"
-                  [costPrice]="costPrice(variant.stockMovements)" [price]="variant.price"
-                  (dataChange)="handleAdd($event)" [(visible)]="visibleAddVariants" />
+                <div class="flex items-center gap-2">
+                  <p-button type="button" icon="pi pi-plus" [outlined]="true"
+                    (onClick)="handleVariantItem(variant, dialogType.IN)" />
+                  <p-button icon="pi pi-minus" outlined="true" severity="danger"
+                    (onClick)="handleVariantItem(variant, dialogType.OUT)" />
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -203,43 +210,12 @@
                   <p-table [value]="variant.stockMovements" dataKey="id">
                     <ng-template #header>
             <tr>
-              <th pSortableColumn="createdAt">
-                <div class="flex items-center gap-2">
-                  {{'product.createAt'|transloco}}
-                  <p-sortIcon field="createdAt" />
-                </div>
-              </th>
-              <th pSortableColumn="type">
-                <div class="flex items-center gap-2">
-                  {{'product.inOut'|transloco}}
-                  <p-sortIcon field="type" />
-                </div>
-              </th>
-              <th pSortableColumn="reason">
-                <div class="flex items-center gap-2">
-                  {{'product.reason'|transloco}}
-                  <p-sortIcon field="reason" />
-                </div>
-              </th>
-              <th pSortableColumn="createdBy">
-                <div class="flex items-center gap-2">
-                  {{'product.createBy'|transloco}}
-                  <p-sortIcon field="createdBy" />
-                </div>
-              </th>
-              <th pSortableColumn="quantity">
-                <div class="flex items-center gap-2">
-                  {{'product.quantity'|transloco}}
-                  <p-sortIcon field="quantity" />
-                </div>
-              </th>
-              <th pSortableColumn="price">
-                <div class="flex items-center gap-2">
-                  {{'product.incomingPrice'|transloco}}
-                  <p-sortIcon field="price" />
-                </div>
-              </th>
-
+              <th>{{'product.createAt'|transloco}}</th>
+              <th>{{'product.inOut'|transloco}}</th>
+              <th>{{'product.reason'|transloco}}</th>
+              <th>{{'product.createBy'|transloco}}</th>
+              <th>{{'product.quantity'|transloco}}</th>
+              <th>{{'product.incomingPrice'|transloco}}</th>
             </tr>
           </ng-template>
           <ng-template #body let-stockMovement>
@@ -253,7 +229,6 @@
               <td>{{ stockMovement.createdBy.user.fullName }}</td>
               <td>{{ stockMovement.quantity }}</td>
               <td>{{ stockMovement.unitCost | currency: ' ' : 'code': '0.0' }}</td>
-
             </tr>
           </ng-template>
           <ng-template #emptymessage>

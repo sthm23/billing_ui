@@ -4,12 +4,14 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { StockMovementType } from '../../../models/product.model';
 
 export interface VariantData {
   quantity: number;
   price: number;
   costPrice: number;
   variantId: string;
+  type: StockMovementType;
 }
 
 @Component({
@@ -26,13 +28,15 @@ export interface VariantData {
   styleUrl: './variant-dialog.css',
 })
 export class VariantDialog implements OnChanges {
+  stockMovementType = StockMovementType;
 
   @Input() visible: boolean = false;
 
+  @Input() type: StockMovementType = StockMovementType.IN;
   @Input() title: string = '';
   @Input() subtitle: string = '';
   @Input() variantId: string = '';
-  @Input() price: string = '';
+  @Input() price: number = 0;
   @Input() costPrice: number = 0;
 
   formData = new FormGroup({
@@ -45,13 +49,19 @@ export class VariantDialog implements OnChanges {
   @Output() dataChange = new EventEmitter<VariantData>();
 
   ngOnChanges(changes: SimpleChanges) {
-    const { price, costPrice } = changes;
+    const { price, costPrice, type } = changes;
+    if (type && type.currentValue) {
+      this.formData.reset({
+        quantity: 0
+      })
+    }
     if (price && price.currentValue) {
       this.formData.get('price')?.setValue(+price.currentValue);
     }
     if (costPrice && costPrice.currentValue) {
       this.formData.get('costPrice')?.setValue(+costPrice.currentValue);
     }
+
   }
 
   hideDialog() {
@@ -63,7 +73,7 @@ export class VariantDialog implements OnChanges {
       this.formData.markAllAsTouched();
       return;
     }
-    this.dataChange.emit({ ...this.formData.value, variantId: this.variantId } as VariantData);
+    this.dataChange.emit({ ...this.formData.value, variantId: this.variantId, type: this.type } as VariantData);
     this.hideDialog();
   }
 
