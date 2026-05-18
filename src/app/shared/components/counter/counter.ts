@@ -1,38 +1,31 @@
 import { Component, EventEmitter, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
-import { ButtonModule } from "primeng/button";
+import { FormsModule } from '@angular/forms';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-counter',
-  imports: [ButtonModule],
+  imports: [InputNumberModule, FormsModule],
   templateUrl: './counter.html',
   styleUrl: './counter.css',
 })
 export class Counter implements OnChanges {
-  count = signal(0);
+  count = 0;
 
   @Input() maxValue: number | null = null;
 
   @Input() initialCount: number = 0;
 
-  @Output() countChange = new EventEmitter<{ count: number, type: 'increment' | 'decrement' }>();
+  @Output() countChange = new EventEmitter<{ count: number }>();
 
   ngOnChanges(changes: SimpleChanges) {
     const initialCountChange = changes['initialCount'];
     if (initialCountChange && initialCountChange.currentValue) {
       const value = this.maxValue ? initialCountChange.currentValue : 0
-      this.count.set(value);
+      this.count = value > this.maxValue! ? this.maxValue : value;
     }
   }
 
-  increment() {
-    if (this.maxValue !== null && this.count() >= this.maxValue) return;
-    this.count.update(n => n + 1);
-    this.countChange.emit({ count: this.count(), type: 'increment' });
-  }
-
-  decrement() {
-    if (this.count() === 0) return;
-    this.count.update(n => n - 1);
-    this.countChange.emit({ count: this.count(), type: 'decrement' });
+  handleChange() {
+    this.countChange.emit({ count: this.count });
   }
 }

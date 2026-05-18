@@ -206,23 +206,13 @@ export class OrderId implements OnInit {
     return true;
   }
 
-  handleAmountChange({ quantity, type, sale = 0 }: OrderItemAmountChange, itemId: string) {
-    if (type === 'decrement' || type === 'increment') {
-      this.orderItems.update(items => items.map(item => {
-        if (item.id === itemId) {
-          return { ...item, quantity };
-        }
-        return item;
-      }));
-
-    } else {
-      this.orderItems.update(items => items.map(item => {
-        if (item.id === itemId) {
-          return { ...item, sale };
-        }
-        return item;
-      }));
-    }
+  handleAmountChange({ quantity, sale = 0 }: OrderItemAmountChange, itemId: string) {
+    this.orderItems.update(items => items.map(item => {
+      if (item.id === itemId) {
+        return { ...item, quantity, sale };
+      }
+      return item;
+    }));
   }
 
   holdOrder() {
