@@ -342,6 +342,14 @@ export class OrderList implements OnInit {
     }
   }
 
+  clearFilter() {
+    this.rangeDates = null;
+    const status = this.checked.value ? [OrderStatus.COMPLETED] : [OrderStatus.CREATED, OrderStatus.HOLD];
+    this.loadOrders({
+      status
+    });
+  }
+
   selectSearchOption(option: AutoCompleteSelectEvent) {
     const selectedOrder = option.value;
     const orders = this.orderSearchResult();
@@ -351,13 +359,11 @@ export class OrderList implements OnInit {
     }
   }
   search(event: AutoCompleteCompleteEvent) {
-    this.appStore.startLoader();
     const search = event.query;
     this.orderService.searchOrders(
       search
     ).subscribe({
       next: (res) => {
-        this.appStore.stopLoader();
         const orders = res.map((order, i) => {
           return {
             id: order.id,
@@ -370,7 +376,6 @@ export class OrderList implements OnInit {
         this.orderSearchResult.set(orders);
       },
       error: (err) => {
-        this.appStore.stopLoader();
         console.error(err)
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
       }

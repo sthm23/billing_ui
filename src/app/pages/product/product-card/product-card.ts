@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { AddInventoryPayload, Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant, TagList } from '../../../models/product.model';
+import { InventoryMovementPayload, Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail, ProductVariant, StockMovement, StockMovementType, TagList, StockMovementReason } from '../../../models/product.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { ImageModule } from 'primeng/image';
@@ -56,6 +56,16 @@ type VariantForm = {
   salePrice: FormControl<number | null>;
   barCode: FormControl<string | null>;
 };
+
+type DialogData = {
+  id: string;
+  title: string;
+  sku: string;
+  costPrice: number;
+  price: number;
+  quantity: number;
+  type: StockMovementType;
+};
 @Component({
   selector: 'app-product-card',
   imports: [
@@ -102,6 +112,9 @@ export class ProductCard implements OnInit, OnDestroy {
 
   visibleAddVariants = false
   expandedRows: any = {};
+
+  dataForDialog: DialogData | null = null
+  dialogType = StockMovementType;
 
   productAttributes = new Map<string, AttrItemList>();
   productTags = new Map<string, TagList>();
@@ -218,8 +231,16 @@ export class ProductCard implements OnInit, OnDestroy {
     this.router.navigate(['/pages/product', id, 'variant']);
   }
 
-  addVariantItem(variant: ProductVariant) {
-    console.log('Add variant item for variant:', variant);
+  handleVariantItem(variant: ProductVariant, type: StockMovementType) {
+    this.dataForDialog = {
+      title: "Skladga qushish",
+      costPrice: +variant.stockMovements[0]?.unitCost || 0,
+      sku: variant.sku,
+      id: variant.id,
+      price: variant.price,
+      quantity: 0,
+      type
+    };
     this.visibleAddVariants = true;
   }
 
@@ -249,7 +270,7 @@ export class ProductCard implements OnInit, OnDestroy {
     return control && control.touched && control.invalid ? 'ng-dirty ng-invalid' : '';
   }
 
-  handleAdd(data: VariantData) {
+  handleDialogData(data: VariantData) {
     const product = this.productCard();
     if (!product) {
       console.error('Product data is not available');
@@ -257,13 +278,15 @@ export class ProductCard implements OnInit, OnDestroy {
     }
     this.appStore.startLoader();
     const warehouseId = product.warehouseId;
-    const payload: AddInventoryPayload = {
+    const payload = {
+      reason: data.type === StockMovementType.OUT ? StockMovementReason.ADJUSTMENT : StockMovementReason.PURCHASE,
+      type: data.type,
       warehouseId,
       variantId: data.variantId,
       quantity: data.quantity,
       costPrice: data.costPrice,
       price: data.price
-    };
+    }
     this.productService.addInventory(warehouseId, payload).pipe(
       switchMap(() => this.productService.getProductById(product.id)),
       takeUntil(this.destroyer$)
@@ -279,14 +302,7 @@ export class ProductCard implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add inventory' });
       }
     })
-  }
 
-  costPrice(stockMovements: { unitCost: number }[]): number {
-    if (!stockMovements || stockMovements.length === 0) {
-      return 0;
-    }
-    const lastStockMovement = stockMovements[stockMovements.length - 1];
-    return lastStockMovement.unitCost;
   }
 
   ngOnDestroy(): void {

@@ -28,7 +28,8 @@
             <div class="flex gap-x-2 flex-wrap gap-4">
               <p-datepicker [focusTrap]="false" iconDisplay="input" [showIcon]="true" dateFormat="dd/mm/yy"
                 [placeholder]="'order.dateRange' | transloco" selectionMode="range" [readonlyInput]="true"
-                [maxDate]="today" [(ngModel)]="rangeDates" />
+                [showClear]="true" [maxDate]="today" [(ngModel)]="rangeDates" (onSelect)="onRangeSelect()"
+                (onClear)="clearFilter()" />
             </div>
             }
           </div>
@@ -60,7 +61,7 @@
           <th>{{'order.createdAt' | transloco}}</th>
           <th>{{'order.warehouse' | transloco}}</th>
           <th>{{'order.creator' | transloco}}</th>
-          <th>{{'order.channel.name' | transloco}}</th>
+          <th>{{'order.customer' | transloco}}</th>
           <th>{{'order.status.name' | transloco}}</th>
           <th>{{'order.total' | transloco}}</th>
           <th>{{'order.action' | transloco}}</th>
@@ -70,8 +71,8 @@
         <tr [pSelectableRow]="order.status !== 'CANCELLED' ? order : null">
           <td>{{ order.createdAt | date:'dd.MM.yyyy' }}</td>
           <td>{{ order.warehouse.name }}</td>
-          <td>{{ order.cashier.role }}</td>
-          <td>{{ (`order.channel.${order.channel}` | transloco) }}</td>
+          <td>{{ order.cashier.user.fullName }}</td>
+          <td>{{ order.customer?.user.fullName ?? '-' }}</td>
           <td>
             <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco), order.status)"
               [severity]="getSeverity(order.status)"></p-tag>

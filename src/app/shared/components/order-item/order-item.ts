@@ -10,7 +10,7 @@ import { CurrencyPipe, NgClass } from '@angular/common';
 import { SaleDialog, SaleDialogOutput } from '../sale-dialog/sale-dialog';
 import { TagModule } from 'primeng/tag';
 
-export interface OrderItemAmountChange { price: number, quantity: number, sale: number, prevSale?: number, type?: 'increment' | 'decrement' }
+export interface OrderItemAmountChange { price: number, quantity: number, sale: number, prevSale?: number }
 @Component({
   selector: 'app-order-item',
   imports: [
@@ -55,9 +55,9 @@ export class OrderItem implements OnChanges {
     this.delete.emit();
   }
 
-  handleCounter({ type, count }: { type: 'increment' | 'decrement', count: number }) {
+  handleCounter({ count }: { count: number }) {
     this.counter.set(count);
-    this.amountChange.emit({ type, price: this.price(), quantity: this.counter(), sale: this.sale() });
+    this.amountChange.emit({ price: this.price(), quantity: this.counter(), sale: this.sale() });
   }
 
   handlePrice(event: SaleDialogOutput) {

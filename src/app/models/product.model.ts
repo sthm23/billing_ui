@@ -43,10 +43,20 @@ export interface ProductVariant {
   attributes: AttributeItem[]
 }
 
+export enum StockMovementType {
+  IN = 'IN',
+  OUT = 'OUT'
+}
+export enum StockMovementReason {
+  PURCHASE = 'PURCHASE',
+  SALE = 'SALE',
+  ADJUSTMENT = 'ADJUSTMENT',
+  RETURN = 'RETURN'
+}
 export interface StockMovement {
   id: string
-  type: 'IN' | 'OUT'
-  reason: 'PURCHASE' | 'SALE' | 'ADJUSTMENT' | 'RETURN'
+  type: StockMovementType
+  reason: StockMovementReason
   warehouseId: string
   quantity: number
   unitCost: string
@@ -178,7 +188,9 @@ export interface AttributeValuePayload {
   value: string | number | boolean;
 }
 
-export interface AddInventoryPayload {
+export interface InventoryMovementPayload {
+  type: StockMovementType,
+  reason: StockMovementReason,
   warehouseId: string;
   variantId: string;
   quantity: number;
