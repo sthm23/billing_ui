@@ -319,7 +319,6 @@ export class DebitorList implements OnInit {
         this.debitorsSearchResult.set(orders);
       },
       error: (err) => {
-        this.loader.set(false);
         console.error(err)
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
       }
