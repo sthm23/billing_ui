@@ -436,5 +436,10 @@
     "debitor": "QARZ",
     "payments": "PUL",
     "attribute": "ATTR"
+  },
+  "notification": {
+    "success": "Muvaffaqiyat",
+    "error": "Xato",
+    "info": "Ma'lumot"
   }
 }

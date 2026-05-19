@@ -434,5 +434,10 @@
     "debitor": "DEB",
     "payments": "PAY",
     "attribute": "ATTR"
+  },
+  "notification": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Information"
   }
 }

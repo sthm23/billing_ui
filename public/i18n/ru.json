@@ -436,5 +436,10 @@
     "debitor": "ДБТ",
     "payments": "ОПЛ",
     "attribute": "АТР"
+  },
+  "notification": {
+    "success": "Успех",
+    "error": "Ошибка",
+    "info": "Информация"
   }
 }

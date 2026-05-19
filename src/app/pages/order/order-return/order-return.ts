@@ -9,7 +9,6 @@ import { CurrencyPipe } from '@angular/common';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FluidModule } from 'primeng/fluid';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ReturnPaymentData, ReturnPaymentDialog } from '../../../shared/components/return-payment-dialog/return-payment-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -25,7 +24,6 @@ import { TranslateService } from '../../../shared/services/translate.service';
     CurrencyPipe,
     AutoCompleteModule,
     FluidModule,
-    ToastModule,
     TranslocoPipe,
     ReturnPaymentDialog,
     ConfirmDialogModule,
@@ -33,7 +31,7 @@ import { TranslateService } from '../../../shared/services/translate.service';
   ],
   templateUrl: './order-return.html',
   styleUrl: './order-return.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class OrderReturn implements OnInit {
 

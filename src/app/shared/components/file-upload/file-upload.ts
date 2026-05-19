@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDest
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FileSelectEvent, FileUpload, FileUploadHandlerEvent, FileUploadModule } from 'primeng/fileupload';
-import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { Subject, takeUntil } from 'rxjs';
@@ -18,14 +17,13 @@ import { TranslocoPipe } from '@ngneat/transloco';
     CommonModule,
     ButtonModule,
     FileUploadModule,
-    ToastModule,
     BadgeModule,
     ProgressBarModule,
     TranslocoPipe
   ],
   templateUrl: './file-upload.html',
   styleUrl: './file-upload.css',
-  providers: [MessageService],
+  providers: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileUploadComponent implements OnInit, OnDestroy {

@@ -5,7 +5,6 @@ import { AuthService } from '../../auth/service/auth';
 import { UserRole } from '../../../models/user.model';
 import { Router } from '@angular/router';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { Table, TableModule, TablePageEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -31,7 +30,6 @@ import { AppStore } from '../../../store/app.store';
   selector: 'app-order-list',
   imports: [
     CurrencyPipe,
-    ToastModule,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -53,7 +51,7 @@ import { AppStore } from '../../../store/app.store';
   ],
   templateUrl: './order-list.html',
   styleUrl: './order-list.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class OrderList implements OnInit {
   appStore = inject(AppStore);

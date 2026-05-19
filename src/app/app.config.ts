@@ -11,6 +11,7 @@ import { BaseUrlInterceptor } from './shared/interceptors/url.interceptor';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco, TranslocoService } from '@ngneat/transloco';
 import { TranslateService } from './shared/services/translate.service';
+import { MessageService } from 'primeng/api';
 
 const storedLang = localStorage.getItem('my_billing_lang');
 
@@ -56,6 +57,7 @@ export const appConfig: ApplicationConfig = {
         translateService.setLocale(config, lang || translate.getDefaultLang());
       });
 
-    })
+    }),
+    MessageService
   ]
 };

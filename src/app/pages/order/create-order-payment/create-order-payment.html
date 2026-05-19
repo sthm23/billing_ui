@@ -1,7 +1,7 @@
 @let order = this.currentOrder();
 <app-dialog [(visible)]="customerDialogVisible" [title]="'order.addCustomer' | transloco"
   [subtitle]="'order.searchCustomer' | transloco" [(data)]="customerData" (dataChange)="handleCustomerCreate($event)" />
-<p-toast />
+
 @if(order) {
 <div class="flex flex-col gap-4">
   <div class="flex items-center gap-4 w-full">

@@ -13,7 +13,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormArray, FormControl, FormGroup, FormsModule, Validators } from "@angular/forms";
 import { FluidModule } from 'primeng/fluid';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-dialog/sale-dialog';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { AdditionalService } from './additional-service/additional-service';
@@ -30,14 +29,13 @@ import { AdditionalService } from './additional-service/additional-service';
     AutoCompleteModule,
     FluidModule,
     FormsModule,
-    ToastModule,
     SaleDialog,
     TranslocoPipe,
     AdditionalService
   ],
   templateUrl: './order-id.html',
   styleUrl: './order-id.css',
-  providers: [MessageService]
+  providers: []
 })
 export class OrderId implements OnInit {
   searchResults = signal<ProductVariant[]>([]);

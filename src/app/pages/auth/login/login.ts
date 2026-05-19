@@ -7,8 +7,7 @@ import { Router, RouterLink } from "@angular/router";
 import { AuthService } from '../service/auth';
 import { switchMap } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe } from '@ngneat/transloco';
 import { TranslateService } from '../../../shared/services/translate.service';
 
 @Component({
@@ -20,12 +19,11 @@ import { TranslateService } from '../../../shared/services/translate.service';
     ButtonModule,
     RouterLink,
     ReactiveFormsModule,
-    ToastModule,
     TranslocoPipe
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
-  providers: [MessageService]
+  providers: []
 })
 export class Login implements OnInit {
   loginForm = new FormGroup({

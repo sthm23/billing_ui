@@ -3,7 +3,6 @@ import { Component, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { Divider } from 'primeng/divider';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { ScrollerModule, ScrollerScrollIndexChangeEvent } from 'primeng/scroller';
 import { TagModule } from 'primeng/tag';
@@ -12,7 +11,6 @@ import { Store } from '../../../models/store.model';
 import { StoreService } from '../service/store';
 import { AddWarehouse } from '../add-warehouse/add-warehouse';
 import { MessageService } from 'primeng/api';
-import { Toast } from "primeng/toast";
 
 @Component({
   selector: 'app-org-view',
@@ -22,16 +20,13 @@ import { Toast } from "primeng/toast";
     OverlayBadgeModule,
     AvatarModule,
     DatePipe,
-    // CurrencyPipe,
-    // Divider,
     ScrollerModule,
     TagModule,
     AddWarehouse,
-    Toast
   ],
   templateUrl: './org-view.html',
   styleUrl: './org-view.css',
-  providers: [MessageService]
+  providers: []
 })
 export class OrgView {
 

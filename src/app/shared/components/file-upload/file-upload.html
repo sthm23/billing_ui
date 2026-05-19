@@ -1,4 +1,3 @@
-<p-toast />
 <div class="font-semibold text-xl mb-4">{{'product.file.title' | transloco}}</div>
 <p-fileupload #fileUploader [customUpload]="true" [multiple]="true" accept="image/*" [maxFileSize]="maxFileSize"
   mode="advanced" (uploadHandler)="customUpload($event)" (onSelect)="onSelectedFiles($event)">

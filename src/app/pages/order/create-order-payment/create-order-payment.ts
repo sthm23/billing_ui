@@ -17,7 +17,6 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { FluidModule } from 'primeng/fluid';
-import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
@@ -41,14 +40,13 @@ type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
     InputNumberModule,
     ReactiveFormsModule,
     FluidModule,
-    ToastModule,
     AccordionModule,
     BadgeModule,
     TranslocoPipe
   ],
   templateUrl: './create-order-payment.html',
   styleUrl: './create-order-payment.css',
-  providers: [MessageService]
+  providers: []
 })
 export class CreateOrderPayment implements OnInit, OnDestroy {
   destroyed$ = new Subject<void>()

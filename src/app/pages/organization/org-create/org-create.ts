@@ -5,7 +5,6 @@ import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { ToastModule } from 'primeng/toast';
 import { RouterModule } from '@angular/router';
 import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
@@ -33,7 +32,6 @@ import { TranslateService } from '../../../shared/services/translate.service';
     FluidModule,
     ButtonModule,
     Select,
-    ToastModule,
     RouterModule,
     InputMaskModule,
     MultiSelectModule,
@@ -43,7 +41,7 @@ import { TranslateService } from '../../../shared/services/translate.service';
   ],
   templateUrl: './org-create.html',
   styleUrl: './org-create.css',
-  providers: [MessageService],
+  providers: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrgCreate implements OnInit, OnDestroy {

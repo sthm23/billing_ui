@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { CategoryService } from '../../../../shared/services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { AttributeDetail } from '../../../../models/product.model';
 import { TranslocoPipe } from '@ngneat/transloco';
@@ -14,7 +13,6 @@ import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-attribute-view',
   imports: [
-    ToastModule,
     ButtonModule,
     TranslocoPipe,
     Tag,
@@ -23,7 +21,7 @@ import { InputTextModule } from 'primeng/inputtext';
   ],
   templateUrl: './attribute-view.html',
   styleUrl: './attribute-view.css',
-  providers: [MessageService]
+  providers: []
 })
 export class AttributeView implements OnInit {
 

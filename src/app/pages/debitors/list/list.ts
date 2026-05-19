@@ -4,7 +4,6 @@ import { AuthService } from '../../auth/service/auth';
 import { UserRole } from '../../../models/user.model';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { Table, TableModule, TablePageEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -28,7 +27,6 @@ import { OrderService } from '../../order/services/order-service';
   selector: 'app-debitor-list',
   imports: [
     CurrencyPipe,
-    ToastModule,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -47,7 +45,7 @@ import { OrderService } from '../../order/services/order-service';
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class DebitorList implements OnInit {
   debitors = signal<Order[]>([])

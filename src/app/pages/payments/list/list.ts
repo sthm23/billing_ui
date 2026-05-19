@@ -19,7 +19,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { SelectModule } from 'primeng/select';
-import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-payment-list',
@@ -38,12 +37,11 @@ import { ToastModule } from 'primeng/toast';
     TagModule,
     CurrencyPipe,
     SelectModule,
-    ToastModule,
     DatePipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class PaymentList {
 

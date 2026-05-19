@@ -8,7 +8,6 @@ import { Button } from "primeng/button";
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
 import { AppStore } from '../../../store/app.store';
 import { TableModule } from 'primeng/table';
 import { Divider } from "primeng/divider";
@@ -26,17 +25,15 @@ import { TranslateService } from '../../../shared/services/translate.service';
     CurrencyPipe,
     TranslocoPipe,
     ConfirmDialogModule,
-    ToastModule,
     DatePipe,
     TableModule,
     Divider,
-    ToastModule,
     IncomingExpenseDialog,
     FormsModule
   ],
   templateUrl: './payment-by-id.html',
   styleUrl: './payment-by-id.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class PaymentById implements OnInit {
   total = signal<number>(1);
@@ -64,14 +61,14 @@ export class PaymentById implements OnInit {
   ngOnInit() {
     const cashboxId = this.route.snapshot.paramMap.get('id');
     if (cashboxId) {
-      this.loadOrder(cashboxId);
+      this.loadCashbox(cashboxId);
     } else {
       console.error('No order ID provided in route');
-      this.router.navigate(['/pages/order/list']);
+      this.router.navigate(['/pages/payments/list']);
     }
   }
 
-  private loadOrder(cashboxId: string) {
+  private loadCashbox(cashboxId: string) {
     this.paymentService.getCashboxById(cashboxId).subscribe({
       next: (res) => {
         this.currentCashbox.set(res);
@@ -80,7 +77,8 @@ export class PaymentById implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.router.navigate(['/pages/order/list']);
+        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Xatolik yuz berdi' });
+        this.router.navigate(['/pages/payments/list']);
       }
     });
   }
@@ -157,7 +155,7 @@ export class PaymentById implements OnInit {
         this.paymentService.closeCashbox(this.currentCashbox()!.id).subscribe({
           next: (res) => {
             this.messageService.add({ severity: 'info', summary: 'Tasdiqlandi', detail: 'Kassa yopildi' });
-            this.loadOrder(this.currentCashbox()!.id);
+            this.loadCashbox(this.currentCashbox()!.id);
           },
           error: (err) => {
             console.error(err);
@@ -166,7 +164,7 @@ export class PaymentById implements OnInit {
         })
       },
       reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Bekor qilindi', detail: 'Siz bekor qildingiz' });
+        this.messageService.add({ severity: 'info', summary: 'Bekor qilindi', detail: 'Siz bekor qildingiz' });
       }
     });
   }
@@ -185,12 +183,12 @@ export class PaymentById implements OnInit {
     const cashboxId = this.currentCashbox()!.id;
     this.paymentService.addTransaction(cashboxId, payload).subscribe({
       next: (res) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Transaction added successfully' });
-        this.loadOrder(cashboxId);
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Tranzaksiya muvaffaqiyatli qo\'shildi' });
+        this.loadCashbox(cashboxId);
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add transaction' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Tranzaksiyani qo\'shishda xatolik yuz berdi' });
       }
     });
   }
