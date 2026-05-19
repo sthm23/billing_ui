@@ -1,10 +1,9 @@
-<p-confirmdialog />
 <div class="card">
   @if(debitors().length > 0) {
   <div class="p-0 md:p-4">
-    <h2 class="text-2xl font-bold mb-4">{{'sidebar.debitor' | transloco}}</h2>
+    <h2 class="text-2xl font-bold mb-4">{{'debitors.old' | transloco}}</h2>
     <p-table #dt [loading]="loader()" [lazy]="true" [value]="debitors()" [paginator]="true" selectionMode="single"
-      (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()"
+      (selectionChange)="selectDebt($event)" [metaKeySelection]="true" dataKey="id" [totalRecords]="total()"
       [rows]="rows" (onPage)="pageChange($event)">
       <ng-template #caption>
         <div class="flex items-center flex-wrap justify-between gap-4">
@@ -16,7 +15,7 @@
               <p-autocomplete class="mr-4!" [placeholder]="'order.search' | transloco" inputId="seachInput"
                 optionLabel="label" [emptyMessage]="'order.noResults' | transloco:{ item: 'order.search' | transloco }"
                 [suggestions]="debitorsSearchResult()" (completeMethod)="search($event)"
-                (onSelect)="selectSearchOption($event)" fluid />
+                (onSelect)="selectSearchOption($event)" fluid disabled="true" />
 
             </p-iconfield>
             <div class="flex gap-x-2 flex-wrap gap-4">
@@ -27,6 +26,11 @@
             </div>
           </div>
 
+          <div class="flex justify-end gap-2 flex-1">
+
+            <p-button type="button" className="sm:align" [label]="'order.create' | transloco" severity="primary"
+              icon="pi pi-plus" (click)="createDebt()" />
+          </div>
         </div>
 
 
@@ -34,31 +38,28 @@
       <ng-template pTemplate="header">
         <tr>
           <th>{{'order.createdAt' | transloco}}</th>
+          <th>{{'debitors.returnedAt' | transloco}}</th>
           <th>{{'user.name' | transloco}}</th>
           <th>{{'user.phone' | transloco}}</th>
-          <th>{{'order.status.name' | transloco}}</th>
           <th>{{'order.total' | transloco}}</th>
           <th>{{'product.inStock' | transloco}}</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-order>
-        <tr [pSelectableRow]="order.status !== 'CANCELLED' ? order : null">
-          <td>{{ order.createdAt | date:'dd.MM.yyyy' }}</td>
-          <td>{{ order.customer.user.fullName }}</td>
-          <td>{{ order.customer.user.phone }}</td>
-          <td>
-            <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco), order.status)"
-              [severity]="getSeverity(order.status)"></p-tag>
-          </td>
-          <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
-          <td>{{ (+order.totalAmount - +order.paidAmount) | currency: " " : 'code' : '0.0' }}</td>
+      <ng-template pTemplate="body" let-debt>
+        <tr [pSelectableRow]="debt">
+          <td>{{ debt.createdAt | date:'dd.MM.yyyy' }}</td>
+          <td>{{ debt.returnedAt | date:'dd.MM.yyyy' }}</td>
+          <td>{{ debt.customer.user.fullName }}</td>
+          <td>{{ debt.customer.user.phone }}</td>
+          <td>{{ debt.totalAmount | currency: " " : 'code' : '0.0' }}</td>
+          <td>{{ (+debt.totalAmount - +debt.paidAmount) | currency: " " : 'code' : '0.0' }}</td>
 
         </tr>
       </ng-template>
     </p-table>
   </div>
   } @else {
-  <h2 class="text-2xl font-bold mb-4">{{'sidebar.debitor' | transloco}}</h2>
+  <h2 class="text-2xl font-bold mb-4">{{'debitors.old' | transloco}}</h2>
   <div class="flex flex-col items-center gap-4 py-8">
     <i class="pi pi-inbox text-6xl text-gray-400"></i>
     <p class="text-gray-500">{{'debitors.noFound' | transloco}}</p>
@@ -66,6 +67,8 @@
     <p-button type="button" [label]="'debitors.clearFilter' | transloco" icon="pi pi-filter-slash"
       (click)="clearFilter()" />
     }
+    <p-button type="button" className="sm:align" [label]="'order.create' | transloco" severity="primary"
+      icon="pi pi-plus" (click)="createDebt()" />
   </div>
   }
 

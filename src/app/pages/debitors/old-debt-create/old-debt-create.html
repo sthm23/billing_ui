@@ -1,0 +1,52 @@
+<div class="card" [formGroup]="oldDebtForm">
+  <div class="flex gap-4">
+    <p-button icon="pi pi-arrow-left" outlined="true" (onClick)="backList()" />
+    <h3 class="!my-0">{{'debitors.createTitle' | transloco}}</h3>
+  </div>
+
+  <app-loader [loading]="false">
+    <p-fluid>
+      <div class="flex">
+        <div class="p-4 flex flex-col gap-6 w-full">
+
+          <div class="flex flex-col md:flex-row">
+            <div class="flex flex-row md:flex-col flex-wrap gap-2 w-full">
+              <label>{{'order.customer' | transloco}}</label>
+              <app-customer-search (customerSelected)="handleCustomerSelect($event)" />
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="amount">{{'order.total' | transloco}}</label>
+              <p-inputnumber id="amount" formControlName="amount" />
+            </div>
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="createdAt">{{'order.createdAt' | transloco}}</label>
+              <p-datepicker id="createdAt" formControlName="createdAt" showIcon="true" showClear="true" class="w-full"
+                dateFormat="dd/mm/yy" />
+            </div>
+
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="returnedAt">{{'debitors.returnedAt' | transloco}}</label>
+              <p-datepicker id="returnedAt" formControlName="returnedAt" showIcon="true" showClear="true" class="w-full"
+                dateFormat="dd/mm/yy" />
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row">
+            <div class="flex flex-wrap gap-2 w-full">
+              <label for="ownerId">{{'payment.comment' | transloco}}</label>
+              <textarea rows="5" cols="30" pTextarea formControlName="description" [autoResize]="true"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 w-full">
+        <p-button [label]="'organization.cancel' | transloco" variant="outlined" (onClick)="clearForm()"></p-button>
+        <p-button [label]="'organization.submit' | transloco" severity="contrast" (onClick)="submitForm()"></p-button>
+      </div>
+    </p-fluid>
+  </app-loader>
+</div>

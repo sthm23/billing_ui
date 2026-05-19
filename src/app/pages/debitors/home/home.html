@@ -1,0 +1,9 @@
+<p-tabs [value]="activeTab">
+  <p-tablist>
+    <p-tab routerLink="/pages/debitor/list" value="list">{{'debitors.actual' | transloco}}</p-tab>
+    <p-tab routerLink="/pages/debitor/list/old" value="old">{{'debitors.old' | transloco}}</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <router-outlet></router-outlet>
+  </p-tabpanels>
+</p-tabs>

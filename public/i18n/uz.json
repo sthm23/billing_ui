@@ -367,7 +367,11 @@
   },
   "debitors": {
     "noFound": "Qarzdor topilmadi.",
-    "clearFilter": "Filtrni tozalash"
+    "clearFilter": "Filtrni tozalash",
+    "actual": "Aktual qarzdorlar",
+    "old": "Eski qarzdorlar",
+    "createTitle": "Qarzdor yaratish",
+    "returnedAt": "Qaytarish sanasi"
   },
   "payment": {
     "noFound": "To'lov topilmadi.",
