@@ -1,4 +1,3 @@
-<p-toast />
 <p-drawer [header]="'order.warehouseTitle' | transloco" [dismissible]="false" [closable]="false" [modal]="false"
   [visible]="visibleDrawer()" position="right">
   <p-select [required]="true" [options]="warehouse()" [(ngModel)]="warehouseId" optionLabel="name" optionValue="id"

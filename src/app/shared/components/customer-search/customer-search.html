@@ -1,0 +1,30 @@
+<app-dialog [(visible)]="customerDialogVisible" [title]="'order.addCustomer' | transloco"
+  [subtitle]="'order.searchCustomer' | transloco" [(data)]="customerData" (dataChange)="handleCustomerCreate($event)" />
+@let customer = this._customer();
+@if(customer) {
+<div class="flex items-center gap-2">
+  <div>
+    <div class="font-semibold">{{customer.name}}</div>
+    <div class="text-sm text-gray-500">{{customer.phone}}</div>
+  </div>
+  <div>
+    @if(!isClearable) {
+    <p-button icon="pi pi-times" text (click)="clearCustomer()" />
+    }
+  </div>
+</div>
+}@else {
+<p-inputgroup>
+  <p-inputgroup-addon>
+    <i class="pi pi-user"></i>
+  </p-inputgroup-addon>
+  <p-autocomplete class="mr-4!" [placeholder]="'order.searchCustomerPlaceholder' | transloco" inputId="customer"
+    optionLabel="label" [emptyMessage]="'order.noResults' | transloco:{ item: 'order.customer' | transloco }"
+    [suggestions]="userSearchResult()" (completeMethod)="search($event)" (onSelect)="selectSearchOption($event)"
+    fluid />
+  <p-button type="button" (click)="customerDialogVisible = true">
+    <i class="pi pi-plus"></i>
+    <span class="hidden sm:block">{{'order.addCustomer' | transloco}}</span>
+  </p-button>
+</p-inputgroup>
+}

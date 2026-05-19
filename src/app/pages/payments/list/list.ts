@@ -19,7 +19,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { SelectModule } from 'primeng/select';
-import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-payment-list',
@@ -38,12 +37,11 @@ import { ToastModule } from 'primeng/toast';
     TagModule,
     CurrencyPipe,
     SelectModule,
-    ToastModule,
     DatePipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class PaymentList {
 
@@ -113,7 +111,7 @@ export class PaymentList {
       error: (err) => {
         this.loader.set(false);
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }
@@ -179,7 +177,7 @@ export class PaymentList {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to open cashbox' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to open cashbox' });
       }
     });
   }

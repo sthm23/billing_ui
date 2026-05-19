@@ -14,7 +14,6 @@ import { FluidModule } from 'primeng/fluid';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../auth/service/auth';
 import { MenuItem, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { Menu, MenuModule } from 'primeng/menu';
 import { Table, TableModule, TableRowCollapseEvent } from 'primeng/table';
@@ -77,7 +76,6 @@ type DialogData = {
     InputTextModule,
     FluidModule,
     InputNumberModule,
-    ToastModule,
     DividerModule,
     TableModule,
     FormsModule,
@@ -101,7 +99,7 @@ type DialogData = {
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
-  providers: [MessageService]
+  providers: []
 })
 export class ProductCard implements OnInit, OnDestroy {
   productCard = signal<ProductDetail | null>(null);
@@ -299,7 +297,7 @@ export class ProductCard implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error adding inventory:', err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add inventory' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add inventory' });
       }
     })
 

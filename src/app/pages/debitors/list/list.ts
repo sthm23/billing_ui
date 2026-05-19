@@ -1,23 +1,16 @@
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
-import { CreateOrderPayload, Order, OrderChannel, OrderParams, OrderStatus } from '../../../models/order.model';
+import { Order, OrderParams, OrderStatus } from '../../../models/order.model';
 import { AuthService } from '../../auth/service/auth';
-import { UserRole } from '../../../models/user.model';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { Table, TableModule, TablePageEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TagModule } from "primeng/tag";
-import { SelectButtonModule } from 'primeng/selectbutton';
 import { DatePickerModule } from 'primeng/datepicker';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { FormsModule } from '@angular/forms';
-import { DrawerModule } from 'primeng/drawer';
-import { SelectModule } from 'primeng/select';
-import { Warehouse } from '../../../models/store.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { TranslateService } from '../../../shared/services/translate.service';
@@ -28,18 +21,13 @@ import { OrderService } from '../../order/services/order-service';
   selector: 'app-debitor-list',
   imports: [
     CurrencyPipe,
-    ToastModule,
     TableModule,
     ButtonModule,
-    InputTextModule,
     TagModule,
-    SelectButtonModule,
     DatePickerModule,
     IconFieldModule,
     InputIconModule,
     FormsModule,
-    DrawerModule,
-    SelectModule,
     ConfirmDialogModule,
     TranslocoPipe,
     DatePipe,
@@ -47,15 +35,12 @@ import { OrderService } from '../../order/services/order-service';
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class DebitorList implements OnInit {
   debitors = signal<Order[]>([])
-  visibleDrawer = signal(false);
   selectedOrder: Order | null = null;
-  warehouseId: string = '';
   storeId: string = '';
-  warehouse = signal<Warehouse[]>([])
 
   loader = signal(false);
   first = signal(1);
@@ -82,8 +67,6 @@ export class DebitorList implements OnInit {
     this.loader.set(true);
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser.staff) {
-      const warehouses = currentUser.staff.warehouse.map(w => ({ ...w.warehouse }));
-      this.warehouse.set(warehouses);
       this.storeId = currentUser.staff.storeId;
     }
     this.loadOrders()
@@ -114,7 +97,7 @@ export class DebitorList implements OnInit {
       error: (err) => {
         this.loader.set(false);
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }
@@ -129,62 +112,6 @@ export class DebitorList implements OnInit {
       pageSize: this.rows
     }
     this.loadOrders(params);
-  }
-
-  createOrder() {
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser) {
-      console.error('User not authenticated')
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'User not authenticated' })
-      return
-    }
-    if (!currentUser.staff) {
-      console.error('Only staff can create orders')
-      this.messageService.add({ severity: 'error', summary: 'Permission', detail: 'Only staff can create orders' })
-      return
-    }
-    if (currentUser.role === UserRole.ADMIN) {
-      console.error('Admin cannot create orders')
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Admin cannot create orders' })
-      return
-    }
-    if (currentUser.staff.warehouse.length === 1) {
-      const warehouseId = currentUser.staff.warehouse[0].warehouseId;
-      this.proceedCreatingOrder(this.storeId, warehouseId);
-      return;
-    } else {
-      this.visibleDrawer.set(true);
-      return;
-    }
-  }
-
-  handleWarehouseChange() {
-    if (this.warehouseId.length > 0) {
-      this.visibleDrawer.set(false);
-      this.proceedCreatingOrder(this.storeId, this.warehouseId);
-    }
-  }
-
-  private proceedCreatingOrder(storeId: string, warehouseId: string) {
-    const payload: CreateOrderPayload = {
-      storeId,
-      warehouseId,
-      channel: OrderChannel.POS,
-    }
-    this.orderService.createOrder(payload).subscribe({
-      next: (res) => {
-        console.log('Order created successfully', res)
-        this.router.navigate(['/pages/order', res.id])
-      },
-      error: (err) => {
-        console.error('Failed to create order', err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create order' })
-      }
-    })
-  }
-
-  createReturnOrder(id: string) {
-    this.router.navigate(['/pages/order/return', id])
   }
 
   getSeverity(status: OrderStatus) {
@@ -202,20 +129,6 @@ export class DebitorList implements OnInit {
       default:
         return null;
     }
-  }
-
-  deleteOrder(order: Order) {
-    this.orderService.deleteOrder(order.id).subscribe({
-      next: (res) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message || 'Order deleted successfully' });
-        this.loadOrders();
-      },
-      error: (err) => {
-        console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to delete order' });
-      }
-    })
-
   }
 
   selectOrder(order: Order) {
@@ -239,40 +152,6 @@ export class DebitorList implements OnInit {
       default:
         return;
     }
-  }
-
-  isDisable(order: Order, action: 'RETURN' | 'DELETE'): boolean {
-    if (action === 'RETURN') {
-      switch (order.status) {
-        case OrderStatus.COMPLETED:
-          return false;
-        case OrderStatus.DEBT:
-          return false;
-        case OrderStatus.CANCELLED:
-        case OrderStatus.HOLD:
-        case OrderStatus.CREATED:
-        default:
-          return true;
-      }
-    }
-    if (action === 'DELETE') {
-      switch (order.status) {
-        case OrderStatus.CREATED:
-          return false;
-        case OrderStatus.HOLD:
-          return false;
-        case OrderStatus.DEBT:
-        case OrderStatus.COMPLETED:
-        case OrderStatus.CANCELLED:
-        default:
-          return true;
-      }
-    }
-    return false;
-  }
-
-  goToReturnPage(order: Order) {
-    this.router.navigate(['/pages/order/return', order.id])
   }
 
   getTranslatedText(translate: string, value: string): string {
@@ -320,7 +199,7 @@ export class DebitorList implements OnInit {
       },
       error: (err) => {
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }

@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Toast } from "primeng/toast";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  template: `<router-outlet></router-outlet>`
+  imports: [RouterOutlet, Toast],
+  template: `
+  <p-toast />
+  <router-outlet></router-outlet>
+  `,
 })
 export class App { }

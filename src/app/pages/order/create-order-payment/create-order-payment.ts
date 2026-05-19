@@ -5,22 +5,17 @@ import { CreateOrderPaymentPayload, OrderDetail, OrderDetailItem, OrderPayment, 
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { DialogComponent, DialogData } from '../../../shared/components/dialog/dialog';
-import { UserService } from '../../user/service/user.service';
 import { MessageService } from 'primeng/api';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Subject, takeUntil } from 'rxjs';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { FluidModule } from 'primeng/fluid';
-import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { CustomerSearch, SearchCustomer } from "../../../shared/components/customer-search/customer-search";
 
 type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE' | 'TRANSFER';
 type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
@@ -32,23 +27,19 @@ type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
     ButtonModule,
     CurrencyPipe,
     DatePipe,
-    DialogComponent,
     SelectButtonModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    AutoCompleteModule,
     InputTextModule,
     InputNumberModule,
     ReactiveFormsModule,
     FluidModule,
-    ToastModule,
     AccordionModule,
     BadgeModule,
-    TranslocoPipe
+    TranslocoPipe,
+    CustomerSearch
   ],
   templateUrl: './create-order-payment.html',
   styleUrl: './create-order-payment.css',
-  providers: [MessageService]
+  providers: []
 })
 export class CreateOrderPayment implements OnInit, OnDestroy {
   destroyed$ = new Subject<void>()
@@ -58,12 +49,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
   orderItems = signal<OrderDetailItem[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
-  customer = signal<{ label: string, name: string, id: string, phone: string } | null>(null);
-
-  userSearchResult = signal<{ name: string, id: string, phone: string }[]>([]);
-
-  customerDialogVisible = false;
-  customerData: DialogData = { name: '', phone: '' };
+  customer = signal<SearchCustomer | null>(null);
 
   paymentOptions = [
     { label: 'CASH', value: 'CASH', icon: 'pi pi-money-bill' },
@@ -86,7 +72,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private orderService: OrderService,
-    private userService: UserService,
     private messageService: MessageService,
   ) { }
 
@@ -119,6 +104,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load order' });
         this.router.navigate(['/pages/order/list']);
       }
     });
@@ -134,22 +120,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       methods.forEach(method => {
         methodControls.get(method as keyof PaymentMethodGroup)!.enable({ onlySelf: true });
       })
-    });
-  }
-
-  handleCustomerCreate(data: DialogData) {
-    const phone = '+998' + data.phone?.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '').trim()
-    const orderId = this.currentOrder()?.id!;
-    this.userService.createCustomer({ fullName: data.name, phone, orderId }).subscribe({
-      next: (res) => {
-        const phoneTemplate = this.formatPhoneNumber(res.phone);
-
-        this.customer.set({ label: res.fullName + ' ' + phoneTemplate, name: res.fullName, id: res.customer!.id, phone: phoneTemplate });
-        this.customerDialogVisible = false;
-      },
-      error: (err) => {
-        console.error(err);
-      }
     });
   }
 
@@ -197,7 +167,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
           },
           error: (err) => {
             console.error(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to add payment to order' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add payment to order' });
           }
         });
         return;
@@ -210,46 +180,23 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error(err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to create payment' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create payment' });
         }
       })
     }
   }
-  selectSearchOption(option: AutoCompleteSelectEvent) {
-    const selectedUser = option.value;
-    const customerList = this.userSearchResult();
-    const matchedUser = customerList.find(user => user.id === selectedUser.id);
-    const phoneTemplate = this.formatPhoneNumber(matchedUser!.phone);
-    const customerOrderPayload = {
-      orderId: this.currentOrder()!.id,
-      customerId: selectedUser.id
-    }
-    this.orderService.setCustomerToOrder(customerOrderPayload).subscribe({
-      next: (res) => {
-        this.customer.set({ label: matchedUser?.name + ' ' + phoneTemplate, name: matchedUser?.name || selectedUser.name, id: selectedUser.id, phone: phoneTemplate });
-      },
-      error: (err) => { }
-    });
-  }
-  search(event: AutoCompleteCompleteEvent) {
-    const query = event.query;
-    this.userService.searchCustomers(query).subscribe({
-      next: (res) => {
-        const users = res.data.map(user => ({ label: user.fullName + ' ' + this.formatPhoneNumber(user.phone), name: user.fullName, id: user.customer!.id, phone: user.phone }));
-        this.userSearchResult.set(users);
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-  }
+
+
 
   clearCustomer() {
     this.orderService.clearCustomerFromOrder(this.currentOrder()!.id).subscribe({
       next: (res) => {
         this.customer.set(null)
       },
-      error: (err) => { },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to clear customer from order' });
+      },
     });
   }
 
@@ -275,6 +222,16 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       }
     }
     return false;
+  }
+
+  handleCustomerSelect(customer: SearchCustomer | null) {
+    if (!customer) {
+      this.clearCustomer();
+      return;
+    }
+
+    this.customer.set(customer);
+
   }
 
   ngOnDestroy(): void {

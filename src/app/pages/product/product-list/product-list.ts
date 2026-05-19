@@ -6,7 +6,6 @@ import { TableModule, Table, TablePageEvent } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
 import { delay } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';
 import { BadgeModule } from 'primeng/badge';
@@ -23,7 +22,6 @@ import { TranslocoPipe } from '@ngneat/transloco';
     TableModule,
     FormsModule,
     ButtonModule,
-    ToastModule,
     BadgeModule,
     ImageModule,
     ConfirmDialogModule,
@@ -33,7 +31,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class ProductList implements OnInit, OnDestroy {
   selectedProduct!: Product;
@@ -68,7 +66,7 @@ export class ProductList implements OnInit, OnDestroy {
         error: (err) => {
           this.appStore.stopLoader();
           console.error('Error fetching products:', err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch products' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to fetch products' });
         }
       });
   }
@@ -122,7 +120,7 @@ export class ProductList implements OnInit, OnDestroy {
           error: (err) => {
             this.appStore.stopLoader();
             console.error('Error archiving product:', err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to archive product' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to archive product' });
           }
         });
 

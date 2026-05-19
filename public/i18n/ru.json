@@ -367,7 +367,11 @@
   },
   "debitors": {
     "noFound": "Дебитор не найден.",
-    "clearFilter": "Очистить фильтр"
+    "clearFilter": "Очистить фильтр",
+    "actual": "Актуальные дебиторы",
+    "old": "Старые дебиторы",
+    "createTitle": "Создать дебитор",
+    "returnedAt": "Дата возврата"
   },
   "payment": {
     "noFound": "Платеж не найден.",
@@ -436,5 +440,10 @@
     "debitor": "ДБТ",
     "payments": "ОПЛ",
     "attribute": "АТР"
+  },
+  "notification": {
+    "success": "Успех",
+    "error": "Ошибка",
+    "info": "Информация"
   }
 }

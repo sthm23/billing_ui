@@ -367,7 +367,11 @@
   },
   "debitors": {
     "noFound": "No debitor found.",
-    "clearFilter": "Clear filter"
+    "clearFilter": "Clear filter",
+    "actual": "Actual debitors",
+    "old": "Old debitors",
+    "createTitle": "Create debitor",
+    "returnedAt": "Returned at"
   },
   "payment": {
     "noFound": "No payment found.",
@@ -434,5 +438,10 @@
     "debitor": "DEB",
     "payments": "PAY",
     "attribute": "ATTR"
+  },
+  "notification": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Information"
   }
 }

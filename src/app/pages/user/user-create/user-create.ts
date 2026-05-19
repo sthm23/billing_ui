@@ -6,7 +6,6 @@ import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { ToastModule } from 'primeng/toast';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Loader } from '../../../shared/components/loader/loader';
 import { MessageService } from 'primeng/api';
@@ -20,7 +19,7 @@ import { SelectType } from '../../../models/app.models';
 import { StoreService } from '../../organization/service/store';
 import { AuthService } from '../../auth/service/auth';
 import { Store } from '../../../models/store.model';
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslateService } from '../../../shared/services/translate.service';
 @Component({
@@ -33,7 +32,6 @@ import { TranslateService } from '../../../shared/services/translate.service';
     FluidModule,
     ButtonModule,
     Select,
-    ToastModule,
     RouterModule,
     InputMaskModule,
     PasswordModule,
@@ -42,7 +40,7 @@ import { TranslateService } from '../../../shared/services/translate.service';
   templateUrl: './user-create.html',
   styleUrl: './user-create.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService]
+  providers: []
 })
 export class UserCreate implements OnInit, OnDestroy {
   userForm = new FormGroup({
@@ -109,7 +107,7 @@ export class UserCreate implements OnInit, OnDestroy {
             })) || []);
           },
           error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
           }
         })
     }
@@ -140,7 +138,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.warehouses.set(warehouses);
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
         }
       });
     } else {
@@ -149,7 +147,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.storeList.set(stores.data);
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
         }
       });
     }

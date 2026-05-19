@@ -1,4 +1,6 @@
-import { UserRole, UserType } from "./user.model"
+import { TransactionPayload } from "./payment.model"
+import { Store } from "./store.model"
+import { Customer, Staff, UserRole, UserType } from "./user.model"
 
 export enum PaymentType {
   CASH = 'CASH',
@@ -166,4 +168,66 @@ export interface CreateOrderPaymentPayload {
   orderId: string
   customerId: string | null
   payments: OrderPaymentPayload[]
+}
+
+export enum DebtStatus {
+  PAID = 'PAID',
+  ACTIVE = 'ACTIVE'
+}
+export interface Debt {
+  id: string
+  storeId: string
+  customerId: string
+  description?: string
+  totalAmount: number
+  paidAmount: number
+  status: DebtStatus
+  createdAt: string
+  returnedAt?: string
+
+  customer: Customer
+  store: Store
+  payments: DebtPayment[]
+}
+
+export interface DebtPayment {
+  id: string
+  debtId: string
+  amount: number
+  type: PaymentType
+  createdBy: string
+  createdAt: string
+
+  debt: Debt
+  cashier: Staff
+
+  cashTransactions: TransactionPayload[]
+}
+
+export interface CreateDebtPayload {
+  storeId: string;
+  customerId: string;
+  amount: number;
+  description?: string;
+  createdAt?: string;
+  returnedAt?: string
+}
+export interface CreateDebtPaymentItemDto {
+  type: PaymentType
+  amount: number
+}
+export interface DebtPaymentPayload {
+  debtId: string;
+  warehouseId: string;
+  payments: CreateDebtPaymentItemDto[];
+}
+
+export interface DebtParams {
+  currentPage?: number
+  pageSize?: number
+  fromDate?: Date
+  toDate?: Date
+  search?: string
+  status?: DebtStatus[]
+  customerId?: string
 }

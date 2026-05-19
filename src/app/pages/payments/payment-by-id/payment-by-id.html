@@ -1,6 +1,5 @@
 @let cashbox = currentCashbox();
 <p-confirmdialog />
-<p-toast />
 <app-incoming-expense-dialog [(visible)]="visibleExpenseDialog" [title]="'payment.detail' | transloco"
   [type]="transactionType" (data)="handlePaymentTransaction($event)" />
 @if(cashbox) {

@@ -6,7 +6,6 @@ import { FluidModule } from 'primeng/fluid';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { ToastModule } from 'primeng/toast';
 import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { Loader } from '../../../shared/components/loader/loader';
@@ -38,7 +37,6 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     FluidModule,
     ButtonModule,
     SelectModule,
-    ToastModule,
     RouterModule,
     InputNumberModule,
     FileUploadComponent,
@@ -51,7 +49,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService]
+  providers: []
 })
 export class ProductCreate implements OnInit, OnDestroy {
   categories = signal<MultiSelectType[]>([])

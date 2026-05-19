@@ -367,7 +367,11 @@
   },
   "debitors": {
     "noFound": "Qarzdor topilmadi.",
-    "clearFilter": "Filtrni tozalash"
+    "clearFilter": "Filtrni tozalash",
+    "actual": "Aktual qarzdorlar",
+    "old": "Eski qarzdorlar",
+    "createTitle": "Qarzdor yaratish",
+    "returnedAt": "Qaytarish sanasi"
   },
   "payment": {
     "noFound": "To'lov topilmadi.",
@@ -436,5 +440,10 @@
     "debitor": "QARZ",
     "payments": "PUL",
     "attribute": "ATTR"
+  },
+  "notification": {
+    "success": "Muvaffaqiyat",
+    "error": "Xato",
+    "info": "Ma'lumot"
   }
 }

@@ -12,6 +12,7 @@ import { TranslocoPipe } from '@ngneat/transloco';
 import { UserInfo, UserStockMovement } from '../../models/user.model';
 import { AuthService } from '../auth/service/auth';
 import { UserService } from '../user/service/user.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-profile',
@@ -44,6 +45,7 @@ export class Profile implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private messageService: MessageService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -57,6 +59,7 @@ export class Profile implements OnInit {
       } else if (currentUser && currentUser.id) {
         this.loadCurrentUser(currentUser.id);
       } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'User not found' });
         this.router.navigate(['/pages/product/list']);
       }
     })
@@ -76,6 +79,7 @@ export class Profile implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching current user:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load user information' });
         this.router.navigate(['/']);
       }
     });

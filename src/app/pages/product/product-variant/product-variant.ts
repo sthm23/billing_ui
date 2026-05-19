@@ -14,7 +14,6 @@ import { FluidModule } from 'primeng/fluid';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AuthService } from '../../auth/service/auth';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
@@ -49,7 +48,6 @@ type VariantForm = {
     InputTextModule,
     FluidModule,
     InputNumberModule,
-    ToastModule,
     TagModule,
     DividerModule,
     AvatarModule,
@@ -57,7 +55,7 @@ type VariantForm = {
   ],
   templateUrl: './product-variant.html',
   styleUrl: './product-variant.css',
-  providers: [MessageService]
+  providers: []
 })
 export class ProductVariant implements OnInit, OnDestroy {
   productCard = signal<ProductDetail | null>(null);
