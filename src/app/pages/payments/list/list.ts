@@ -111,7 +111,7 @@ export class PaymentList {
       error: (err) => {
         this.loader.set(false);
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }
@@ -177,7 +177,7 @@ export class PaymentList {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to open cashbox' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to open cashbox' });
       }
     });
   }

@@ -66,7 +66,7 @@ export class ProductList implements OnInit, OnDestroy {
         error: (err) => {
           this.appStore.stopLoader();
           console.error('Error fetching products:', err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch products' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to fetch products' });
         }
       });
   }
@@ -120,7 +120,7 @@ export class ProductList implements OnInit, OnDestroy {
           error: (err) => {
             this.appStore.stopLoader();
             console.error('Error archiving product:', err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to archive product' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to archive product' });
           }
         });
 

@@ -226,7 +226,7 @@ export class OrderId implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to proceed to payment' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to proceed to payment' });
       },
     });
   }
@@ -249,7 +249,7 @@ export class OrderId implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to proceed to payment' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to proceed to payment' });
       },
     });
   }

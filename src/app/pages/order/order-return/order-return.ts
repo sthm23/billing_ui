@@ -163,7 +163,7 @@ export class OrderReturn implements OnInit {
           },
           error: (err) => {
             console.error(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to process return' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to process return' });
           }
         });
       },

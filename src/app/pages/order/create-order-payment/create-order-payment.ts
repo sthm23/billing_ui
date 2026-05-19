@@ -117,6 +117,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load order' });
         this.router.navigate(['/pages/order/list']);
       }
     });
@@ -195,7 +196,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
           },
           error: (err) => {
             console.error(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to add payment to order' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add payment to order' });
           }
         });
         return;
@@ -208,7 +209,7 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error(err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to create payment' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create payment' });
         }
       })
     }
@@ -226,7 +227,10 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       next: (res) => {
         this.customer.set({ label: matchedUser?.name + ' ' + phoneTemplate, name: matchedUser?.name || selectedUser.name, id: selectedUser.id, phone: phoneTemplate });
       },
-      error: (err) => { }
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to set customer to order' });
+      }
     });
   }
   search(event: AutoCompleteCompleteEvent) {
@@ -247,7 +251,10 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       next: (res) => {
         this.customer.set(null)
       },
-      error: (err) => { },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to clear customer from order' });
+      },
     });
   }
 

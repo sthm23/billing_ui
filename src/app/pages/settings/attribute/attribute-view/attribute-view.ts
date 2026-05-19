@@ -56,7 +56,7 @@ export class AttributeView implements OnInit {
         this.currentAttributeValues.set(res);
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch attribute details' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to fetch attribute details' });
         this.router.navigate(['pages/settings/attribute/list']);
       },
     })
@@ -84,7 +84,7 @@ export class AttributeView implements OnInit {
           this.attrValueForm.reset();
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add attribute value' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add attribute value' });
         }
       });
     } else {

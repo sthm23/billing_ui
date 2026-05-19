@@ -109,7 +109,7 @@ export class OrgCreate implements OnInit, OnDestroy {
         this.translateObject = translate;
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch data' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to fetch data' });
       }
     })
   }

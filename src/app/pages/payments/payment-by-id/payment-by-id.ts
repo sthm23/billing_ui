@@ -77,7 +77,7 @@ export class PaymentById implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Xatolik yuz berdi' });
+        this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Kassa ma\'lumotlarini olishda xatolik yuz berdi' });
         this.router.navigate(['/pages/payments/list']);
       }
     });
@@ -159,7 +159,7 @@ export class PaymentById implements OnInit {
           },
           error: (err) => {
             console.error(err);
-            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Kassani yopishda xatolik yuz berdi' });
+            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Kassani yopishda xatolik yuz berdi' });
           }
         })
       },
@@ -188,7 +188,7 @@ export class PaymentById implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Tranzaksiyani qo\'shishda xatolik yuz berdi' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Tranzaksiyani qo\'shishda xatolik yuz berdi' });
       }
     });
   }

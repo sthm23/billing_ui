@@ -128,7 +128,7 @@ export class OrderList implements OnInit {
       error: (err) => {
         this.appStore.stopLoader();
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }
@@ -196,7 +196,7 @@ export class OrderList implements OnInit {
       error: (err) => {
         this.appStore.stopLoader();
         console.error('Failed to create order', err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create order' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create order' })
       }
     })
   }
@@ -257,7 +257,7 @@ export class OrderList implements OnInit {
       error: (err) => {
         this.appStore.stopLoader();
         console.error(err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error.message || 'Failed to delete order' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to delete order' });
       }
     })
 
@@ -375,7 +375,7 @@ export class OrderList implements OnInit {
       },
       error: (err) => {
         console.error(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to load orders' })
       }
     })
   }

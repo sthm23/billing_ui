@@ -297,7 +297,7 @@ export class ProductCard implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error adding inventory:', err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add inventory' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add inventory' });
       }
     })
 

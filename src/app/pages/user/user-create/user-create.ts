@@ -107,7 +107,7 @@ export class UserCreate implements OnInit, OnDestroy {
             })) || []);
           },
           error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+            this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
           }
         })
     }
@@ -138,7 +138,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.warehouses.set(warehouses);
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'kon ma\'lumotlarini olishda xatolik yuz berdi' });
         }
       });
     } else {
@@ -147,7 +147,7 @@ export class UserCreate implements OnInit, OnDestroy {
           this.storeList.set(stores.data);
         },
         error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
+          this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Do\'konlar ro\'yxatini olishda xatolik yuz berdi' });
         }
       });
     }
