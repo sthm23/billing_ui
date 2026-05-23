@@ -41,7 +41,6 @@ export class CustomerSearch implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const customerChange = changes['customer'];
-    console.log(customerChange);
     if (customerChange && customerChange.currentValue) {
       this._customer.set(customerChange.currentValue);
     }
