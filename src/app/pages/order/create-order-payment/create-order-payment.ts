@@ -1,24 +1,14 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../services/order-service';
-import { CreateOrderPaymentPayload, OrderDetail, OrderDetailItem, OrderPayment, OrderPaymentPayload, OrderStatus, PaymentType } from '../../../models/order.model';
+import { CreateOrderPaymentPayload, OrderDetail, OrderDetailItem, OrderStatus } from '../../../models/order.model';
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { Subject, takeUntil } from 'rxjs';
-import { FluidModule } from 'primeng/fluid';
-import { AccordionModule } from 'primeng/accordion';
-import { BadgeModule } from 'primeng/badge';
 import { TranslocoPipe } from '@ngneat/transloco';
-import { CustomerSearch, SearchCustomer } from "../../../shared/components/customer-search/customer-search";
-
-type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE' | 'TRANSFER';
-type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
+import { SearchCustomer } from "../../../shared/components/customer-search/customer-search";
+import { PaymentOperation } from '../../../shared/components/payment-operation/payment-operation';
 
 @Component({
   selector: 'app-create-order-payment',
@@ -27,46 +17,16 @@ type PaymentMethodGroup = { [key in PaymentMethod]: FormControl<number> };
     ButtonModule,
     CurrencyPipe,
     DatePipe,
-    SelectButtonModule,
-    InputTextModule,
-    InputNumberModule,
-    ReactiveFormsModule,
-    FluidModule,
-    AccordionModule,
-    BadgeModule,
     TranslocoPipe,
-    CustomerSearch
+    PaymentOperation
   ],
   templateUrl: './create-order-payment.html',
   styleUrl: './create-order-payment.css',
   providers: []
 })
-export class CreateOrderPayment implements OnInit, OnDestroy {
-  destroyed$ = new Subject<void>()
-  totalAmount = signal<number>(0);
-  saleAmount = signal<number>(0);
-  paymentAmounts = signal<number>(0);
+export class CreateOrderPayment implements OnInit {
   orderItems = signal<OrderDetailItem[]>([]);
-
   currentOrder = signal<OrderDetail | null>(null);
-  customer = signal<SearchCustomer | null>(null);
-
-  paymentOptions = [
-    { label: 'CASH', value: 'CASH', icon: 'pi pi-money-bill' },
-    { label: 'CARD', value: 'CARD', icon: 'pi pi-credit-card' },
-    { label: 'CLICK', value: 'ONLINE', icon: 'pi pi-credit-card' },
-    { label: 'PEREVOD', value: 'TRANSFER', icon: 'pi pi-calculator' },
-  ]
-
-  paymentForm = new FormGroup({
-    paymentMethod: new FormControl<string[]>(['CASH'], { nonNullable: true }),
-    method: new FormGroup<PaymentMethodGroup>({
-      CASH: new FormControl<number>({ value: 0, disabled: false }, { nonNullable: true }),
-      CARD: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
-      ONLINE: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
-      TRANSFER: new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true }),
-    }),
-  });
 
   constructor(
     private route: ActivatedRoute,
@@ -78,7 +38,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
 
   ngOnInit() {
     const orderId = this.route.snapshot.paramMap.get('id');
-    this.paymentChanged()
     if (orderId) {
       this.loadOrder(orderId);
     } else {
@@ -93,14 +52,6 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       next: (res) => {
         this.currentOrder.set(res);
         this.orderItems.set(res.items);
-        this.totalAmount.set(res.items.reduce((total, item) => total + (item.retailPrice * item.quantity), 0));
-        if (res.customer && res.customer.id && res.customer.user) {
-          this.customer.set({ label: res.customer.user.fullName + ' ' + this.formatPhoneNumber(res.customer.user.phone), name: res.customer.user.fullName, id: res.customer.id, phone: this.formatPhoneNumber(res.customer.user.phone) });
-        }
-        this.saleAmount.set(res.items.reduce((total, item) => total + (item.sale * item.quantity), 0));
-        if (res.payments && res.payments.length > 0) {
-          this.paymentAmounts.set(res.payments.reduce((total, payment) => total + +payment.amount, 0));
-        }
       },
       error: (err) => {
         console.error(err);
@@ -110,94 +61,54 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
     });
   }
 
-  private paymentChanged() {
-    const methodControls = this.paymentForm.get('method') as FormGroup<PaymentMethodGroup>;
-    const validMethods: PaymentMethod[] = ['CASH', 'CARD', 'ONLINE', 'TRANSFER'];
-    this.paymentForm.get('paymentMethod')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((methods) => {
-      validMethods.forEach(method => {
-        methodControls.get(method)!.disable({ onlySelf: true });
-      })
-      methods.forEach(method => {
-        methodControls.get(method as keyof PaymentMethodGroup)!.enable({ onlySelf: true });
-      })
+  addPaymentToOrder(id: string, data: CreateOrderPaymentPayload) {
+    this.orderService.addPaymentToOrder(id, data).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
+        this.router.navigate(['/pages/order/list']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add payment to order' });
+      }
     });
   }
 
-  private formatPhoneNumber(phone: string): string {
-    const code = phone?.slice(4, 6);
-    const prefix = phone?.slice(6, 9);
-    const firstPart = phone?.slice(9, 11);
-    const secondPart = phone?.slice(11, 13);
-    return `+998 (${code}) ${prefix}-${firstPart}-${secondPart}`;
-  }
-
-
-  submit() {
-    if (this.paymentForm.valid) {
-      const order = this.currentOrder();
-      if (!order) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Order ID is missing' });
-        console.error('Order ID is missing');
-        return;
-      }
-      const { paymentMethod, method } = this.paymentForm.value;
-      const customer = this.customer();
-      const paymentData: CreateOrderPaymentPayload = {
-        orderId: order.id,
-        customerId: customer ? customer.id : null,
-        payments: []
-      }
-
-      const payments = paymentMethod!.map(m => {
-        const type = m === 'CASH' ? PaymentType.CASH : m === 'CARD' ? PaymentType.CARD : m === 'TRANSFER' ? PaymentType.TRANSFER : PaymentType.ONLINE;
-        const amount = method![m as keyof PaymentMethodGroup]!;
-        const paymentPayload: OrderPaymentPayload = {
-          type,
-          amount
-        }
-        return paymentPayload;
-      }).filter(p => p.amount > 0);
-      paymentData.payments = payments;
-
-      if (order.payments && order.payments.length > 0) {
-        this.orderService.addPaymentToOrder(order.id, paymentData).subscribe({
-          next: (res) => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
-            this.router.navigate(['/pages/order/list']);
-          },
-          error: (err) => {
-            console.error(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to add payment to order' });
-          }
-        });
-        return;
-      }
-
-      this.orderService.createOrderPayment(order.id, paymentData).subscribe({
-        next: (res) => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
-          this.router.navigate(['/pages/order/list']);
-        },
-        error: (err) => {
-          console.error(err);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create payment' });
-        }
-      })
-    }
-  }
-
-
-
-  clearCustomer() {
-    this.orderService.clearCustomerFromOrder(this.currentOrder()!.id).subscribe({
+  createOrderPayment(id: string, data: CreateOrderPaymentPayload) {
+    this.orderService.createOrderPayment(id, data).subscribe({
       next: (res) => {
-        this.customer.set(null)
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
+        this.router.navigate(['/pages/order/list']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create payment' });
+      }
+    })
+  }
+
+  clearCustomerFromOrder(orderId: string) {
+    this.orderService.clearCustomerFromOrder(orderId).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Customer cleared from order' });
       },
       error: (err) => {
         console.error(err);
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to clear customer from order' });
       },
     });
+  }
+
+  setCustomerToOrder(orderId: string, customer: SearchCustomer) {
+    this.orderService.setCustomerToOrder({ orderId, customerId: customer.id }).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: res.message });
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to set customer to order' });
+      }
+    })
   }
 
   backOrderList() {
@@ -222,20 +133,5 @@ export class CreateOrderPayment implements OnInit, OnDestroy {
       }
     }
     return false;
-  }
-
-  handleCustomerSelect(customer: SearchCustomer | null) {
-    if (!customer) {
-      this.clearCustomer();
-      return;
-    }
-
-    this.customer.set(customer);
-
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next();
-    this.destroyed$.complete();
   }
 }

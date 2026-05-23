@@ -1,1 +1,18 @@
-<p>old-debt-by-id works!</p>
+@let debitor = debt();
+
+
+@if(debitor) {
+<div class="flex flex-col gap-4">
+  <div class="flex items-center gap-4 w-full">
+    <p-button icon="pi pi-arrow-left" text (click)="backOrderList()" />
+    <h4 class="m-0!">{{'sidebar.debitor' | transloco}}</h4>
+  </div>
+  <div class="flex flex-col gap-2">
+    <span class="text-sm text-gray-500">ID # {{ debitor.id }}</span>
+    <p class="text-sm text-gray-500">{{'order.createdAt' | transloco}}: {{ debitor.createdAt | date: 'medium' }}</p>
+  </div>
+  <app-payment-operation [mode]="'PAYMENT'" [isClearable]="true" [order]="debitor"
+    (addPaymentToOrder)="addPaymentToOrder(debitor.id, $event)"
+    (createOrderPayment)="addPaymentToOrder(debitor.id, $event)" />
+</div>
+}
