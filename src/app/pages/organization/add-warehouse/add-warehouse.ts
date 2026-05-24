@@ -69,7 +69,6 @@ export class AddWarehouse {
       error: (err) => {
         this.loader.set(false)
         this.error.emit();
-        console.log(err);
       }
     })
   }

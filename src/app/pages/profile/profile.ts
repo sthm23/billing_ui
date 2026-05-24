@@ -101,8 +101,6 @@ export class Profile implements OnInit {
   }
 
   handleScroll(event: ScrollerScrollIndexChangeEvent) {
-    console.log(event);
-
     this.fistPage = event.first;
     this.lastItem = event.last;
 

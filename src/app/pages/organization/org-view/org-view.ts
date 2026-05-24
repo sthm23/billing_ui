@@ -73,11 +73,8 @@ export class OrgView {
 
 
   handleScroll(event: ScrollerScrollIndexChangeEvent) {
-    console.log(event);
-
     this.fistPage = event.first;
     this.lastItem = event.last;
-
     if (this.fistPage === 0) { }
 
   }

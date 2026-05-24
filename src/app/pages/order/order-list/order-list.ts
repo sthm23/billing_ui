@@ -190,7 +190,6 @@ export class OrderList implements OnInit {
     this.orderService.createOrder(payload).subscribe({
       next: (res) => {
         this.appStore.stopLoader();
-        console.log('Order created successfully', res)
         this.router.navigate(['/pages/order', res.id])
       },
       error: (err) => {

@@ -128,7 +128,6 @@ export class OrgCreate implements OnInit, OnDestroy {
 
       this.storeService.createStore(payload).subscribe({
         next: (store) => {
-          console.log('Store created:', store);
           this.messageService.add({ severity: 'success', summary: 'Muvaffaqiyatli', detail: 'Magazin yaratildi' });
           this.clearForm();
         },
@@ -142,7 +141,6 @@ export class OrgCreate implements OnInit, OnDestroy {
   }
 
   clearForm() {
-    console.log(this.storeForm.value);
     this.storeForm.reset();
   }
 
