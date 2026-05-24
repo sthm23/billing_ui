@@ -200,7 +200,6 @@ export class UserCreate implements OnInit, OnDestroy {
 
 
   clearForm() {
-    console.log(this.userForm.value);
     this.userForm.reset();
     this.staff.reset();
   }

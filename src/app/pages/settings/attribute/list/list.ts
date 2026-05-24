@@ -1,18 +1,20 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { TableModule, TablePageEvent } from 'primeng/table';
 import { AppStore } from '../../../../store/app.store';
 import { Router } from '@angular/router';
-import { Attribute } from '../../../../models/product.model';
+import { Attribute, AttributePayload } from '../../../../models/product.model';
 import { CategoryService } from '../../../../shared/services/category.service';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { AttributeCreate } from '../create/create';
 
 @Component({
   selector: 'app-attribute-list',
   imports: [
     TableModule,
     ButtonModule,
-    TranslocoPipe
+    TranslocoPipe,
+    AttributeCreate
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
@@ -23,7 +25,7 @@ export class AttributeList implements OnInit {
   first = signal(0);
   rows = 10;
   total = signal(0);
-
+  visibleCreate = false
   public appStore = inject(AppStore);
 
   constructor(
@@ -39,8 +41,8 @@ export class AttributeList implements OnInit {
     this.appStore.startLoader();
     this.categoryService.getAttributeList(page, pageSize).subscribe({
       next: (res) => {
-        this.attributes.set(res);
-        this.total.set(res.length);
+        this.attributes.set(res.data);
+        this.total.set(res.total);
         this.appStore.stopLoader();
       },
       error: (err) => {
@@ -53,8 +55,10 @@ export class AttributeList implements OnInit {
     this.router.navigate([`pages/settings/attribute/view/${attribute.id}`]);
   }
 
-  pageChange(event: any) {
-    // Handle pagination change
+  pageChange(event: TablePageEvent) {
+    this.first.set(event.first);
+    this.rows = event.rows;
+    this.fetchAttributes(event.first / event.rows + 1, event.rows);
   }
 
   goToDashboard() {
@@ -62,7 +66,18 @@ export class AttributeList implements OnInit {
   }
 
   createAttribute() {
-    this.router.navigate(['pages/settings/attribute/create']);
+    this.visibleCreate = true;
+  }
+
+  handleData(event: AttributePayload) {
+    this.categoryService.createAttribute(event).subscribe({
+      next: (res) => {
+        this.fetchAttributes(this.first() / this.rows + 1, this.rows);
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    })
   }
 
   getTranslate(translate: string, text: string) {

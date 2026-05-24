@@ -71,7 +71,6 @@ export class OldDebtById implements OnInit {
     }
     this.debtService.createDebtPayment(paymentPayload).subscribe({
       next: (res) => {
-        console.log('Payment created successfully', res);
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment created successfully' });
         this.loadDebtor(debtId);
       },

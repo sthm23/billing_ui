@@ -68,7 +68,8 @@
                 optionLabel="name" [maxSelectedLabels]="3" [class]="isValidField('attributes')">
                 <ng-template let-attribute #item>
                   <div class="flex items-center gap-2">
-                    <span>{{ `attribute.${attribute.name}` | transloco }}</span>
+                    <span>{{ getProductTranslatedName(`attribute.${attribute.name}` | transloco, attribute.name)
+                      }}</span>
                   </div>
                 </ng-template>
               </p-multiselect>

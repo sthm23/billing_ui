@@ -34,4 +34,10 @@ export class StoreService {
       withCredentials: true
     });
   }
+
+  updateStore(id: string, body: Partial<CreateStore>) {
+    return this.http.put<Store>(`/api/store/${id}`, body, {
+      withCredentials: true
+    });
+  }
 }

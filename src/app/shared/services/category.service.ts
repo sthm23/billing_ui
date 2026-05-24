@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Category, TagList, Attribute, Brand, AttributeItem, AttributeDetail, AttributeValuePayload, AttributePayload } from "../../models/product.model";
+import { BaseListResponse } from "../../models/app.models";
 
 
 @Injectable({
@@ -37,7 +38,7 @@ export class CategoryService {
   }
 
   getAttributeList(page = 1, pageSize = 10) {
-    return this.http.get<Attribute[]>(`/api/category/attributes?pageSize=${pageSize}&currentPage=${page}`, {
+    return this.http.get<BaseListResponse<Attribute>>(`/api/category/attributes?pageSize=${pageSize}&currentPage=${page}`, {
       withCredentials: true,
     });
   }

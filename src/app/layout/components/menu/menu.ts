@@ -104,11 +104,6 @@ export class Menu {
                   label: res['list'],
                   icon: 'pi pi-fw pi-list',
                   routerLink: ['/pages/settings/attribute/list']
-                },
-                {
-                  label: res['create'],
-                  icon: 'pi pi-fw pi-plus-circle',
-                  routerLink: ['/pages/settings/attribute/create']
                 }
               ]
             },
