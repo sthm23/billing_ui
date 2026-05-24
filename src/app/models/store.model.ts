@@ -18,6 +18,10 @@ export interface Store {
   creator: User
   warehouse: Warehouse[]
   categories: { category: Category[], categoryId: string, storeId: string }[]
+  attributes: { attributeId: string, attribute: any, storeId: string }[]
+  brands: { brandId: string, brand: any, storeId: string }[]
+  staff: Staff[]
+  admins: Admin[]
   // products:   Product[]
   // orders:     Order[]
 }

@@ -30,7 +30,7 @@
             <div class="flex flex-col flex-wrap gap-4">
               @for (attr of attributes(); track attr.id) {
               <div class="flex gap-2 flex-wrap">
-                <strong>{{ `attribute.${attr.name}` | transloco }}:</strong>
+                <strong>{{ getProductTranslate(`attribute.${attr.name}` | transloco, attr.name) }}:</strong>
                 @for (item of attrGroup.controls[attr.id].value; track $index; let i = $index; let last = $last) {
                 <p-tag icon="pi pi-info-circle" [value]="(getProductTranslate(
                   (`attributeValue.${item.value}` | transloco), item.value.toString()))" />
@@ -83,7 +83,8 @@
           <div class="flex flex-col md:flex-row gap-6">
             @for (attr of attributes(); track attr.id) {
             <div class="flex flex-col flex-wrap gap-3 w-full">
-              <label [for]="'attr-' + attr.id">{{ `attribute.${attr.name}` | transloco }}</label>
+              <label [for]="'attr-' + attr.id">{{ getProductTranslate(`attribute.${attr.name}` | transloco, attr.name)
+                }}</label>
               <p-multiselect [inputId]="'attr-' + attr.id" [placeholder]="'product.selectPlaceholder'|transloco"
                 [loading]="!(attr.items && attr.items.length)" [options]="attr.items" optionLabel="value"
                 [maxSelectedLabels]="3" [formControlName]="attr.id">
