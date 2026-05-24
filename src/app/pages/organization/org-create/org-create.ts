@@ -83,7 +83,7 @@ export class OrgCreate implements OnInit, OnDestroy {
       owners: this.userService.getOwners(1, 10),
       brands: this.categoryService.getBrandList(),
       categories: this.categoryService.getCategoryList(),
-      attributes: this.categoryService.getAttributeList()
+      attributes: this.categoryService.getAttributeList(1, 100)
     }).pipe(takeUntil(this.destroy$), switchMap(({ owners, brands, categories, attributes }) => {
 
       this.ownerList.set(owners.data.map((owner) => ({
@@ -99,7 +99,7 @@ export class OrgCreate implements OnInit, OnDestroy {
         id: brand.id
       })));
 
-      this.attributeList.set(attributes.map((attr) => ({
+      this.attributeList.set(attributes.data.map((attr) => ({
         name: attr.name,
         id: attr.id
       })));

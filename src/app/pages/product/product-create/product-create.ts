@@ -146,7 +146,7 @@ export class ProductCreate implements OnInit, OnDestroy {
         brands: this.categoryService.getBrandList(),
         stores: this.storeService.getStores(),
         categories: this.categoryService.getCategoryList(),
-        attributes: this.categoryService.getAttributeList(),
+        attributes: this.categoryService.getAttributeList(1, 100),
         tags: this.categoryService.getTagList()
       }).subscribe({
         next: ({ brands, stores, categories, attributes, tags }) => {
@@ -154,7 +154,7 @@ export class ProductCreate implements OnInit, OnDestroy {
           this.stores.set(stores.data);
           const categoryData = this.makeSelectTypes(categories) as MultiSelectType[];
           this.categories.set(categoryData);
-          this.attributeOptions.set(attributes);
+          this.attributeOptions.set(attributes.data);
           this.tags.set(tags);
           this.appStore.stopLoader();
         },

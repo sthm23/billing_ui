@@ -1,5 +1,6 @@
-<div class="flex flex-col h-full p-4">
+<app-attribute-create [(visible)]="visibleCreate" (data)="handleData($event)" />
 
+<div class="flex flex-col h-full p-4">
   <div class="card">
     <p-table #dt [lazy]="true" [value]="attributes()" [tableStyle]="{ 'min-width': '50rem' }"
       [loading]="appStore.isLoading()" [paginator]="true" [totalRecords]="total()" [rows]="rows" selectionMode="single"
