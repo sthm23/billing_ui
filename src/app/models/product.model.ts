@@ -197,3 +197,7 @@ export interface InventoryMovementPayload {
   costPrice: number;
   price: number;
 }
+
+export interface UpdateProductVariantPrice {
+  price: number;
+}

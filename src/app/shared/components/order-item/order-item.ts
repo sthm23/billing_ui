@@ -7,10 +7,15 @@ import { FluidModule } from 'primeng/fluid';
 import { FormsModule } from '@angular/forms';
 import { Counter } from '../counter/counter';
 import { CurrencyPipe, NgClass } from '@angular/common';
-import { SaleDialog, SaleDialogOutput } from '../sale-dialog/sale-dialog';
+import { SaleDialog, SaleDialogOutput, SaleType } from '../sale-dialog/sale-dialog';
 import { TagModule } from 'primeng/tag';
 
-export interface OrderItemAmountChange { price: number, quantity: number, sale: number, prevSale?: number }
+export interface OrderItemAmountChange {
+  price: number,
+  quantity: number,
+  sale: number,
+  type: SaleType
+}
 @Component({
   selector: 'app-order-item',
   imports: [
@@ -57,24 +62,18 @@ export class OrderItem implements OnChanges {
 
   handleCounter({ count }: { count: number }) {
     this.counter.set(count);
-    this.amountChange.emit({ price: this.price(), quantity: this.counter(), sale: this.sale() });
+    this.amountChange.emit({ price: this.price(), quantity: this.counter(), sale: this.sale(), type: 'PRICE' });
   }
 
   handlePrice(event: SaleDialogOutput) {
     this.isPriceChangeDialogVisible = event.visible;
-    if (event.prevSale) {
-      this.sale.set(event.sale);
-      this.amountChange.emit({
-        price: event.price,
-        quantity: this.counter(),
-        sale: this.sale(),
-        prevSale: event.prevSale
-      });
-      return
-    }
-    if (event.sale) {
-      this.sale.set(event.sale);
-      this.amountChange.emit({ price: event.price, quantity: this.counter(), sale: this.sale() });
+
+    if (event.saleType === 'PRICE') {
+      this.sale.set(event.sale)
+      this.amountChange.emit({ price: event.price, quantity: this.counter(), sale: this.sale(), type: event.saleType });
+    } else if (event.saleType === 'UPGRADE') {
+      this.price.set(event.price);
+      this.amountChange.emit({ price: event.price, quantity: this.counter(), sale: this.sale(), type: event.saleType });
     }
   }
 }
