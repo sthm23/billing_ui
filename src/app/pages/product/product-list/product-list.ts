@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule, Table, TablePageEvent } from 'primeng/table';
 import { AppStore } from '../../../store/app.store';
-import { delay } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ProductService } from '../service/product.service';
 import { Product } from '../../../models/product.model';

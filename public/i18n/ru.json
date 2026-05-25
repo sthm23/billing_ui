@@ -304,7 +304,9 @@
     "serviceName": "Название услуги",
     "servicePrice": "Цена услуги",
     "serviceDescription": "Описание услуги",
-    "add": "Добавить"
+    "add": "Добавить",
+    "updatePrice": "Обновить цену",
+    "newPrice": "Новая цена"
   },
   "user": {
     "name": "Польная имя",
