@@ -65,8 +65,8 @@
     </div>
   </div>
   <h3 class="mt-4 mb-2">{{'payment.transactions' | transloco}}</h3>
-  <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="cashbox.transactions" [paginator]="true"
-    [totalRecords]="total()" [rows]="rows()" (onPage)="pageChange($event)">
+  <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="transactions()" [paginator]="true"
+    [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
     <ng-template #caption>
       <div class=" flex items-center flex-wrap justify-between gap-4">
         <div class="flex gap-2 flex-1">
@@ -85,6 +85,7 @@
         <th>{{'payment.createdAt' | transloco}}</th>
         <th>{{'payment.type.name' | transloco}}</th>
         <th>{{'payment.category.name' | transloco}}</th>
+        <th>{{'payment.comment' | transloco}}</th>
         <th>{{'payment.cashboxStatus.name' | transloco}}</th>
         <th>{{'payment.amount' | transloco}}</th>
 
@@ -98,6 +99,7 @@
             [severity]="transaction.type === 'INCOME' ? 'success' : 'danger'" />
         </td>
         <td>{{ `payment.category.${transaction.category}` | transloco }}</td>
+        <td>{{ transaction.comment || '-' }}</td>
         <td>
           <p-tag [value]="(`order.paymentMethod.${transaction.paymentType}`) | transloco" severity="secondary" />
         </td>
@@ -107,7 +109,7 @@
 
     <ng-template #footer>
       <tr>
-        <td colspan="4" class="text-right font-bold p-3 pb-0">{{'order.totalAmount' | transloco}}</td>
+        <td colspan="5" class="text-right font-bold p-3 pb-0">{{'order.totalAmount' | transloco}}</td>
         <td class="font-bold p-3 pb-0">{{ (+cashbox.balance) | currency: " ":"code": "0.0" }}</td>
       </tr>
     </ng-template>

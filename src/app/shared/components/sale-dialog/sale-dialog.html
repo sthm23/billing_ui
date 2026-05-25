@@ -1,4 +1,4 @@
-<p-dialog header="Update price" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }"
+<p-dialog [header]="'order.updatePrice' | transloco" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }"
   (visibleChange)="closeModal($event)">
 
   <form class="flex flex-col gap-4" [formGroup]="form">
@@ -27,10 +27,10 @@
       <div>
       </div>
       <div class="flex flex-row items-center gap-3">
-        <small>Price:</small>
+        <small>{{'order.price' | transloco}}:</small>
         <h5 [ngClass]="{'sale': currentSale > 0 }">{{price | currency: ' ' : 'code' : '0.0'}}</h5>
         @if(newPrice) {
-        <small>New price:</small>
+        <small>{{'order.newPrice' | transloco}}:</small>
         <h5>{{newPrice | currency: ' ' : 'code' : '0.0'}}
         </h5>
         }
@@ -38,8 +38,8 @@
 
     </div>
     <div class="flex justify-end gap-2">
-      <p-button label="Cancel" severity="secondary" (click)="closeModal(false)" />
-      <p-button label="Save" (click)="save()" />
+      <p-button [label]="'order.cancel' | transloco" severity="secondary" (click)="closeModal(false)" />
+      <p-button [label]="'order.save' | transloco" (click)="save()" />
     </div>
   </form>
 </p-dialog>

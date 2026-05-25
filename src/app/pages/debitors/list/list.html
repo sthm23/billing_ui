@@ -44,8 +44,8 @@
       <ng-template pTemplate="body" let-order>
         <tr [pSelectableRow]="order.status !== 'CANCELLED' ? order : null">
           <td>{{ order.createdAt | date:'dd.MM.yyyy' }}</td>
-          <td>{{ order.customer.user.fullName }}</td>
-          <td>{{ order.customer.user.phone }}</td>
+          <td>{{ order?.customer?.user?.fullName || '-' }}</td>
+          <td>{{ order?.customer?.user?.phone || '-' }}</td>
           <td>
             <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco), order.status)"
               [severity]="getSeverity(order.status)"></p-tag>

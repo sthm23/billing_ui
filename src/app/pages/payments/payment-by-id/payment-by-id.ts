@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AppStore } from '../../../store/app.store';
-import { TableModule } from 'primeng/table';
+import { TableModule, TablePageEvent } from 'primeng/table';
 import { Divider } from "primeng/divider";
 import { PaymentType } from '../../../models/order.model';
 import { IncomingExpenseDialog } from './incoming-expense-dialog/incoming-expense-dialog';
@@ -36,9 +36,12 @@ import { TranslateService } from '../../../shared/services/translate.service';
   providers: [ConfirmationService]
 })
 export class PaymentById implements OnInit {
-  total = signal<number>(1);
-  rows = signal<number>(10);
+  first = signal(0);
+  rows = 10;
+  total = signal(0);
+
   currentCashbox = signal<Payment | null>(null);
+  transactions = signal<CashboxTransaction[]>([]);
   outgoingTransactions = signal<CashboxTransaction[]>([]);
   incomingTransactions = signal<CashboxTransaction[]>([]);
 
@@ -69,13 +72,18 @@ export class PaymentById implements OnInit {
   }
 
   private loadCashbox(cashboxId: string) {
+    this.appStore.startLoader();
     this.paymentService.getCashboxById(cashboxId).subscribe({
       next: (res) => {
+        this.appStore.stopLoader();
         this.currentCashbox.set(res);
+        this.transactions.set(res.transactions);
+        this.total.set(res.transactions.length);
         this.outgoingTransactions.set(res.transactions.filter(t => t.type === CashTransactionType.EXPENSE));
         this.incomingTransactions.set(res.transactions.filter(t => t.type === CashTransactionType.INCOME));
       },
       error: (err) => {
+        this.appStore.stopLoader();
         console.error(err);
         this.messageService.add({ severity: 'error', summary: 'Xatolik', detail: err.error?.message || 'Kassa ma\'lumotlarini olishda xatolik yuz berdi' });
         this.router.navigate(['/pages/payments/list']);
@@ -124,8 +132,11 @@ export class PaymentById implements OnInit {
     this.router.navigate(['/pages/payments/list']);
   }
 
-  pageChange(event: any) {
-    // Handle pagination change if needed
+  pageChange(event: TablePageEvent) {
+    const cashboxTransactions = this.currentCashbox()!.transactions;
+    this.first.set(event.first);
+    const paginatedTransactions = cashboxTransactions.slice(event.first, event.first + event.rows);
+    this.transactions.set(paginatedTransactions);
   }
 
   getTranslatedText(key: string): string {

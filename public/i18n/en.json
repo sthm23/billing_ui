@@ -304,7 +304,9 @@
     "serviceName": "Service name",
     "servicePrice": "Service price",
     "serviceDescription": "Service description",
-    "add": "Add"
+    "add": "Add",
+    "updatePrice": "Update price",
+    "newPrice": "New price"
   },
   "user": {
     "name": "Full name",

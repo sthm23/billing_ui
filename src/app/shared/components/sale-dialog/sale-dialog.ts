@@ -1,6 +1,7 @@
 import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslocoPipe } from '@ngneat/transloco';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -34,6 +35,7 @@ interface SaleDialogForm {
     CurrencyPipe,
     ReactiveFormsModule,
     NgClass,
+    TranslocoPipe
   ],
   templateUrl: './sale-dialog.html',
   styleUrl: './sale-dialog.css',
