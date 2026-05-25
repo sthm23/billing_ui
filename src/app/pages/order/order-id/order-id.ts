@@ -204,13 +204,22 @@ export class OrderId implements OnInit {
     return true;
   }
 
-  handleAmountChange({ quantity, sale = 0 }: OrderItemAmountChange, itemId: string) {
-    this.orderItems.update(items => items.map(item => {
-      if (item.id === itemId) {
-        return { ...item, quantity, sale };
-      }
-      return item;
-    }));
+  handleAmountChange({ quantity, sale = 0, type, price }: OrderItemAmountChange, itemId: string) {
+    if (type === 'PRICE') {
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, quantity, sale };
+        }
+        return item;
+      }));
+    } else if (type === 'UPGRADE') {
+      this.orderItems.update(items => items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, quantity, price };
+        }
+        return item;
+      }));
+    }
   }
 
   holdOrder() {
@@ -298,7 +307,7 @@ export class OrderId implements OnInit {
 
   handleSaleDialogChange(event: SaleDialogOutput) {
     this.saleDialogVisible = event.visible;
-    if (event.price > 0 && event.sale > 0 && event.prevSale === 0) {
+    if (event.saleType === 'PRICE') {
       const currentOrderItems = this.orderItems();
       const updatedItems = currentOrderItems.map(item => {
         return {
@@ -307,16 +316,7 @@ export class OrderId implements OnInit {
         };
       });
       this.orderItems.set(updatedItems);
-
-    } else if (event.price > 0 && event.sale > 0 && event.prevSale > 0) {
-      const currentOrderItems = this.orderItems();
-      const updatedItems = currentOrderItems.map(item => {
-        return {
-          ...item,
-          sale: (event.sale / currentOrderItems.length) / item.quantity
-        };
-      });
-      this.orderItems.set(updatedItems);
+      this.saleAmount.set(event.sale);
     }
   }
 
