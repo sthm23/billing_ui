@@ -27,7 +27,7 @@ import { TranslateService } from '../../../shared/services/translate.service';
 })
 export class Login implements OnInit {
   loginForm = new FormGroup({
-    login: new FormControl(null, [Validators.required, Validators.minLength(5)]),
+    login: new FormControl(null, [Validators.required, Validators.minLength(3)]),
     password: new FormControl(null, [Validators.required, Validators.minLength(3)]),
   })
   constructor(
