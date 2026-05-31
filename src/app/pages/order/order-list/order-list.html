@@ -10,7 +10,7 @@
   <div class="p-0 md:p-4">
     <p-table #dt [loading]="appStore.isLoading()" [lazy]="true" [value]="orders()" [paginator]="true"
       selectionMode="single" (selectionChange)="selectOrder($event)" [metaKeySelection]="true" dataKey="id"
-      [totalRecords]="total()" [rows]="rows" (onPage)="pageChange($event)">
+      [totalRecords]="total()" [rows]="rows" [first]="first()" (onPage)="pageChange($event)">
       <ng-template #caption>
         <div class="flex items-center flex-wrap justify-between gap-4">
           <div

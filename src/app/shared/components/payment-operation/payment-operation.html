@@ -116,13 +116,14 @@
       <div>{{'order.total' | transloco}}: </div>
       <div class="flex items-center gap-2">
         @if(mode==='ORDER') {
-        <p class="text-xl font-bold mb-0!">{{ (totalAmount() - saleAmount() - paymentAmounts() - order.returnedAmount)
+        <p class="text-xl font-bold mb-0!">{{ ((totalAmount() + additionalServiceAmount()) - saleAmount() -
+          paymentAmounts() - order.returnedAmount)
           | currency: " ":
           "code":
           "0.0"}} UZS
         </p>
         } @else {
-        <p class="text-xl font-bold mb-0!">{{ (totalAmount() - paymentAmounts())
+        <p class="text-xl font-bold mb-0!">{{ ((totalAmount() + additionalServiceAmount()) - paymentAmounts())
           | currency: " ":
           "code":
           "0.0"}} UZS
