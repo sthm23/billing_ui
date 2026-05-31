@@ -43,6 +43,7 @@ export class PaymentOperation implements OnInit, OnDestroy {
   totalAmount = signal<number>(0);
   saleAmount = signal<number>(0);
   paymentAmounts = signal<number>(0);
+  additionalServiceAmount = signal<number>(0);
   orderItems = signal<OrderDetailItem[]>([]);
 
   currentOrder = signal<OrderDetail | null>(null);
@@ -95,6 +96,7 @@ export class PaymentOperation implements OnInit, OnDestroy {
     if (this.mode === 'ORDER') {
       this.orderItems.set(res.items);
       this.totalAmount.set(res.items.reduce((total, item) => total + (item.retailPrice * item.quantity), 0));
+      this.additionalServiceAmount.set(res.services.reduce((total, service) => total + +service.price, 0));
     } else {
       this.totalAmount.set(res.totalAmount);
     }
