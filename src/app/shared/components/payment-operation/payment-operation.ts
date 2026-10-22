@@ -160,7 +160,9 @@ export class PaymentOperation implements OnInit, OnDestroy {
       }).filter(p => p.amount > 0);
       paymentData.payments = payments;
 
-      if (order.payments && order.payments.length > 0) {
+      // A DEBT order is repaid via POST /payment (no stock deduction), even
+      // when it was sold fully on credit and has no payments yet.
+      if (order.status === 'DEBT' || (order.payments && order.payments.length > 0)) {
         this.addPaymentToOrder.emit(paymentData);
         this.paymentForm.reset({ paymentMethod: ['CASH'], method: { CASH: 0, CARD: 0, ONLINE: 0, TRANSFER: 0 } });
         return;

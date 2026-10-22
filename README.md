@@ -1,59 +1,142 @@
-# BillingUi
+# Billing Web UI — Angular Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.1.
+Web frontend for **my-billing** retail POS system.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Application runs at: `http://localhost:4200`
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 📚 Documentation
 
-```bash
-ng generate component component-name
-```
+### For AI / Developers
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+**Start here**: [`AGENTS.md`](./AGENTS.md) — Web development guide
 
-```bash
-ng generate --help
-```
+**Root documentation**:
+- [`../AGENTS.md`](../AGENTS.md) — Project overview
+- [`../docs/INDEX.md`](../docs/INDEX.md) — Documentation index
+- [`../docs/business-domain.md`](../docs/business-domain.md) — Business concepts
+- [`../docs/api-map.md`](../docs/api-map.md) — API endpoints
+- [`../docs/workflows/`](../docs/workflows/) — Business workflows
 
-## Building
+**Architecture notes**:
+- [`ANALIZE.md`](./ANALIZE.md) — Angular architecture analysis (issues & recommendations)
 
-To build the project run:
+---
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🛠️ Development Commands
 
 ```bash
-ng test
+# Development
+ng serve                       # Start dev server (http://localhost:4200)
+ng serve --open                # Open browser automatically
+
+# Build
+ng build                       # Production build to dist/
+ng build --configuration production
+
+# Code Generation
+ng generate component <name> --standalone
+ng generate service <name>
+ng generate guard <name>
+
+# Testing
+ng test                        # Unit tests (Vitest)
+ng e2e                         # End-to-end tests
+
+# Code Quality
+ng lint                        # ESLint
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 🏗️ Project Structure
 
-```bash
-ng e2e
+```
+src/app/
+├── layout/              # App shell (sidebar, header)
+├── models/              # TypeScript interfaces
+├── pages/               # Lazy-loaded route pages
+│   ├── auth/            # Login
+│   ├── dashboard/       # Home
+│   ├── order/           # Order management
+│   ├── debitors/        # Debt tracking
+│   ├── payments/        # Cashbox operations
+│   ├── product/         # Product/inventory
+│   ├── user/            # User management
+│   └── settings/        # Settings (ADMIN only)
+├── shared/
+│   ├── guards/          # Route guards (hasAccessGuard)
+│   ├── services/        # API services
+│   ├── interceptors/    # HTTP interceptors
+│   └── components/      # Reusable UI components
+└── store/               # State management
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 🔑 Environment Configuration
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Edit `src/environments/environment.ts`:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:4000',  // Backend API URL
+};
+```
+
+---
+
+## 📦 Tech Stack
+
+- **Angular** 21 — Modern web framework
+- **PrimeNG** — Rich UI component library
+- **Transloco** — i18n (en, ru, uz)
+- **Angular Signals** — Reactive state management
+- **RxJS** — Reactive extensions
+- **TypeScript** — Type-safe JavaScript
+
+---
+
+## 🎨 Key Features
+
+- ✅ **Standalone Components** — No NgModule
+- ✅ **PrimeNG UI** — Table, Button, Dialog, Toast, etc.
+- ✅ **i18n** — English, Russian, Uzbek
+- ✅ **Signals** — Modern reactive state
+- ✅ **Role-based Access** — hasAccessGuard
+- ✅ **JWT Auth** — Auto token refresh
+
+---
+
+## 🔗 Related Projects
+
+- **Backend API**: [`../billing/`](../billing/)
+- **Mobile App**: [`../billing-mobile/`](../billing-mobile/)
+
+---
+
+## 📖 Learn More
+
+- [Angular Documentation](https://angular.dev)
+- [PrimeNG Documentation](https://primeng.org)
+- [Transloco Documentation](https://jsverse.github.io/transloco/)
+
+---
+
+## 📄 License
+
+MIT
