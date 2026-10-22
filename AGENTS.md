@@ -43,18 +43,20 @@ src/app/
 │   └── header/
 ├── models/               # TypeScript interfaces (Order, Product, Payment, etc.)
 ├── pages/                # Lazy-loaded route pages
+│   ├── pages.routes.ts   # Feature routes under /pages (role guards here)
 │   ├── auth/             # Login/signup
 │   ├── dashboard/        # Home dashboard
-│   ├── order/            # Order management (create, list, view, return)
-│   ├── debitors/         # Debt management (DEBT orders + CustomerDebt)
-│   ├── payments/         # Cashbox management
-│   ├── product/          # Product/inventory management
+│   ├── order/            # Order management (create, list, view, return) + services/order-service.ts
+│   ├── debitors/         # Debt management (DEBT orders + CustomerDebt) + service/debt.service.ts
+│   ├── payments/         # Cashbox management + payment-service.ts
+│   ├── product/          # Product/inventory management + service/product.service.ts
 │   ├── user/             # User management (ADMIN, OWNER only)
-│   └── settings/         # Settings (stores, warehouses, ADMIN only)
+│   ├── organization/     # Stores & warehouses (ADMIN only)
+│   └── settings/         # Settings (attributes, ADMIN only)
 ├── shared/
-│   ├── guards/           # Route guards (hasAccessGuard for roles)
-│   ├── services/         # API services (OrderService, ProductService, etc.)
-│   ├── interceptors/     # HTTP interceptors (auth, error handling)
+│   ├── guards/           # Route guards (isLoginGuard, hasAccessGuard for roles)
+│   ├── services/         # Cross-feature services only (CategoryService, FileUploadService, TranslateService)
+│   ├── interceptors/     # HTTP interceptors (base URL, auth, token refresh)
 │   └── components/       # Reusable UI components
 └── store/                # State management (@ngrx/signals)
 ```
@@ -143,24 +145,33 @@ addProduct(product: Product) {
 ## Route Structure
 
 ```
-/ (root)
-├── /login                        # Public (unauth)
-├── /dashboard                    # Authenticated
-├── /order
-│   ├── /list                     # All orders
-│   ├── /create                   # New order
-│   ├── /view/:id                 # Order details
-│   └── /return/:id               # Return order
-├── /debitors                     # Debt management
-├── /payments                     # Cashbox management
-├── /product
-│   ├── /list                     # Product list
-│   ├── /create                   # New product
-│   └── /edit/:id                 # Edit product
-├── /user                         # ADMIN, OWNER only
-└── /settings                     # ADMIN only
-    ├── /stores
-    └── /warehouses
+/ (root)                          # Layout, isLoginGuard
+├── /                             # Dashboard (ADMIN, OWNER)
+├── /auth/...                     # Public (login)
+├── /notfound
+└── /pages
+    ├── /profile, /profile/:id
+    ├── /order
+    │   ├── /list                 # All orders (+ create order)
+    │   ├── /:id                  # Order details / edit items
+    │   ├── /payment/:id          # Order payment
+    │   └── /return/:id           # Return order
+    ├── /debitor
+    │   ├── /list (+ /list/old)   # DEBT orders / CustomerDebt sheet
+    │   ├── /create               # New CustomerDebt
+    │   └── /:id                  # CustomerDebt details / pay
+    ├── /payments
+    │   ├── /list                 # Cashbox list
+    │   └── /:id                  # Cashbox details
+    ├── /product                  # ADMIN, OWNER, MANAGER
+    │   ├── /list
+    │   ├── /create
+    │   ├── /view/:id
+    │   └── /:id/variant
+    ├── /user                     # ADMIN, OWNER (/list, /create)
+    ├── /organization             # ADMIN (/list, /create, /view/:id)
+    └── /settings                 # ADMIN
+        └── /attribute/...
 ```
 
 ---
@@ -169,35 +180,34 @@ addProduct(product: Product) {
 
 ### hasAccessGuard
 
-**Purpose**: Check user role before allowing access to route.
+**Purpose**: Check user role before allowing access to route. Reads `data.expectedRole` (`'ADMIN' | 'OWNER' | 'MANAGER'`); without access redirects to orders.
 
-**Usage**:
+**Usage** (`pages/pages.routes.ts` — each feature is lazy-loaded with `loadChildren`):
 ```typescript
-const routes: Routes = [
-  {
-    path: 'product',
-    canActivate: [hasAccessGuard],
-    data: { roles: ['ADMIN', 'OWNER', 'MANAGER'] },
-    loadComponent: () => import('./pages/product/product-list/product-list.component')
-  },
-  {
-    path: 'user',
-    canActivate: [hasAccessGuard],
-    data: { roles: ['ADMIN', 'OWNER'] },
-    loadComponent: () => import('./pages/user/user-list/user-list.component')
-  },
-  {
-    path: 'settings',
-    canActivate: [hasAccessGuard],
-    data: { roles: ['ADMIN'] },
-    loadComponent: () => import('./pages/settings/settings.component')
-  },
-  {
-    path: 'order',
-    // No guard — open to all authenticated users
-    loadComponent: () => import('./pages/order/order-list/order-list.component')
-  }
-];
+export default [
+  { path: 'profile', component: Profile },
+  { path: 'product', loadChildren: () => import('./product/product.routes'), data: { expectedRole: ['ADMIN', 'OWNER', 'MANAGER'] }, canActivate: [hasAccessGuard] },
+  { path: 'user', loadChildren: () => import('./user/user.routes'), data: { expectedRole: ['ADMIN', 'OWNER'] }, canActivate: [hasAccessGuard] },
+  { path: 'settings', loadChildren: () => import('./settings/setting.routes'), data: { expectedRole: ['ADMIN'] }, canActivate: [hasAccessGuard] },
+  // No guard — open to all authenticated users
+  { path: 'order', loadChildren: () => import('./order/order.routes') },
+  { path: '**', redirectTo: '/notfound' }
+] as Routes;
+```
+
+**Feature routes file** (`pages/order/order.routes.ts`, default export):
+```typescript
+export default [
+  { path: 'list', component: OrderList },
+  { path: 'return/:id', component: OrderReturn },
+  { path: 'payment/:id', component: CreateOrderPayment },
+  { path: ':id', component: OrderId },
+] as Routes;
+```
+
+Single lazy page: `loadComponent` with a named export, e.g. `pages/payments/payment.routes.ts`:
+```typescript
+{ path: ':id', loadComponent: () => import('./payment-by-id/payment-by-id').then(m => m.PaymentById) }
 ```
 
 **Current User**:
@@ -238,42 +248,44 @@ if (error.status === 401 && !request.url.includes('/refresh')) {
 
 ### API Services
 
-**Location**: `src/app/shared/services/`
+**Location**: inside the feature folder — `src/app/pages/<feature>/` (e.g. `pages/order/services/order-service.ts`, `pages/payments/payment-service.ts`). `src/app/shared/services/` holds only cross-feature services (category, file upload, translate).
 
-**Pattern**:
+**Pattern** (`pages/payments/payment-service.ts`, excerpt):
 ```typescript
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class OrderService {
-  private apiUrl = `${environment.apiUrl}/api/order`;
+export class PaymentService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) { }
 
-  getOrders(page = 1, pageSize = 10): Observable<OrderResponse> {
-    return this.http.get<OrderResponse>(
-      `${this.apiUrl}?currentPage=${page}&pageSize=${pageSize}`,
-      { withCredentials: true }
-    );
+  // Relative '/api/...' URL — BaseUrlInterceptor prefixes environment.apiUrl
+  getPayments(params: { currentPage: number; pageSize: number; status?: string[]; fromDate?: string; toDate?: string; search?: string; }) {
+    return this.http.get<BaseListResponse<Payment>>('/api/cashbox', { params, withCredentials: true });
   }
 
-  createOrder(dto: CreateOrderDto): Observable<Order> {
-    return this.http.post<Order>(
-      this.apiUrl,
-      dto,
-      { withCredentials: true }
-    );
+  getCashboxById(id: string) {
+    return this.http.get<Payment>(`/api/cashbox/${id}`, { withCredentials: true });
+  }
+
+  openCashbox(data: CashboxOpenPayload) {
+    return this.http.post<Payment>(`/api/cashbox`, data, { withCredentials: true });
   }
 }
 ```
 
+Methods return the `Observable` directly (no explicit return type); payload/response types come from `src/app/models/` (`BaseListResponse<T>` from `models/app.models.ts`).
+
 **Available Services**:
-- `AuthService` → `/api/auth/*`
-- `OrderService` → `/api/order/*`
-- `ProductService` → `/api/product/*`
-- `PaymentService` → `/api/cashbox/*` ⚠️ Note: uses `/cashbox` endpoint!
-- `DebtService` → `/api/debt/*`
-- `UserService` → `/api/user/*`
+- `AuthService` (`pages/auth/service/auth.ts`) → `/api/auth`, `/api/login`, `/api/logout`, `/api/refresh`
+- `OrderService` (`pages/order/services/order-service.ts`) → `/api/orders/*`, `/api/payment` (debt repayment)
+- `ProductService` (`pages/product/service/product.service.ts`) → `/api/product/*`
+- `PaymentService` (`pages/payments/payment-service.ts`) → `/api/cashbox/*` ⚠️ Note: uses `/cashbox` endpoint!
+- `DebtService` (`pages/debitors/service/debt.service.ts`) → `/api/debt/*`
+- `UserService` (`pages/user/service/user.service.ts`) → `/api/users/*`
+- `StoreService` (`pages/organization/service/store.ts`) → `/api/store/*`, `/api/warehouse/*`
 
 ---
 
@@ -281,7 +293,7 @@ export class OrderService {
 
 **Transloco** with 3 languages: English (en), Russian (ru), Uzbek (uz).
 
-**Translation Files**: `assets/i18next/locales/{en,ru,uz}.ts`
+**Translation Files**: `public/i18n/{en,ru,uz}.json` (loaded by `transloco-loader.ts`)
 
 **Usage in Component**:
 ```typescript
@@ -630,31 +642,31 @@ constructor() {
    ng generate component pages/reports/report-list --standalone
    ```
 
-2. Add route:
+2. Add routes — a feature routes file plus an entry in `pages/pages.routes.ts`:
    ```typescript
-   // app.routes.ts
+   // pages/reports/reports.routes.ts
+   export default [
+     { path: 'list', component: ReportList },
+   ] as Routes;
+
+   // pages/pages.routes.ts
+   { path: 'reports', loadChildren: () => import('./reports/reports.routes'), data: { expectedRole: ['ADMIN', 'OWNER', 'MANAGER'] }, canActivate: [hasAccessGuard] },
+   ```
+
+3. Add to sidebar menu (`layout/components/menu/menu.ts`, `items` of the `pages` group):
+   ```typescript
    {
-     path: 'reports',
-     canActivate: [hasAccessGuard],
-     data: { roles: ['ADMIN', 'OWNER', 'MANAGER'] },
-     loadComponent: () => import('./pages/reports/report-list/report-list.component')
-   }
+     label: res['reports'],
+     icon: 'pi pi-fw pi-chart-bar',
+     routerLink: ['/pages/reports/list'],
+     visible: this.authService.isOwner() || this.authService.isAdmin() || this.authService.isManager(),
+   },
    ```
 
-3. Add to sidebar:
-   ```html
-   <!-- layout/sidebar/sidebar.component.html -->
-   <a routerLink="/reports">
-     <i class="pi pi-chart-bar"></i>
-     <span>{{ 'navigation.reports' | transloco }}</span>
-   </a>
-   ```
-
-4. Add translations:
-   ```typescript
-   // assets/i18next/locales/en.ts
-   navigation: {
-     reports: 'Reports'
+4. Add translations to `public/i18n/{en,ru,uz}.json`:
+   ```json
+   "sidebar": {
+     "reports": "Reports"
    }
    ```
 
@@ -662,26 +674,30 @@ constructor() {
 
 ### 2. Adding New API Service
 
-**Example**: Create `ReportService`
+**Example**: the existing `OrderService` (`pages/order/services/order-service.ts`, excerpt) — put the service in the feature folder, call an endpoint that exists in `billing` (check `docs/api-map.md`), use a relative `/api/...` URL:
 
 ```typescript
-// shared/services/report.service.ts
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ReportService {
-  private apiUrl = `${environment.apiUrl}/api/reports`;
+export class OrderService {
+  constructor(private http: HttpClient) { }
 
-  constructor(private http: HttpClient) {}
+  createOrderPayment(orderId: string, body: CreateOrderPaymentPayload) {
+    return this.http.post<{ message: string }>(`/api/orders/payment/${orderId}`, body, {
+      withCredentials: true
+    })
+  }
 
-  getReport(storeId: string, dateFrom: string, dateTo: string): Observable<Report> {
-    return this.http.get<Report>(
-      `${this.apiUrl}?storeId=${storeId}&from=${dateFrom}&to=${dateTo}`,
-      { withCredentials: true }
-    );
+  returnOrder(returnOrderPayload: ReturnOrderItemPayload) {
+    return this.http.post<{ message: string }>('/api/orders/return', returnOrderPayload, {
+      withCredentials: true
+    })
   }
 }
 ```
+
+Never prefix `environment.apiUrl` yourself — `BaseUrlInterceptor` does it.
 
 ---
 
@@ -694,9 +710,9 @@ export class ReportService {
    ls src/app/pages/order/
    ```
 
-2. Check existing service:
+2. Check existing services (feature folders first, then shared):
    ```bash
-   ls src/app/shared/services/
+   ls src/app/pages/order/services/ src/app/shared/services/
    ```
 
 3. Review existing component patterns
