@@ -91,7 +91,8 @@ export interface OrderPayment {
   type: PaymentType
 }
 export interface OrderDetailItem {
-  costAtSale: number
+  /** Owner/manager only — absent for other roles */
+  costAtSale?: number
   id: string
   orderId: string
   quantity: 2
@@ -115,7 +116,6 @@ export interface OrderItemCard {
   stock: number
   quantity: number
   price: number
-  costAtSale: number
   sale: number
 }
 
@@ -125,7 +125,6 @@ export interface OrderItemPayload {
   quantity: number
   retailPrice: number
   sale: number
-  costAtSale: number
 }
 export interface OrderAdditionalServicePayload {
   id?: string
@@ -147,9 +146,8 @@ export interface CreateOrderItemPayload {
 
 export interface ReturnOrderItemPayload {
   orderId: string,
-  items: (Omit<OrderItemPayload, 'variantId'> & {
-    itemId: string;
-  })[]
+  /** Prices and cost come from the order line on the backend */
+  items: { itemId: string; quantity: number }[]
   returnPayments: OrderPaymentPayload[]
 }
 export interface CreateOrderPayload {

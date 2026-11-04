@@ -84,8 +84,7 @@ export class OrderReturn implements OnInit {
             stock: +item.quantity,
             price: +item.retailPrice,
             quantity: 0,
-            sale: +item.sale,
-            costAtSale: +item.costAtSale
+            sale: +item.sale
           }));
           this.debt.set(res.totalAmount - res.paidAmount);
           this.orderItems.set(items)
@@ -124,10 +123,7 @@ export class OrderReturn implements OnInit {
     }
     const returnItems = this.orderItems().filter(item => item.quantity > 0).map(item => ({
       itemId: item.itemId!,
-      quantity: +item.quantity,
-      sale: +item.sale,
-      retailPrice: +item.price,
-      costAtSale: +item.costAtSale
+      quantity: +item.quantity
     }));
 
     this.confirmSave({
