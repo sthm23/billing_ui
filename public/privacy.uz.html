@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maxfiylik siyosati — STHM</title>
+<meta name="description" content="STHM mobil ilovasining maxfiylik siyosati">
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root { --bg:#F2F2EF; --card:#FFFFFF; --ink:#141414; --soft:#55554F; --line:#E2E2DC; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0F0F0E; --card:#1A1A18; --ink:#EDEDE8; --soft:#A3A39B; --line:#2C2C29; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:28px; line-height:1.25; margin:0 0 8px; }
+  h2 { font-size:20px; margin:36px 0 8px; }
+  h3 { font-size:17px; margin:24px 0 6px; }
+  p, li { color:var(--ink); }
+  .meta { color:var(--soft); font-size:14px; margin:0 0 24px; }
+  a { color:inherit; }
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:8px; overflow:hidden; font-size:15px; }
+  th, td { text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line); }
+  th { font-weight:600; }
+  tr:last-child td { border-bottom:0; }
+  footer { margin-top:48px; padding-top:16px; border-top:1px solid var(--line); color:var(--soft); font-size:14px; }
+  .langs { display:flex; gap:12px; justify-content:flex-end; font-size:14px; margin:0 0 16px; }
+  .langs a { color:var(--soft); text-decoration:none; }
+  .langs a[aria-current] { color:var(--ink); font-weight:600; }
+</style>
+</head>
+<body>
+<main>
+<nav class="langs" aria-label="Язык / Til / Language"><a href="/privacy.html" hreflang="ru">Русский</a><a href="/privacy.uz.html" hreflang="uz" aria-current="page">Oʻzbekcha</a><a href="/privacy.en.html" hreflang="en">English</a></nav>
+<h1>STHM mobil ilovasining maxfiylik siyosati</h1>
+<p class="meta">Kuchga kirish sanasi: 05.11.2026 · Oxirgi yangilanish: 05.11.2026</p>
+
+<p>Ushbu Maxfiylik siyosati (keyingi oʻrinlarda — «Siyosat») <strong>STHM</strong> mobil ilovasi (Android, paket <code>com.sthm23.billingmobile</code>, keyingi oʻrinlarda — «Ilova») qanday maʼlumotlarni yigʻishi va qayta ishlashi, ular nima maqsadda ishlatilishi, qanday saqlanishi va himoya qilinishi hamda foydalanuvchilarning huquqlarini tavsiflaydi.</p>
+<p>Ishlab chiquvchi va maʼlumotlar operatori: <strong>Sanjar Tuxtamishev</strong> (jismoniy shaxs), Toshkent shahri, Oʻzbekiston Respublikasi.<br>
+Maxfiylik masalalari boʻyicha aloqa: <a href="mailto:sanjartukhtamishev@gmail.com"><strong>sanjartukhtamishev@gmail.com</strong></a>.</p>
+
+<h2>1. Ilovaning vazifasi</h2>
+<p>STHM — doʻkon xodimlari va egalari uchun ish vositasi (POS tizimi): tovarlar va qoldiqlarni hisobga olish, savdoni rasmiylashtirish, toʻlovlarni qabul qilish, qaytarishlar, kassa bilan ishlash va xaridorlar qarzlarini hisobga olish.</p>
+<p>Ilova <strong>faqat doʻkon egasi tomonidan hisob yozuvi berilgan doʻkon xodimlari uchun</strong> moʻljallangan. Ilova bolalar uchun moʻljallanmagan va tovarlarni bevosita oxirgi xaridorlarga sotish uchun ishlatilmaydi.</p>
+
+<h2>2. Qanday maʼlumotlarni qayta ishlaymiz</h2>
+<h3>2.1. Xodimlar (Ilova foydalanuvchilari) maʼlumotlari</h3>
+<div class="table-wrap"><table>
+<tr><th>Maʼlumot</th><th>Nima uchun</th></tr>
+<tr><td>F.I.Sh.</td><td>Profilda koʻrsatish, amallar muallifini belgilash (savdo, toʻlov, qaytarish)</td></tr>
+<tr><td>Telefon raqami, login</td><td>Identifikatsiya va tizimga kirish</td></tr>
+<tr><td>Parol</td><td>Autentifikatsiya. Parol himoyalangan ulanish orqali uzatiladi va serverda faqat xeshlangan holda saqlanadi</td></tr>
+<tr><td>Profil surati (ixtiyoriy)</td><td>Profilda koʻrsatish</td></tr>
+<tr><td>Rol, doʻkon, omborlar</td><td>Maʼlumotlarga kirish huquqini cheklash</td></tr>
+<tr><td>Tizimdagi harakatlar tarixi (savdo, toʻlovlar, kassa amallari)</td><td>Buxgalteriya va ombor hisobi, audit</td></tr>
+</table></div>
+
+<h3>2.2. Doʻkon xaridorlari maʼlumotlari</h3>
+<p>Doʻkon xodimlari tizimga xaridorlar maʼlumotlarini kiritishi mumkin:</p>
+<ul>
+<li>F.I.Sh. va telefon raqami;</li>
+<li>xaridlar tarixi;</li>
+<li>qarzdorlik va uni toʻlash haqidagi maʼlumotlar.</li>
+</ul>
+<p>Bu maʼlumotlar xodim tomonidan doʻkon topshirigʻiga koʻra kiritiladi. Ularni qayta ishlash uchun qonuniy asos, jumladan qonun talab qilgan hollarda xaridorning roziligi mavjudligi uchun <strong>doʻkon (doʻkon hisob yozuvi egasi) javobgar</strong>.</p>
+
+<h3>2.3. Doʻkonning tijorat maʼlumotlari</h3>
+<p>Tovarlar, narxlar, qoldiqlar, buyurtmalar, toʻlovlar, kassa amallari. Bu maʼlumotlar shaxsga doir emas, lekin xuddi shunday darajada himoya qilinadi.</p>
+
+<h3>2.4. Qurilmadagi texnik maʼlumotlar</h3>
+<p>Qurilmada Ilovaning lokal xotirasida quyidagilar saqlanadi:</p>
+<ul>
+<li>avtorizatsiya tokeni (har safar ishga tushirishda parol kiritmaslik uchun);</li>
+<li>joriy foydalanuvchi profili maʼlumotlari;</li>
+<li>interfeys sozlamalari (mavzu, til).</li>
+</ul>
+<p>Bu maʼlumotlar hisob yozuvidan chiqilganda yoki Ilova oʻchirilganda oʻchiriladi.</p>
+
+<h3>2.5. Biz nimalarni yigʻmaymiz</h3>
+<ul>
+<li>geolokatsiya;</li>
+<li>kontaktlar, SMS, qoʻngʻiroqlar jurnali;</li>
+<li>galereyadagi suratlar va fayllar (foydalanuvchi oʻzi yuklagan profil suratidan tashqari);</li>
+<li>audio (mikrofonga ruxsat soʻralmaydi);</li>
+<li>reklama identifikatorlari;</li>
+<li>bank kartalari maʼlumotlari (Ilova faqat toʻlov fakti va summasini qayd etadi, karta raqamisiz).</li>
+</ul>
+<p>Ilovada <strong>reklama, uchinchi tomon analitika va kuzatuv tizimlari yoʻq</strong>.</p>
+
+<h2>3. Ilova ruxsatlari</h2>
+<div class="table-wrap"><table>
+<tr><th>Ruxsat</th><th>Nima uchun ishlatiladi</th></tr>
+<tr><td><strong>Kamera</strong></td><td>Faqat tovarlar shtrix-kodini skanerlash uchun. Tasvir qurilmada real vaqtda qayta ishlanadi, <strong>saqlanmaydi va serverga yuborilmaydi</strong> — faqat aniqlangan tovar kodi yuboriladi</td></tr>
+<tr><td><strong>Bildirishnomalar</strong></td><td>Ilova ishlashi davomida lokal bildirishnomalarni koʻrsatish (masalan, amal natijasi haqida). Push-xabarlar va marketing xabarlari yuborilmaydi</td></tr>
+<tr><td><strong>Internet</strong></td><td>Tizim serveri bilan maʼlumot almashish</td></tr>
+</table></div>
+<p>Kamera va bildirishnomalarga ruxsatni istalgan vaqtda qurilma sozlamalarida bekor qilish mumkin; Ilovaning qolgan funksiyalari ishlashda davom etadi.</p>
+
+<h2>4. Qayta ishlash maqsadlari</h2>
+<p>Maʼlumotlar faqat quyidagi maqsadlarda qayta ishlanadi:</p>
+<ol>
+<li>Ilova funksiyalarini taqdim etish (hisob, savdo, toʻlovlar, qarzlar);</li>
+<li>autentifikatsiya va kirish huquqlarini cheklash;</li>
+<li>xavfsizlikni taʼminlash va ruxsatsiz kirishning oldini olish;</li>
+<li>buxgalteriya hisobi toʻgʻrisidagi qonunchilik talablarini bajarish (amallar tarixini saqlash).</li>
+</ol>
+<p>Biz maʼlumotlarni <strong>sotmaymiz</strong>, reklama beruvchilarga bermaymiz va profillash uchun ishlatmaymiz.</p>
+
+<h2>5. Maʼlumotlarni uchinchi shaxslarga berish</h2>
+<p>Maʼlumotlar uchinchi shaxslarga berilmaydi, quyidagilar bundan mustasno:</p>
+<ul>
+<li>tizim joylashtirilgan serverlar egasi — <strong>xosting-provayder</strong> «Oʻzbektelekom» AK (serverlar Oʻzbekiston Respublikasi hududida joylashgan);</li>
+<li>qonunchilikda bevosita nazarda tutilgan hollar (vakolatli davlat organlarining qonuniy soʻrovi boʻyicha).</li>
+</ul>
+<p>Bir doʻkon maʼlumotlari boshqa doʻkonlar xodimlariga koʻrinmaydi.</p>
+
+<h2>6. Maʼlumotlarni saqlash va himoya qilish</h2>
+<ul>
+<li>Maʼlumotlar Oʻzbekiston Respublikasi hududida joylashgan serverlarda saqlanadi va uning hududidan tashqariga uzatilmaydi.</li>
+<li>Ilova va server oʻrtasida maʼlumotlar shifrlangan HTTPS protokoli orqali uzatiladi.</li>
+<li>Parollar faqat xesh koʻrinishida saqlanadi.</li>
+<li>Maʼlumotlarga kirish rollar bilan cheklangan: xodim faqat oʻz doʻkoni va oʻziga biriktirilgan omborlar maʼlumotlarini koʻradi.</li>
+<li>Seanslarning amal qilish muddati cheklangan va ularni yakunlash mumkin.</li>
+</ul>
+<p><strong>Saqlash muddatlari.</strong> Maʼlumotlar qayta ishlash maqsadlari uchun zarur boʻlgan muddatdan ortiq saqlanmaydi:</p>
+<ul>
+<li><strong>xodim hisob yozuvi</strong> — u faol boʻlgan davrda. Oʻchirilgandan soʻng shaxsga doir maʼlumotlar (F.I.Sh., telefon, login, surat) 30 kun ichida oʻchiriladi;</li>
+<li><strong>xaridorlar maʼlumotlari</strong> (F.I.Sh., telefon) — doʻkon tizimdan foydalanayotgan davrda yoki xaridor yoxud doʻkon oʻchirishni soʻraguncha; shundan soʻng 30 kun ichida oʻchiriladi;</li>
+<li><strong>savdo, toʻlovlar, qarzlar va kassa amallari yozuvlari</strong> — doʻkon tizimdan foydalanayotgan davrda. Doʻkon foydalanishni toʻxtatgandan soʻng maʼlumotlar yana 5 yil (Oʻzbekiston Respublikasi qonunchiligiga koʻra birlamchi hisob hujjatlarini saqlash muddati) doʻkon ularni soʻrab olishi uchun saqlanadi, soʻngra oʻchiriladi. Hisob yozuvi yoki xaridor oʻchirilgandan keyin qolgan yozuvlarda shaxsga doir maʼlumotlar anonimlashtiriladi;</li>
+<li><strong>qurilmadagi maʼlumotlar</strong> — hisob yozuvidan chiqilgunga yoki Ilova oʻchirilgunga qadar.</li>
+</ul>
+<p>Agar tizim ishi toʻxtatilsa, foydalanuvchilar kamida 30 kun oldin xabardor qilinadi va oʻz doʻkoni maʼlumotlarini eksport qilishni soʻrashlari mumkin boʻladi. Shundan soʻng barcha maʼlumotlar oʻchiriladi.</p>
+
+<h2>7. Foydalanuvchilarning huquqlari</h2>
+<p>Siz quyidagi huquqlarga egasiz:</p>
+<ul>
+<li>sizga oid qanday maʼlumotlar qayta ishlanayotganini bilish;</li>
+<li>ularning nusxasini olish;</li>
+<li>notoʻgʻri maʼlumotlarni tuzatishni talab qilish;</li>
+<li>maʼlumotlarni oʻchirishni talab qilish (8-bandni hisobga olgan holda);</li>
+<li>qayta ishlashga berilgan rozilikni qaytarib olish.</li>
+</ul>
+<p>Huquqlaringizdan foydalanish uchun <a href="mailto:sanjartukhtamishev@gmail.com"><strong>sanjartukhtamishev@gmail.com</strong></a> manziliga yozing. Biz 30 kun ichida javob beramiz.</p>
+<p>Maʼlumotlari tizimga kiritilgan doʻkon xaridorlari doʻkonning oʻziga ham, yuqoridagi manzil orqali bizga ham murojaat qilishlari mumkin.</p>
+
+<h2 id="delete">8. Hisob yozuvi va maʼlumotlarni oʻchirish</h2>
+<p>Hisob yozuvini quyidagi yoʻllar bilan oʻchirish mumkin:</p>
+<ol>
+<li>doʻkoningiz egasi/administratoriga murojaat qilish; yoki</li>
+<li><a href="mailto:sanjartukhtamishev@gmail.com?subject=Akkauntni%20o%CA%BBchirish"><strong>sanjartukhtamishev@gmail.com</strong></a> manziliga «Akkauntni oʻchirish» mavzusi va hisob yozuviga bogʻlangan telefon raqami bilan xat yuborish.</li>
+</ol>
+<p>Soʻrov tasdiqlangandan soʻng hisob yozuvi va shaxsga doir maʼlumotlar (F.I.Sh., telefon, surat, login) 30 kun ichida oʻchiriladi. Amalga oshirilgan moliyaviy amallar yozuvlari buxgalteriya hisobi toʻgʻrisidagi qonunchilikda talab qilinadigan muddat davomida anonimlashtirilgan holda saqlanishi mumkin.</p>
+<p>Batafsil yoʻriqnoma: <a href="/delete-account.uz.html">sthm23.uz/delete-account.uz.html</a></p>
+
+<h2>9. Bolalar</h2>
+<p>Ilova 18 yoshga toʻlmagan shaxslar uchun moʻljallanmagan va biz ularning maʼlumotlarini ongli ravishda yigʻmaymiz.</p>
+
+<h2>10. Qoʻllaniladigan qonunchilik</h2>
+<p>Shaxsga doir maʼlumotlar Oʻzbekiston Respublikasining 02.07.2019 yildagi OʻRQ-547-son «Shaxsga doir maʼlumotlar toʻgʻrisida»gi Qonuni va Oʻzbekiston Respublikasining boshqa qonun hujjatlariga muvofiq qayta ishlanadi. Siyosatning til versiyalari oʻrtasida farq boʻlsa, rus tilidagi versiya ustun hisoblanadi.</p>
+
+<h2>11. Siyosatdagi oʻzgarishlar</h2>
+<p>Biz ushbu Siyosatni yangilashimiz mumkin. Amaldagi versiya doimo <a href="https://sthm23.uz/privacy.uz.html">https://sthm23.uz/privacy.uz.html</a> manzilida mavjud, oxirgi yangilanish sanasi hujjat boshida koʻrsatilgan. Muhim oʻzgarishlar haqida Ilova orqali xabar beramiz.</p>
+
+<h2>12. Aloqa</h2>
+<p><strong>Sanjar Tuxtamishev</strong><br>
+Email: <a href="mailto:sanjartukhtamishev@gmail.com">sanjartukhtamishev@gmail.com</a><br>
+Manzil: Toshkent shahri, Oʻzbekiston Respublikasi</p>
+
+<footer>© 2026 STHM</footer>
+</main>
+</body>
+</html>

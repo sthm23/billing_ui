@@ -21,10 +21,14 @@
   a { color:inherit; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; }
   footer { margin-top:48px; padding-top:16px; border-top:1px solid var(--line); color:var(--soft); font-size:14px; }
+  .langs { display:flex; gap:12px; justify-content:flex-end; font-size:14px; margin:0 0 16px; }
+  .langs a { color:var(--soft); text-decoration:none; }
+  .langs a[aria-current] { color:var(--ink); font-weight:600; }
 </style>
 </head>
 <body>
 <main>
+<nav class="langs" aria-label="Язык / Til / Language"><a href="/delete-account.html" hreflang="ru" aria-current="page">Русский</a><a href="/delete-account.uz.html" hreflang="uz">Oʻzbekcha</a><a href="/delete-account.en.html" hreflang="en">English</a></nav>
 <h1>Удаление аккаунта STHM</h1>
 <p class="meta">Приложение STHM (Android, <code>com.sthm23.billingmobile</code>) · разработчик: Санжар Тухтамишев</p>
 
