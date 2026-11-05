@@ -20,7 +20,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Must match the npm major that wrote package-lock.json (Node 24 → npm 11).
+          # npm 10 rejects this lock file because of optional peer deps (chokidar@5).
+          node-version: 24
           cache: npm
 
       - run: npm ci
