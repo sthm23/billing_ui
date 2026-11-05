@@ -104,8 +104,7 @@ export class OrderId implements OnInit {
             stock: +item.variant.quantity,
             price: +item.retailPrice,
             quantity: +item.quantity,
-            sale: +item.sale,
-            costAtSale: +item.costAtSale
+            sale: +item.sale
           }));
           this.orderItems.set(items)
         }
@@ -178,7 +177,6 @@ export class OrderId implements OnInit {
       quantity: 1,
       name: variant.name,
       price: variant.price,
-      costAtSale: +variant.stockMovements.filter(movement => movement.type === 'IN')[0]?.unitCost || 0,
       id: variant.id,
       sale: 0
     }
@@ -285,8 +283,7 @@ export class OrderId implements OnInit {
         variantId: item.id,
         quantity: item.quantity,
         retailPrice: +item.price,
-        sale: item.sale,
-        costAtSale: item.costAtSale
+        sale: item.sale
       }));
       if (orderItems.length === 0) {
         this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No items in the order' });

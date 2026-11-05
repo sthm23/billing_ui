@@ -1,0 +1,67 @@
+name: Deploy frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          if ! ssh-keygen -lf ~/.ssh/known_hosts; then
+            echo "::error::SSH_KNOWN_HOSTS secret is empty or invalid (paste ssh-keyscan output)"
+            exit 1
+          fi
+
+      - name: Run deploy script on server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" -o BatchMode=yes \
+            "$SSH_USER@$SSH_HOST" 'bash /var/www/billing-ui/deploy.sh'
+
+      - name: Smoke check
+        run: |
+          curl -fsS -o /dev/null https://sthm23.uz/ || { echo "::error::https://sthm23.uz/ is not reachable"; exit 1; }
+          # Play Market links: must be served as static pages, not swallowed by the SPA fallback.
+          for path in /privacy.html /delete-account.html; do
+            body=$(curl -fsS "https://sthm23.uz$path") || { echo "::error::https://sthm23.uz$path is not reachable"; exit 1; }
+            if grep -q '<app-root' <<< "$body"; then
+              echo "::error::https://sthm23.uz$path returns the Angular index.html instead of the static page"
+              exit 1
+            fi
+          done

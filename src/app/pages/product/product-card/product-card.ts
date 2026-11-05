@@ -232,7 +232,7 @@ export class ProductCard implements OnInit, OnDestroy {
   handleVariantItem(variant: ProductVariant, type: StockMovementType) {
     this.dataForDialog = {
       title: "Skladga qushish",
-      costPrice: +variant.stockMovements[0]?.unitCost || 0,
+      costPrice: +(variant.stockMovements[0]?.unitCost ?? 0),
       sku: variant.sku,
       id: variant.id,
       price: variant.price,

@@ -67,7 +67,8 @@ export interface UserStockMovement {
   quantity: number
   reason: "PURCHASE" | "SALE" | "ADJUSTMENT"
   type: "IN" | "OUT"
-  unitCost: number
+  /** Owner/manager only */
+  unitCost?: number
   variantId: string
   warehouseId: string
   variant: {
@@ -83,7 +84,6 @@ export interface AuthAccount {
   id: string
   userId: string
   login: string   // e.g. email or username or phone
-  passwordHash: string
   isActive: boolean
   createdAt: string
   user?: User

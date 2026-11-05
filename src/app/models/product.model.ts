@@ -59,7 +59,8 @@ export interface StockMovement {
   reason: StockMovementReason
   warehouseId: string
   quantity: number
-  unitCost: string
+  /** null for write-offs and for roles below manager */
+  unitCost: string | null
   createdAt: string
   createdBy: {
     role: 'OWNER' | 'STAFF'
