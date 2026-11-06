@@ -1,0 +1,228 @@
+<p-confirmdialog />
+@if (rental(); as r) {
+<div class="flex flex-col gap-4">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-arrow-left" text (onClick)="back()" />
+      <div>
+        <h4 class="mb-1!">{{ r.order.customer?.user?.fullName ?? '-' }}</h4>
+        <div class="text-gray-500">{{ r.order.customer?.user?.phone }} · {{ r.order.warehouse.name }}</div>
+      </div>
+      <p-tag [value]="'rental.status.' + r.status | transloco" [severity]="statusSeverity(r.status)" />
+      @if (r.overdue) {
+      <p-tag [value]="'rental.overdue' | transloco" severity="danger" />
+      }
+    </div>
+    <div class="flex flex-wrap gap-2">
+      @if (r.status === Status.BOOKED) {
+      <p-button [label]="'rental.edit' | transloco" icon="pi pi-pencil" severity="secondary" outlined
+        (onClick)="edit()" />
+      @if (canManage) {
+      <p-button [label]="'rental.cancelBooking' | transloco" icon="pi pi-ban" severity="danger" outlined
+        (onClick)="openCancel()" />
+      }
+      <p-button [label]="'rental.addPayment' | transloco" icon="pi pi-wallet" severity="secondary"
+        (onClick)="openPayment('PAYMENT')" />
+      <p-button [label]="'rental.issue' | transloco" icon="pi pi-sign-out" (onClick)="openPayment('ISSUE')" />
+      }
+      @if (r.status === Status.ISSUED || r.status === Status.PARTIALLY_RETURNED) {
+      <p-button [label]="'rental.addPayment' | transloco" icon="pi pi-wallet" severity="secondary"
+        (onClick)="openPayment('PAYMENT')" />
+      <p-button [label]="'rental.return' | transloco" icon="pi pi-sign-in" (onClick)="returnVisible = true" />
+      }
+      @if (r.status === Status.RETURNED && due() > 0) {
+      <p-button [label]="'rental.payDebt' | transloco" icon="pi pi-wallet" (onClick)="openPayment('DEBT')" />
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-4">
+    <div class="flex-3 flex flex-col gap-4">
+      <!-- Dates -->
+      <div class="card mb-0! flex flex-wrap gap-6">
+        <div>
+          <div class="text-sm text-gray-500">{{ 'rental.dates' | transloco }}</div>
+          <div class="font-semibold">{{ r.startDate | date: 'dd.MM.yyyy' }} — {{ r.endDate | date: 'dd.MM.yyyy' }}</div>
+          <small class="text-gray-500">{{ 'rental.daysCount' | transloco: { days: r.plannedDays } }} ·
+            {{ 'rental.boundaryHint' | transloco }}</small>
+        </div>
+        @if (r.issuedAt) {
+        <div>
+          <div class="text-sm text-gray-500">{{ 'rental.issuedAt' | transloco }}</div>
+          <div class="font-semibold">{{ r.issuedAt | date: 'dd.MM.yyyy HH:mm' }}</div>
+        </div>
+        }
+        @if (r.closedAt) {
+        <div>
+          <div class="text-sm text-gray-500">{{ 'rental.closedAt' | transloco }}</div>
+          <div class="font-semibold">{{ r.closedAt | date: 'dd.MM.yyyy HH:mm' }}</div>
+        </div>
+        }
+        @if (r.cancelledAt) {
+        <div>
+          <div class="text-sm text-gray-500">{{ 'rental.cancelledAt' | transloco }}</div>
+          <div class="font-semibold">{{ r.cancelledAt | date: 'dd.MM.yyyy HH:mm' }}</div>
+          @if (r.cancelReason) {
+          <small>{{ r.cancelReason }}</small>
+          }
+        </div>
+        }
+        @if (r.notes) {
+        <div>
+          <div class="text-sm text-gray-500">{{ 'rental.notes' | transloco }}</div>
+          <div>{{ r.notes }}</div>
+        </div>
+        }
+      </div>
+
+      <!-- Items -->
+      <div class="card mb-0!">
+        <h5>{{ 'rental.items' | transloco }}</h5>
+        <p-table [value]="r.order.items">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'rental.item' | transloco }}</th>
+              <th>{{ 'rental.quantity' | transloco }}</th>
+              <th>{{ 'rental.returnedQty' | transloco }}</th>
+              <th>{{ 'rental.price' | transloco }}</th>
+              <th>{{ 'rental.sale' | transloco }}</th>
+              <th>{{ 'rental.total' | transloco }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item>
+            <tr>
+              <td>
+                <div class="font-semibold">{{ item.variant.product.name }}</div>
+                <small class="text-gray-500">{{ item.variant.sku }} {{ attributes(item) }}</small>
+              </td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.returnedQuantity }}</td>
+              <td>{{ item.retailPrice | currency: ' ' : 'code' : '0.0' }}</td>
+              <td>{{ item.sale | currency: ' ' : 'code' : '0.0' }}</td>
+              <td>{{ lineTotal(item) | currency: ' ' : 'code' : '0.0' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+        @if (r.order.services.length) {
+        <h5 class="mt-4">{{ 'rental.services' | transloco }}</h5>
+        <p-table [value]="r.order.services">
+          <ng-template #body let-service>
+            <tr>
+              <td>{{ service.name }}</td>
+              <td>{{ service.price | currency: ' ' : 'code' : '0.0' }}</td>
+              <td>{{ +service.sale > 0 ? '- ' : '' }}{{ service.sale | currency: ' ' : 'code' : '0.0' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+        }
+      </div>
+
+      <!-- Returns -->
+      @if (r.returns.length) {
+      <div class="card mb-0!">
+        <h5>{{ 'rental.returns' | transloco }}</h5>
+        @for (ret of r.returns; track ret.id) {
+        <div class="flex flex-col gap-1 py-2 border-b border-surface last:border-0">
+          <div class="font-semibold">{{ ret.returnedAt | date: 'dd.MM.yyyy HH:mm' }}</div>
+          @for (it of ret.items; track it.id) {
+          <small>{{ 'rental.returnedItemLine' | transloco: { quantity: it.quantity, days: it.cleaningDays } }}
+            · {{ 'rental.freeFrom' | transloco }} {{ it.availableFrom | date: 'dd.MM.yyyy HH:mm' }}</small>
+          }
+          @if (+ret.penaltyAmount > 0) {
+          <small class="text-red-500">{{ 'rental.penalty' | transloco }}: {{ ret.penaltyAmount | currency: ' ' : 'code' : '0.0' }}
+            — {{ ret.penaltyComment }}</small>
+          }
+          @if (+ret.earlyReturnRefund > 0) {
+          <small class="text-green-600">{{ 'rental.earlyReturnRefund' | transloco }}: {{ ret.earlyReturnRefund | currency: ' ' : 'code' : '0.0' }}</small>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Money & collaterals -->
+    <div class="flex-2 flex flex-col gap-4">
+      <div class="card mb-0! flex flex-col gap-2">
+        <div class="flex justify-between"><span>{{ 'rental.total' | transloco }}</span>
+          <span class="font-bold">{{ r.order.totalAmount | currency: ' ' : 'code' : '0.0' }} UZS</span></div>
+        <div class="flex justify-between"><span>{{ 'rental.paid' | transloco }}</span>
+          <span class="text-green-600">{{ r.order.paidAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+        <div class="flex justify-between"><span>{{ 'rental.due' | transloco }}</span>
+          <span [class.text-red-500]="due() > 0" class="font-bold">{{ r.order.dueAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+        @if (r.refundAmount !== null && +r.refundAmount > 0) {
+        <div class="flex justify-between"><span>{{ 'rental.refunded' | transloco }}</span>
+          <span>{{ r.refundAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+        }
+        @if (r.order.payments.length) {
+        <p-divider />
+        @for (p of r.order.payments; track p.id) {
+        <div class="flex justify-between text-sm">
+          <span>{{ p.createdAt | date: 'dd.MM.yyyy HH:mm' }} · {{ 'order.paymentMethod.' + p.type | transloco }}</span>
+          <span class="text-green-600">+{{ p.amount | currency: ' ' : 'code' : '0.0' }}</span>
+        </div>
+        }
+        }
+      </div>
+
+      <div class="card mb-0! flex flex-col gap-2">
+        <h5 class="mb-0!">{{ 'rental.collaterals' | transloco }}</h5>
+        @if (!r.collaterals.length) {
+        <small class="text-gray-500">{{ 'rental.noCollaterals' | transloco }}</small>
+        }
+        @for (c of r.collaterals; track c.id) {
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <div>{{ 'rental.collateralType.' + c.type | transloco }}: {{ c.description }}</div>
+            <small class="text-gray-500">
+              @if (c.returnedAt) {
+              {{ 'rental.collateralReturnedAt' | transloco }} {{ c.returnedAt | date: 'dd.MM.yyyy HH:mm' }}
+              } @else {
+              {{ 'rental.collateralReceivedAt' | transloco }} {{ c.receivedAt | date: 'dd.MM.yyyy HH:mm' }}
+              }
+            </small>
+          </div>
+          @if (!c.returnedAt) {
+          <p-button [label]="'rental.returnCollateral' | transloco" size="small" outlined
+            [disabled]="busy() || (!isPaid() && r.status !== Status.CANCELLED)" (onClick)="returnCollateral($event, c)" />
+          }
+        </div>
+        }
+        @if (r.collaterals.length && !isPaid() && r.status !== Status.CANCELLED) {
+        <small class="text-gray-500">{{ 'rental.collateralAfterPayment' | transloco }}</small>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-rental-payment-dialog [(visible)]="paymentVisible" [mode]="paymentMode" [dueAmount]="due()" [loading]="busy()"
+  (submitted)="onPaymentSubmitted($event)" />
+<app-rental-return-dialog [(visible)]="returnVisible" [rental]="r" [canManage]="canManage" [loading]="busy()"
+  (submitted)="onReturnSubmitted($event)" />
+
+<p-dialog [header]="'rental.cancelBooking' | transloco" [modal]="true" [(visible)]="cancelVisible"
+  [style]="{ width: '28rem' }" [breakpoints]="{ '640px': '95vw' }">
+  <div class="flex flex-col gap-3">
+    <div class="flex justify-between"><span>{{ 'rental.paid' | transloco }}</span>
+      <span class="font-bold">{{ r.order.paidAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+    <label>{{ 'rental.refundAmount' | transloco }}</label>
+    <p-inputnumber [(ngModel)]="cancelForm.refundAmount" [min]="0" [max]="+r.order.paidAmount" fluid />
+    @if (cancelForm.refundAmount > 0) {
+    <p-select [options]="paymentTypeOptions" optionValue="value" [(ngModel)]="cancelForm.refundPaymentType"
+      [placeholder]="'rental.chooseRefundType' | transloco" class="w-full">
+      <ng-template let-option #item>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+      <ng-template let-option #selectedItem>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+    </p-select>
+    }
+    <input pInputText [(ngModel)]="cancelForm.reason" [placeholder]="'rental.cancelReason' | transloco" />
+    <small class="text-gray-500">{{ 'rental.cancelHint' | transloco }}</small>
+  </div>
+  <ng-template #footer>
+    <p-button [label]="'rental.cancelAction' | transloco" severity="secondary" outlined (onClick)="cancelVisible = false" />
+    <p-button [label]="'rental.cancelBooking' | transloco" severity="danger" [loading]="busy()"
+      [disabled]="!cancelValid" (onClick)="submitCancel()" />
+  </ng-template>
+</p-dialog>
+}

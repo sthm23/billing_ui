@@ -41,7 +41,10 @@ export interface CashboxTransaction {
 export enum CashTransactionCategory {
   SALE = 'SALE',
   DEBT_PAYMENT = 'DEBT_PAYMENT',
+  /** Expense: premises rent */
   RENT = 'RENT',
+  /** Income from rental orders (not RENT) */
+  RENTAL = 'RENTAL',
   DELIVERY = 'DELIVERY',
   SALARY = 'SALARY',
   PURCHASE = 'PURCHASE',

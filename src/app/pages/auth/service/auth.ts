@@ -83,6 +83,20 @@ export class AuthService {
     return role === StaffRole.OWNER;
   }
 
+  /** OWNER or MANAGER: may lower prices, cancel bookings, backdate returns */
+  canManageStore(): boolean {
+    return this.isOwner() || this.isManager();
+  }
+
+  /** Store mode flags (UX only — the backend enforces them) */
+  isSalesEnabled(): boolean {
+    return this.getCurrentUser()?.staff?.store?.salesEnabled ?? true;
+  }
+
+  isRentalEnabled(): boolean {
+    return this.getCurrentUser()?.staff?.store?.rentalEnabled ?? false;
+  }
+
   getUserStoreId(): string | null {
     const user = this.getCurrentUser();
     if (user?.staff && user.staff.store) {

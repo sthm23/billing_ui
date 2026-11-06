@@ -73,6 +73,8 @@ export interface Order {
   returnedAmount: number
   isReturned: boolean
   returnedAt: string | null
+  /** Set for a rental order — open it in the rental screens, not in the cart */
+  rental?: { id: string, status: string } | null
 }
 
 export interface OrderDetail extends Order {

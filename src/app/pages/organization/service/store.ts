@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateStore, Store, CreateWarehouse, Warehouse, StoreResponse } from '../../../models/store.model';
+import { CreateStore, Store, CreateWarehouse, Warehouse, StoreResponse, UpdateStoreFlags } from '../../../models/store.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,13 @@ export class StoreService {
 
   getStoreById(id: string) {
     return this.http.get<Store>(`/api/store/${id}`, {
+      withCredentials: true
+    });
+  }
+
+  /** PUT /store/:id with the sale/rent flags; attributes and brands are required by the backend */
+  updateStoreFlags(id: string, body: UpdateStoreFlags) {
+    return this.http.put<Store>(`/api/store/${id}`, body, {
       withCredentials: true
     });
   }

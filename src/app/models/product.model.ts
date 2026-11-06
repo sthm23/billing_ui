@@ -35,6 +35,11 @@ export interface ProductVariant {
   sku: string // ску будет уникален в пределах магазина
   barCode: string
   price: number
+  /** Sale / rent flags (rental feature) */
+  canSell?: boolean
+  canRent?: boolean
+  /** Decimal string; required > 0 when canRent */
+  rentPricePerDay?: string | number | null
   storeId: string // это для быстрого поиска уникального SKU в пределах магазина
   product: Product
   quantity: number
@@ -162,6 +167,9 @@ export interface ProductVariantPayload {
   retailPrice: number;
   costPrice: number;
   quantity: number;
+  canSell?: boolean;
+  canRent?: boolean;
+  rentPricePerDay?: number;
   attributes: AttributeValue[];
 }
 export interface CreateProductVariantPayload {
@@ -201,4 +209,7 @@ export interface InventoryMovementPayload {
 
 export interface UpdateProductVariantPrice {
   price: number;
+  canSell?: boolean;
+  canRent?: boolean;
+  rentPricePerDay?: number;
 }

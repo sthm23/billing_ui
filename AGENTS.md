@@ -163,6 +163,12 @@ addProduct(product: Product) {
     ├── /payments
     │   ├── /list                 # Cashbox list
     │   └── /:id                  # Cashbox details
+    ├── /rental                   # rentalEnabledGuard (store.rentalEnabled)
+    │   ├── /list                 # Rentals: status, period, overdue
+    │   ├── /create, /:id/edit    # Booking form (dates, items with availability, services, set discount)
+    │   ├── /calendar             # Busy units per variant per day
+    │   └── /:id                  # Rental card: payments, issue, return, collaterals, cancel
+    ├── /store-settings           # OWNER — sale / rental modes of the store
     ├── /product                  # ADMIN, OWNER, MANAGER
     │   ├── /list
     │   ├── /create
@@ -286,6 +292,9 @@ Methods return the `Observable` directly (no explicit return type); payload/resp
 - `DebtService` (`pages/debitors/service/debt.service.ts`) → `/api/debt/*`
 - `UserService` (`pages/user/service/user.service.ts`) → `/api/users/*`
 - `StoreService` (`pages/organization/service/store.ts`) → `/api/store/*`, `/api/warehouse/*`
+- `RentalService` (`pages/rental/service/rental.service.ts`) → `/api/rental/*` (rules: `../docs/features/rental.md`)
+
+**Store modes**: `AuthService.isSalesEnabled()` / `isRentalEnabled()` read `staff.store` of the cached user; the menu hides Orders / Rental by them (UX only). A rental order in the order list carries `rental: { id }` and opens the rental card. The set-discount spread of a booking is `shared/utils/set-discount.ts` — must match billing-mobile (`docs/features/rental.md#set-discount-distribution`).
 
 ---
 

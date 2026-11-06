@@ -76,7 +76,20 @@ export class Menu {
             {
               label: res['order'],
               icon: 'pi pi-fw pi-shopping-cart',
-              routerLink: ['/pages/order/list']
+              routerLink: ['/pages/order/list'],
+              visible: this.authService.isSalesEnabled(),
+            },
+            {
+              label: res['rental'],
+              icon: 'pi pi-fw pi-calendar',
+              routerLink: ['/pages/rental/list'],
+              visible: this.authService.isRentalEnabled(),
+            },
+            {
+              label: res['rentalCalendar'],
+              icon: 'pi pi-fw pi-calendar-clock',
+              routerLink: ['/pages/rental/calendar'],
+              visible: this.authService.isRentalEnabled(),
             },
             {
               label: res['debitor'],
@@ -87,6 +100,12 @@ export class Menu {
               label: res['payments'],
               icon: 'pi pi-fw pi-money-bill',
               routerLink: ['/pages/payments/list']
+            },
+            {
+              label: res['storeSettings'],
+              icon: 'pi pi-fw pi-cog',
+              routerLink: ['/pages/store-settings'],
+              visible: this.authService.isOwner(),
             },
           ]
         },

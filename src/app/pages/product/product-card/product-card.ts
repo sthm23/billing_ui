@@ -35,6 +35,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { VariantData, VariantDialog } from '../../../shared/components/variant-dialog/variant-dialog';
 import { StaffRole } from '../../../models/user.model';
+import { DialogModule } from 'primeng/dialog';
+import { CheckboxModule } from 'primeng/checkbox';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -95,7 +97,9 @@ type DialogData = {
     TextareaModule,
     AvatarModule,
     TranslocoPipe,
-    VariantDialog
+    VariantDialog,
+    DialogModule,
+    CheckboxModule
   ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -132,6 +136,17 @@ export class ProductCard implements OnInit, OnDestroy {
   @ViewChild('dt') dataTable!: Table;
 
   public appStore = inject(AppStore);
+
+  /** Rental settings of a variant (store with rental enabled) */
+  readonly rentalEnabled = inject(AuthService).isRentalEnabled();
+  readonly salesEnabled = inject(AuthService).isSalesEnabled();
+  rentDialogVisible = false;
+  rentForm: { variant: ProductVariant | null; canSell: boolean; canRent: boolean; rentPricePerDay: number | null } = {
+    variant: null,
+    canSell: true,
+    canRent: false,
+    rentPricePerDay: null,
+  };
 
   destroyer$ = new Subject<void>();
 
@@ -301,6 +316,46 @@ export class ProductCard implements OnInit, OnDestroy {
       }
     })
 
+  }
+
+  openRentSettings(variant: ProductVariant) {
+    this.rentForm = {
+      variant,
+      canSell: variant.canSell ?? true,
+      canRent: variant.canRent ?? false,
+      rentPricePerDay: variant.rentPricePerDay != null ? +variant.rentPricePerDay : null,
+    };
+    this.rentDialogVisible = true;
+  }
+
+  get rentFormValid() {
+    const f = this.rentForm;
+    return (f.canSell || f.canRent) && (!f.canRent || (f.rentPricePerDay ?? 0) > 0);
+  }
+
+  saveRentSettings() {
+    const product = this.productCard();
+    const { variant, canSell, canRent, rentPricePerDay } = this.rentForm;
+    if (!product || !variant || !this.rentFormValid) return;
+    this.productService.updateProductVariant(variant.id, {
+      // PUT /product/variants/:id requires the sale price: keep the current one
+      price: +variant.price,
+      canSell,
+      canRent,
+      ...(rentPricePerDay != null ? { rentPricePerDay } : {}),
+    }).pipe(
+      switchMap(() => this.productService.getProductById(product.id)),
+      takeUntil(this.destroyer$)
+    ).subscribe({
+      next: (res) => {
+        this.productCard.set(res);
+        this.rentDialogVisible = false;
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Saved' });
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to save' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

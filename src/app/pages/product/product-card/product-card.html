@@ -6,6 +6,35 @@
     [costPrice]="dataForDialog.costPrice" [price]="dataForDialog.price" [type]="dataForDialog.type"
     (dataChange)="handleDialogData($event)" [(visible)]="visibleAddVariants" />
   }
+  <p-dialog [header]="'product.rentSettings' | transloco" [modal]="true" [(visible)]="rentDialogVisible"
+    [style]="{ width: '26rem' }">
+    <div class="flex flex-col gap-4">
+      <span class="text-gray-500">{{ rentForm.variant?.sku }}</span>
+      @if (salesEnabled) {
+      <label class="flex items-center gap-2">
+        <p-checkbox [(ngModel)]="rentForm.canSell" [binary]="true" />
+        <span>{{ 'product.canSell' | transloco }}</span>
+      </label>
+      }
+      <label class="flex items-center gap-2">
+        <p-checkbox [(ngModel)]="rentForm.canRent" [binary]="true" />
+        <span>{{ 'product.canRent' | transloco }}</span>
+      </label>
+      @if (rentForm.canRent) {
+      <div class="flex flex-col gap-2">
+        <label for="rentPricePerDay">{{ 'product.rentPricePerDay' | transloco }}</label>
+        <p-inputnumber inputId="rentPricePerDay" [(ngModel)]="rentForm.rentPricePerDay" [min]="0" />
+      </div>
+      }
+      @if (!rentFormValid) {
+      <small class="text-red-500">{{ 'product.rentSettingsInvalid' | transloco }}</small>
+      }
+      <div class="flex justify-end gap-2">
+        <p-button [label]="'product.cancel' | transloco" severity="secondary" (onClick)="rentDialogVisible = false" />
+        <p-button [label]="'order.save' | transloco" [disabled]="!rentFormValid" (onClick)="saveRentSettings()" />
+      </div>
+    </div>
+  </p-dialog>
   @if (product) {
   <div class="flex flex-col justify-content-center p-4">
     <div class="flex-1 flex items-center justify-between">
@@ -155,6 +184,9 @@
               <th pResizableColumn>{{'product.sku'|transloco}}</th>
               <th pResizableColumn>{{'product.attribute'|transloco}}</th>
               <th pResizableColumn>{{'product.retailPrice'|transloco}}</th>
+              @if (rentalEnabled) {
+              <th pResizableColumn>{{'product.rentPricePerDay'|transloco}}</th>
+              }
               <th pResizableColumn>{{'product.quantity'|transloco}}</th>
               <th style="width: 5rem"></th>
             </tr>
@@ -183,6 +215,15 @@
 
               </td>
               <td> {{ variant.price | currency: ' ' : "code": "0.0" }}</td>
+              @if (rentalEnabled) {
+              <td>
+                @if (variant.canRent) {
+                {{ variant.rentPricePerDay | currency: ' ' : "code": "0.0" }}
+                } @else {
+                <span class="text-gray-400">—</span>
+                }
+              </td>
+              }
               <td>
                 <p-tag [value]="variant.quantity" [severity]="getSeverity(variant.quantity)" />
               </td>
@@ -192,13 +233,17 @@
                     (onClick)="handleVariantItem(variant, dialogType.IN)" />
                   <p-button icon="pi pi-minus" outlined="true" severity="danger"
                     (onClick)="handleVariantItem(variant, dialogType.OUT)" />
+                  @if (rentalEnabled) {
+                  <p-button icon="pi pi-calendar" outlined="true" severity="secondary"
+                    (onClick)="openRentSettings(variant)" />
+                  }
                 </div>
               </td>
             </tr>
           </ng-template>
           <ng-template #expandedrow let-variant>
             <tr>
-              <td colspan="7">
+              <td [attr.colspan]="rentalEnabled ? 8 : 7">
                 <div class="p-4">
                   <h5>{{'product.stockMovement'| transloco:{
                     attribute: getProductTranslate((`attributeValue.${variant.attributes[0].value}` | transloco),

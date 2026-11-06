@@ -138,12 +138,36 @@
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
                 </div>
 
+                @if (salesEnabled) {
                 <div class="flex flex-col gap-2 w-full">
                   <label [for]="'salePrice-' + i">{{'product.retailPrice' | transloco}}</label>
                   <p-inputnumber [inputId]="'salePrice-' + i" formControlName="salePrice"
                     [class]="variantsArray.at(i).controls.salePrice.touched && variantsArray.at(i).controls.salePrice.invalid ? 'ng-dirty ng-invalid' : ''" />
                 </div>
+                }
+                @if (rentalEnabled && variant.controls.canRent.value) {
+                <div class="flex flex-col gap-2 w-full">
+                  <label [for]="'rentPrice-' + i">{{'product.rentPricePerDay' | transloco}}</label>
+                  <p-inputnumber [inputId]="'rentPrice-' + i" formControlName="rentPricePerDay"
+                    [class]="variantsArray.at(i).controls.rentPricePerDay.touched && rentPriceMissing(i) ? 'ng-dirty ng-invalid' : ''" />
+                </div>
+                }
               </div>
+
+              @if (rentalEnabled) {
+              <div class="flex flex-col gap-2 justify-center">
+                @if (salesEnabled) {
+                <label class="flex items-center gap-2">
+                  <p-checkbox formControlName="canSell" [binary]="true" />
+                  <span>{{'product.canSell' | transloco}}</span>
+                </label>
+                }
+                <label class="flex items-center gap-2">
+                  <p-checkbox formControlName="canRent" [binary]="true" />
+                  <span>{{'product.canRent' | transloco}}</span>
+                </label>
+              </div>
+              }
 
             </div>
           </div>

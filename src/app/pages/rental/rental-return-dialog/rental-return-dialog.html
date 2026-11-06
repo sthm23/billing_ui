@@ -1,0 +1,138 @@
+<p-dialog [header]="'rental.returnTitle' | transloco" [modal]="true" [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)" [style]="{ width: '48rem' }" [breakpoints]="{ '960px': '95vw' }">
+  <div class="flex flex-col gap-4">
+    <!-- Items -->
+    @for (line of lines; track line.orderItemId) {
+    <div class="flex flex-col md:flex-row md:items-end gap-3">
+      <div class="flex-2">
+        <div class="font-semibold">{{ line.name }}</div>
+        <small class="text-gray-500">{{ 'rental.outstanding' | transloco: { count: line.outstanding } }}</small>
+      </div>
+      <div class="flex flex-col gap-1 w-32">
+        <label class="text-sm">{{ 'rental.returnQuantity' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="line.quantity" (ngModelChange)="invalidate()" [min]="0" [max]="line.outstanding"
+          [showButtons]="true" buttonLayout="horizontal" inputStyleClass="w-12 text-center" />
+      </div>
+      <div class="flex flex-col gap-1 w-36">
+        <label class="text-sm">{{ 'rental.cleaningDays' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="line.cleaningDays" (ngModelChange)="invalidate()" [min]="0" [max]="30"
+          [showButtons]="true" buttonLayout="horizontal" inputStyleClass="w-12 text-center" />
+      </div>
+    </div>
+    }
+    <small class="text-gray-500">{{ 'rental.cleaningHint' | transloco }}</small>
+
+    <p-divider />
+
+    <div class="flex flex-col md:flex-row gap-4">
+      @if (canManage) {
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="text-sm">{{ 'rental.returnedAt' | transloco }}</label>
+        <p-datepicker [(ngModel)]="returnedAt" (ngModelChange)="invalidate()" [showTime]="true" hourFormat="24"
+          dateFormat="dd.mm.yy" [maxDate]="now" [showClear]="true" [placeholder]="'rental.now' | transloco" fluid />
+      </div>
+      }
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="text-sm">{{ 'rental.penalty' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="penaltyAmount" (ngModelChange)="invalidate()" [min]="0" fluid />
+      </div>
+    </div>
+    @if (penaltyAmount > 0) {
+    <input pInputText [(ngModel)]="penaltyComment" (ngModelChange)="invalidate()"
+      [placeholder]="'rental.penaltyComment' | transloco" />
+    }
+    @if (canManage) {
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="text-sm">{{ 'rental.earlyReturnRefund' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="earlyReturnRefund" (ngModelChange)="invalidate()" [min]="0" fluid />
+        @if (preview(); as p) {
+        @if (+p.maxEarlyReturnRefund > 0) {
+        <small class="text-gray-500">{{ 'rental.maxEarlyRefund' | transloco }}: {{ p.maxEarlyReturnRefund | currency: ' ' : 'code' : '0.0' }}</small>
+        }
+        }
+      </div>
+      <div class="flex-1"></div>
+    </div>
+    }
+
+    <div class="font-semibold">{{ 'rental.paymentsWithReturn' | transloco }}</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      @for (type of paymentTypes; track type) {
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'order.paymentMethod.' + type | transloco }}</label>
+        <p-inputnumber [(ngModel)]="amounts[type]" (ngModelChange)="invalidate()" [min]="0" fluid />
+      </div>
+      }
+    </div>
+
+    @if (checkError()) {
+    <p-message severity="error" [text]="checkError()!" />
+    }
+
+    <!-- Preview -->
+    @if (preview(); as p) {
+    <p-divider />
+    <div class="flex flex-col gap-2">
+      @for (item of p.items; track item.orderItemId) {
+      <div class="flex flex-wrap justify-between gap-2">
+        <span>{{ itemName(item.orderItemId) }}</span>
+        <span [class.text-red-500]="item.actualDays > item.plannedDays">
+          {{ 'rental.daysPlanFact' | transloco: { planned: item.plannedDays, actual: item.actualDays } }}
+          · {{ 'rental.freeFrom' | transloco }} {{ item.availableFrom | date: 'dd.MM.yyyy HH:mm' }}
+        </span>
+      </div>
+      }
+      @if (p.items[0] && p.items[0].actualDays > p.items[0].plannedDays) {
+      <p-message severity="warn" [text]="'rental.lateHint' | transloco" />
+      }
+      <div class="flex justify-between"><span>{{ 'rental.newTotal' | transloco }}</span><span>{{ p.newTotalAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+      <div class="flex justify-between"><span>{{ 'rental.paid' | transloco }}</span><span>{{ p.paidAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+      @if (+p.paymentsAmount > 0) {
+      <div class="flex justify-between"><span>{{ 'rental.paymentsNow' | transloco }}</span><span>+{{ p.paymentsAmount | currency: ' ' : 'code' : '0.0' }}</span></div>
+      }
+      <div class="flex justify-between font-bold" [class.text-red-500]="+p.dueAmount > 0">
+        <span>{{ 'rental.dueAfter' | transloco }}</span><span>{{ p.dueAmount | currency: ' ' : 'code' : '0.0' }} UZS</span>
+      </div>
+      @if (+p.cashOutAmount > 0) {
+      <div class="flex justify-between font-bold text-orange-500">
+        <span>{{ 'rental.cashOut' | transloco }}</span><span>{{ p.cashOutAmount | currency: ' ' : 'code' : '0.0' }} UZS</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'rental.refundPaymentType' | transloco }}</label>
+        <p-select [options]="paymentTypeOptions" optionValue="value" [(ngModel)]="refundPaymentType"
+          [placeholder]="'rental.chooseRefundType' | transloco" class="w-full md:w-64">
+          <ng-template let-option #item>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+          <ng-template let-option #selectedItem>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+        </p-select>
+      </div>
+      }
+      <div class="text-sm text-gray-500">
+        {{ 'rental.after' | transloco }}: {{ 'rental.status.' + p.rentalStatusAfter | transloco }},
+        {{ 'order.status.' + p.orderStatusAfter | transloco }}
+      </div>
+    </div>
+
+    @if (conflictCount > 0) {
+    <p-message severity="warn">
+      <div class="flex flex-col gap-1">
+        <span class="font-semibold">{{ 'rental.cleaningConflicts' | transloco }}</span>
+        @for (item of conflicts(); track item.orderItemId) {
+        @for (c of item.conflicts; track c.rentalId) {
+        <span>{{ itemName(item.orderItemId) }}: {{ c.customerName ?? '-' }}, {{ c.startDate }} —
+          {{ 'rental.conflictAvailable' | transloco: { available: c.availableAtStart, needed: c.quantity } }}</span>
+        }
+        }
+      </div>
+    </p-message>
+    }
+    }
+  </div>
+  <ng-template #footer>
+    <p-button [label]="'rental.cancelAction' | transloco" severity="secondary" outlined (onClick)="close()" />
+    <p-button [label]="'rental.check' | transloco" icon="pi pi-calculator" severity="secondary" [loading]="checking()"
+      (onClick)="check()" />
+    <p-button [label]="'rental.confirmReturn' | transloco" icon="pi pi-check" [loading]="loading"
+      [disabled]="!preview() || (needsRefundType && !refundPaymentType)" (onClick)="confirm()" />
+  </ng-template>
+</p-dialog>

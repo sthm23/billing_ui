@@ -75,6 +75,9 @@
           <td>
             <p-tag [value]="getTranslatedText((`order.status.${order.status}`|transloco), order.status)"
               [severity]="getSeverity(order.status)"></p-tag>
+            @if (order.rental) {
+            <p-tag class="ml-1" [value]="'rental.badge' | transloco" severity="info" />
+            }
           </td>
           <td>{{ order.totalAmount | currency: " " : 'code' : '0.0' }}</td>
           <td>

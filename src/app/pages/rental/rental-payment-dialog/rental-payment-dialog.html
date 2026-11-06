@@ -1,0 +1,52 @@
+<p-dialog [header]="'rental.paymentDialog.' + mode | transloco" [modal]="true" [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)" [style]="{ width: '34rem' }" [breakpoints]="{ '640px': '95vw' }">
+  <div class="flex flex-col gap-4">
+    @if (mode === 'ISSUE') {
+    <p class="text-gray-600 mb-0!">{{ 'rental.issueHint' | transloco }}</p>
+    }
+    <div class="flex justify-between">
+      <span>{{ 'rental.due' | transloco }}</span>
+      <span class="font-bold">{{ dueAmount | currency: ' ' : 'code' : '0.0' }} UZS</span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      @for (type of paymentTypes; track type) {
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'order.paymentMethod.' + type | transloco }}</label>
+        <p-inputnumber [(ngModel)]="amounts[type]" [min]="0" fluid />
+      </div>
+      }
+    </div>
+    @if (overpaid) {
+    <small class="text-red-500">{{ 'rental.overpaid' | transloco }}</small>
+    }
+    @if (mode === 'PAYMENT') {
+    <small class="text-gray-500">{{ 'rental.prepaymentHint' | transloco }}</small>
+    }
+
+    @if (mode !== 'DEBT') {
+    <div class="flex justify-between items-center">
+      <span class="font-semibold">{{ 'rental.collaterals' | transloco }}</span>
+      <p-button icon="pi pi-plus" [label]="'rental.addCollateral' | transloco" text (onClick)="addCollateral()" />
+    </div>
+    @for (collateral of collaterals; track $index; let i = $index) {
+    <div class="flex gap-2 items-center">
+      <p-select [options]="collateralTypes" optionValue="value" [(ngModel)]="collateral.type" class="w-36">
+        <ng-template let-option #item>{{ 'rental.collateralType.' + option.value | transloco }}</ng-template>
+        <ng-template let-option #selectedItem>{{ 'rental.collateralType.' + option.value | transloco }}</ng-template>
+      </p-select>
+      <input pInputText class="flex-1" [(ngModel)]="collateral.description"
+        [placeholder]="'rental.collateralDescription' | transloco" />
+      <p-button icon="pi pi-times" severity="danger" text (onClick)="removeCollateral(i)" />
+    </div>
+    }
+    <small class="text-gray-500">{{ 'rental.collateralHint' | transloco }}</small>
+    }
+  </div>
+  <ng-template #footer>
+    <p-button [label]="(mode === 'PAYMENT' ? 'rental.later' : 'rental.cancelAction') | transloco" severity="secondary"
+      outlined (onClick)="close()" />
+    <p-button [label]="'rental.paymentDialog.submit' + mode | transloco" icon="pi pi-check" [loading]="loading"
+      [disabled]="!canSubmit" (onClick)="submit()" />
+  </ng-template>
+</p-dialog>

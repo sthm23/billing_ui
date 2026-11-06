@@ -1,0 +1,29 @@
+<div class="card max-w-2xl">
+  <h2 class="text-2xl font-bold">{{ 'storeSettings.title' | transloco }}</h2>
+  @if (store(); as s) {
+  <p class="text-gray-500">{{ s.name }}</p>
+  <div class="flex flex-col gap-5 mt-4">
+    <label class="flex items-start gap-3">
+      <p-toggleswitch [(ngModel)]="salesEnabled" />
+      <span>
+        <span class="font-semibold block">{{ 'storeSettings.sales' | transloco }}</span>
+        <small class="text-gray-500">{{ 'storeSettings.salesHint' | transloco }}</small>
+      </span>
+    </label>
+    <label class="flex items-start gap-3">
+      <p-toggleswitch [(ngModel)]="rentalEnabled" />
+      <span>
+        <span class="font-semibold block">{{ 'storeSettings.rental' | transloco }}</span>
+        <small class="text-gray-500">{{ 'storeSettings.rentalHint' | transloco }}</small>
+      </span>
+    </label>
+    @if (!valid) {
+    <p-message severity="warn" [text]="'storeSettings.atLeastOne' | transloco" />
+    }
+    <div class="flex justify-end">
+      <p-button [label]="'rental.save' | transloco" icon="pi pi-check" [disabled]="!valid" [loading]="saving()"
+        (onClick)="save()" />
+    </div>
+  </div>
+  }
+</div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { Attribute, AttributeItem, CreateProductVariantPayload, Product, ProductDetail } from '../../../models/product.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +18,7 @@ import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
 import { TranslocoPipe } from '@ngneat/transloco';
+import { CheckboxModule } from 'primeng/checkbox';
 
 type AttrItemList = Attribute & { items: AttributeItem[] };
 
@@ -36,6 +37,9 @@ type VariantForm = {
   quantity: FormControl<number | null>;
   price: FormControl<number | null>;
   salePrice: FormControl<number | null>;
+  canSell: FormControl<boolean>;
+  canRent: FormControl<boolean>;
+  rentPricePerDay: FormControl<number | null>;
 };
 @Component({
   selector: 'app-product-variant',
@@ -51,7 +55,8 @@ type VariantForm = {
     TagModule,
     DividerModule,
     AvatarModule,
-    TranslocoPipe
+    TranslocoPipe,
+    CheckboxModule
   ],
   templateUrl: './product-variant.html',
   styleUrl: './product-variant.css',
@@ -77,6 +82,10 @@ export class ProductVariant implements OnInit, OnDestroy {
   }
 
   destroyer$ = new Subject<void>();
+
+  /** Store modes: a rental-only store creates rentable variants without a sale price */
+  readonly salesEnabled = inject(AuthService).isSalesEnabled();
+  readonly rentalEnabled = inject(AuthService).isRentalEnabled();
 
   constructor(
     private router: Router,
@@ -229,7 +238,11 @@ export class ProductVariant implements OnInit, OnDestroy {
       attrs: new FormControl<VariantAttr[]>(attrs, { nonNullable: true }),
       quantity: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
       price: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      salePrice: new FormControl<number | null>(null, [Validators.required, Validators.min(0)])
+      // Not shown in a rental-only store: the variant is not for sale
+      salePrice: new FormControl<number | null>(this.salesEnabled ? null : 0, [Validators.required, Validators.min(0)]),
+      canSell: new FormControl<boolean>(this.salesEnabled, { nonNullable: true }),
+      canRent: new FormControl<boolean>(this.rentalEnabled && !this.salesEnabled, { nonNullable: true }),
+      rentPricePerDay: new FormControl<number | null>(null, [Validators.min(0)])
     });
   }
 
@@ -254,7 +267,19 @@ export class ProductVariant implements OnInit, OnDestroy {
     Object.values(this.attrGroup.controls).forEach((c) => c.setValue([]));
   }
 
+  /** canRent requires a rent price per day > 0 (backend rule) */
+  rentPriceMissing(i: number) {
+    const v = this.variantsArray.at(i).controls;
+    return v.canRent.value && !(v.rentPricePerDay.value && v.rentPricePerDay.value > 0);
+  }
+
   submit() {
+    const missingRentPrice = this.variantsArray.controls.some((_, i) => this.rentPriceMissing(i));
+    if (missingRentPrice) {
+      this.form.markAllAsTouched();
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'A rentable variant needs a rent price per day' });
+      return;
+    }
     // итог: variants содержит комбинации + quantity/price/salePrice
     if (this.form.valid) {
       const product = this.productCard()!;
@@ -269,7 +294,10 @@ export class ProductVariant implements OnInit, OnDestroy {
         })),
         quantity: v.controls.quantity.value!,
         costPrice: v.controls.price.value!,
-        retailPrice: v.controls.salePrice.value!
+        retailPrice: v.controls.salePrice.value!,
+        canSell: v.controls.canSell.value,
+        canRent: v.controls.canRent.value,
+        ...(v.controls.canRent.value ? { rentPricePerDay: v.controls.rentPricePerDay.value! } : {})
       }));
 
       const createProductVariantPayload: CreateProductVariantPayload = {

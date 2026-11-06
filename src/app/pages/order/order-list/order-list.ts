@@ -262,6 +262,11 @@ export class OrderList implements OnInit {
   }
 
   selectOrder(order: Order) {
+    // A rental order is managed in the rental screens, never in the sale cart
+    if (order.rental) {
+      this.router.navigate(['/pages/rental', order.rental.id]);
+      return;
+    }
 
     switch (order.status) {
       case OrderStatus.COMPLETED:
@@ -285,6 +290,10 @@ export class OrderList implements OnInit {
   }
 
   isDisable(order: Order, action: 'RETURN' | 'DELETE'): boolean {
+    // Rentals are returned / cancelled from the rental card
+    if (order.rental) {
+      return true;
+    }
     if (action === 'RETURN') {
       switch (order.status) {
         case OrderStatus.COMPLETED:
@@ -366,6 +375,7 @@ export class OrderList implements OnInit {
             createdAt: order.createdAt,
             total: order.totalAmount.toLocaleString('en-US'),
             status: order.status,
+            rental: order.rental,
             label: `${order.customer.user.fullName} - ${order.customer.user.phone} - ${new Date(order.createdAt).toLocaleDateString()} - ${(+order.totalAmount).toLocaleString(undefined, { compactDisplay: 'short' })}`
           }
         })
