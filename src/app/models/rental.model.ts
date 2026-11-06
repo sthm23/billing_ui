@@ -147,6 +147,8 @@ export interface RentalOrderItem {
     sku: string;
     barCode: string | null;
     rentPricePerDay: Money | null;
+    /** Dry-cleaning days suggested on return */
+    defaultCleaningDays: number;
     product: { id: string; name: string };
     attributes: { value: { value: string; attribute: { name: string } } }[];
   };
@@ -180,6 +182,8 @@ export interface Rental {
   status: RentalStatus;
   issuedAt: string | null;
   issuedBy: string | null;
+  /** Issued while the salon held no collateral */
+  issuedWithoutCollateral: boolean;
   closedAt: string | null;
   cancelledAt: string | null;
   cancelledBy: string | null;
@@ -188,6 +192,8 @@ export interface Rental {
   notes: string | null;
   createdAt: string;
   overdue: boolean;
+  /** Short code shown to people: the first id characters */
+  code: string;
 }
 
 /** GET /rental/:id and the response of every rental mutation */

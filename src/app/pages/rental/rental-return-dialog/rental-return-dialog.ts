@@ -95,7 +95,7 @@ export class RentalReturnDialog implements OnChanges {
         name: `${item.variant.product.name} · ${item.variant.sku}`,
         outstanding: item.quantity - item.returnedQuantity,
         quantity: item.quantity - item.returnedQuantity,
-        cleaningDays: DEFAULT_CLEANING_DAYS,
+        cleaningDays: item.variant.defaultCleaningDays ?? DEFAULT_CLEANING_DAYS,
       }));
     this.returnedAt = null;
     this.penaltyAmount = 0;
