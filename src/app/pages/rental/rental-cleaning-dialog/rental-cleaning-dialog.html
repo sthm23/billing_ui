@@ -1,0 +1,77 @@
+<p-dialog [header]="'rental.cleaning.dialogTitle' | transloco" [modal]="true" [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)" [style]="{ width: '34rem' }" [breakpoints]="{ '640px': '95vw' }">
+  @if (variant) {
+  <div class="flex flex-col gap-4">
+    <div>
+      <div class="font-semibold">{{ variant.productName }}</div>
+      <small class="text-gray-500">{{ variant.sku }} · {{ 'rental.cleaning.oneUnit' | transloco }}</small>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'rental.cleaning.firstDay' | transloco }}</label>
+        <p-datepicker [(ngModel)]="date" (ngModelChange)="scheduleCheck()" dateFormat="dd.mm.yy" [readonlyInput]="true"
+          [showIcon]="true" iconDisplay="input" [minDate]="today" appendTo="body" fluid />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'rental.cleaning.days' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="days" (ngModelChange)="scheduleCheck()" [min]="1" [max]="maxDays" [showButtons]="true"
+          buttonLayout="horizontal" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" fluid />
+      </div>
+    </div>
+
+    <div class="rounded p-3 text-sm" [class]="check()?.ok === false ? 'bg-red-50 text-red-700' : 'bg-surface-100 dark:bg-surface-800'">
+      @if (checking()) {
+      <span class="text-gray-500"><i class="pi pi-spin pi-spinner mr-2"></i>{{ 'rental.cleaning.checking' | transloco }}</span>
+      } @else if (checkFailed()) {
+      <span class="text-red-600">{{ 'rental.availabilityFailed' | transloco }}</span>
+      } @else if (check(); as c) {
+      @if (c.ok) {
+      <div>{{ 'rental.cleaning.period' | transloco: { from: shortDay(c.startDate), to: shortDay(lastDay(c.endDate)), days } }}</div>
+      <div class="font-semibold">{{ 'rental.cleaning.freeFrom' | transloco: { date: shortDay(c.endDate) } }}</div>
+      } @else {
+      <div class="font-semibold mb-1">{{ 'rental.cleaning.conflictTitle' | transloco }}</div>
+      @for (day of c.conflicts; track day.date) {
+      <div>
+        <span class="font-semibold">{{ dayLabel(day.date) }}:</span>
+        @for (r of day.rentals; track r.rentalId) {
+        <span class="ml-1">{{ 'rental.cleaning.conflictBooking' | transloco: { code: r.code, customer: r.customerName ?? '—', from: shortDay(r.startDate), to: shortDay(r.endDate) } }};</span>
+        }
+        @for (other of day.cleanings; track other.cleaningId) {
+        <span class="ml-1">{{ 'rental.cleaning.conflictCleaning' | transloco: { from: shortDay(other.startDate), to: shortDay(lastDay(other.endDate)) } }};</span>
+        }
+      </div>
+      }
+      <small class="block mt-1">{{ 'rental.cleaning.conflictHint' | transloco }}</small>
+      }
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'rental.cleaning.amount' | transloco }}</label>
+        <p-inputnumber [(ngModel)]="amount" [min]="0" [maxFractionDigits]="2" suffix=" UZS" fluid />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm">{{ 'rental.cleaning.paymentType' | transloco }}</label>
+        <p-select [options]="paymentTypes" optionValue="value" [(ngModel)]="paymentType" appendTo="body" fluid>
+          <ng-template let-option #item>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+          <ng-template let-option #selectedItem>{{ 'order.paymentMethod.' + option.value | transloco }}</ng-template>
+        </p-select>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm">{{ 'rental.cleaning.comment' | transloco }}</label>
+      <textarea pTextarea rows="2" maxlength="500" [(ngModel)]="comment" style="resize: none"
+        [placeholder]="'rental.cleaning.commentPlaceholder' | transloco"></textarea>
+    </div>
+    <small class="text-gray-500">{{ 'rental.cleaning.expenseHint' | transloco }}</small>
+  </div>
+  }
+  <ng-template #footer>
+    <p-button [label]="'rental.cancelAction' | transloco" severity="secondary" outlined (onClick)="close()" />
+    <p-button [label]="'rental.cleaning.submit' | transloco" icon="pi pi-check" [loading]="saving()"
+      [disabled]="!canSubmit" (onClick)="submit()" />
+  </ng-template>
+</p-dialog>

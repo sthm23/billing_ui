@@ -413,7 +413,8 @@
       "PURCHASE": "Покупка",
       "RETURN": "Возврат",
       "OTHER": "Другое",
-      "RENTAL": "Доход от аренды"
+      "RENTAL": "Доход от аренды",
+      "DRY_CLEANING": "Химчистка"
     },
     "cashboxStatus": {
       "name": "Статус кассы",
@@ -615,6 +616,41 @@
     "legendBusy": "всё занято",
     "ownedCount": "{{owned}} шт.",
     "bookingsInPeriod": "Брони в периоде",
-    "badge": "Аренда"
+    "badge": "Аренда",
+    "cleaning": {
+      "toCleaning": "В химчистку",
+      "dialogTitle": "В химчистку",
+      "oneUnit": "1 экземпляр",
+      "firstDay": "Первый день",
+      "days": "Дней",
+      "checking": "Проверяем занятость…",
+      "period": "{{from}} — {{to}}, дней: {{days}}",
+      "freeFrom": "Свободно с 12:00 {{date}}",
+      "conflictTitle": "Нельзя: на эти дни нет свободного экземпляра",
+      "conflictBooking": "бронь #{{code}} · {{customer}} ({{from}} — {{to}})",
+      "conflictCleaning": "другая химчистка ({{from}} — {{to}})",
+      "conflictHint": "Выберите другие дни или измените бронь.",
+      "amount": "Сумма расхода",
+      "paymentType": "Способ оплаты",
+      "comment": "Комментарий",
+      "commentPlaceholder": "Химчистка, примечание",
+      "expenseHint": "Расход сразу записывается в вашу открытую кассу. На эти дни экземпляр недоступен для аренды.",
+      "submit": "Сохранить",
+      "saved": "Химчистка запланирована, расход записан в кассу",
+      "notAvailable": "На эти дни нет свободного экземпляра",
+      "legend": "Химчистка",
+      "inCleaning": "в химчистке: {{count}}",
+      "listTitle": "Химчистка",
+      "cancel": "Отменить",
+      "cancelTitle": "Отменить химчистку?",
+      "cancelMessage": "{{product}}, {{from}} — {{to}}. Сумма расхода вернётся в кассу.",
+      "cancelled": "Химчистка отменена, сумма возвращена в кассу",
+      "state": {
+        "PLANNED": "Запланирована",
+        "IN_PROGRESS": "Идёт",
+        "DONE": "Завершена",
+        "CANCELLED": "Отменена"
+      }
+    }
   }
 }

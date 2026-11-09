@@ -413,7 +413,8 @@
       "PURCHASE": "Sotib olish",
       "RETURN": "Qaytarish",
       "OTHER": "Boshqa",
-      "RENTAL": "Ijaradan daromad"
+      "RENTAL": "Ijaradan daromad",
+      "DRY_CLEANING": "Kimyoviy tozalash"
     },
     "cashboxStatus": {
       "name": "Kassaning holati",
@@ -615,6 +616,41 @@
     "legendBusy": "hammasi band",
     "ownedCount": "{{owned}} dona",
     "bookingsInPeriod": "Davrdagi bronlar",
-    "badge": "Ijara"
+    "badge": "Ijara",
+    "cleaning": {
+      "toCleaning": "Kimyoviy tozalashga",
+      "dialogTitle": "Kimyoviy tozalashga",
+      "oneUnit": "1 dona",
+      "firstDay": "Birinchi kun",
+      "days": "Kunlar",
+      "checking": "Bandlik tekshirilmoqda…",
+      "period": "{{from}} — {{to}}, kunlar: {{days}}",
+      "freeFrom": "{{date}} 12:00 dan bo‘sh",
+      "conflictTitle": "Mumkin emas: bu kunlarda bo‘sh dona yo‘q",
+      "conflictBooking": "bron #{{code}} · {{customer}} ({{from}} — {{to}})",
+      "conflictCleaning": "boshqa tozalash ({{from}} — {{to}})",
+      "conflictHint": "Boshqa kunlarni tanlang yoki bronni o‘zgartiring.",
+      "amount": "Xarajat summasi",
+      "paymentType": "To‘lov usuli",
+      "comment": "Izoh",
+      "commentPlaceholder": "Tozalash joyi, izoh",
+      "expenseHint": "Xarajat darhol ochiq kassangizga yoziladi. Bu kunlarda dona ijaraga berilmaydi.",
+      "submit": "Saqlash",
+      "saved": "Tozalash rejalashtirildi, xarajat kassaga yozildi",
+      "notAvailable": "Bu kunlarda bo‘sh dona yo‘q",
+      "legend": "Tozalash",
+      "inCleaning": "tozalashda: {{count}}",
+      "listTitle": "Kimyoviy tozalash",
+      "cancel": "Bekor qilish",
+      "cancelTitle": "Tozalash bekor qilinsinmi?",
+      "cancelMessage": "{{product}}, {{from}} — {{to}}. Xarajat summasi kassaga qaytadi.",
+      "cancelled": "Tozalash bekor qilindi, summa kassaga qaytarildi",
+      "state": {
+        "PLANNED": "Rejalashtirilgan",
+        "IN_PROGRESS": "Jarayonda",
+        "DONE": "Tugagan",
+        "CANCELLED": "Bekor qilingan"
+      }
+    }
   }
 }

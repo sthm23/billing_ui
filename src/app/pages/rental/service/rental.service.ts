@@ -6,6 +6,9 @@ import {
   RentalBookingPayload,
   RentalCalendar,
   RentalCancelPayload,
+  RentalCleaning,
+  RentalCleaningCheck,
+  RentalCleaningPayload,
   RentalDetail,
   RentalListItem,
   RentalListParams,
@@ -125,6 +128,42 @@ export class RentalService {
 
   cancel(id: string, body: RentalCancelPayload) {
     return this.http.post<RentalDetail>(`/api/rental/${id}/cancel`, body, {
+      withCredentials: true,
+    });
+  }
+
+  /** Planned dry cleaning (R13): can one unit go on these days? Saves nothing. */
+  checkCleaning(params: { warehouseId: string; variantId: string; startDate: string; days: number }) {
+    const query = new URLSearchParams({
+      warehouseId: params.warehouseId,
+      variantId: params.variantId,
+      startDate: params.startDate,
+      days: String(params.days),
+    });
+    return this.http.get<RentalCleaningCheck>(`/api/rental/cleanings/check?${query.toString()}`, {
+      withCredentials: true,
+    });
+  }
+
+  /** Active cleanings not finished before `from` (default today) and starting by `to` */
+  getCleanings(params: { warehouseId: string; variantId?: string; from?: string; to?: string }) {
+    const query = new URLSearchParams({ warehouseId: params.warehouseId });
+    if (params.variantId) query.append('variantId', params.variantId);
+    if (params.from) query.append('from', params.from);
+    if (params.to) query.append('to', params.to);
+    return this.http.get<RentalCleaning[]>(`/api/rental/cleanings?${query.toString()}`, {
+      withCredentials: true,
+    });
+  }
+
+  /** OWNER/MANAGER; the expense goes to the user's open cashbox at once */
+  createCleaning(body: RentalCleaningPayload) {
+    return this.http.post<RentalCleaning>('/api/rental/cleanings', body, { withCredentials: true });
+  }
+
+  /** OWNER/MANAGER, before the start only; the amount comes back to the cashbox */
+  cancelCleaning(id: string) {
+    return this.http.post<RentalCleaning>(`/api/rental/cleanings/${id}/cancel`, {}, {
       withCredentials: true,
     });
   }

@@ -411,7 +411,8 @@
       "PURCHASE": "Purchase",
       "RETURN": "Return",
       "OTHER": "Other",
-      "RENTAL": "Rental income"
+      "RENTAL": "Rental income",
+      "DRY_CLEANING": "Dry cleaning"
     },
     "cashboxStatus": {
       "name": "Cashbox status",
@@ -613,6 +614,41 @@
     "legendBusy": "all busy",
     "ownedCount": "{{owned}} pcs.",
     "bookingsInPeriod": "Bookings in the period",
-    "badge": "Rental"
+    "badge": "Rental",
+    "cleaning": {
+      "toCleaning": "Send to dry cleaning",
+      "dialogTitle": "Send to dry cleaning",
+      "oneUnit": "1 unit",
+      "firstDay": "First day",
+      "days": "Days",
+      "checking": "Checking availability…",
+      "period": "{{from}} — {{to}}, days: {{days}}",
+      "freeFrom": "Free from 12:00 {{date}}",
+      "conflictTitle": "Not possible: no free unit on these days",
+      "conflictBooking": "booking #{{code}} · {{customer}} ({{from}} — {{to}})",
+      "conflictCleaning": "another dry cleaning ({{from}} — {{to}})",
+      "conflictHint": "Pick other days or change the booking.",
+      "amount": "Expense amount",
+      "paymentType": "Payment method",
+      "comment": "Comment",
+      "commentPlaceholder": "Dry cleaner, note",
+      "expenseHint": "The expense is written to your open cashbox at once. The unit cannot be rented on these days.",
+      "submit": "Save",
+      "saved": "Dry cleaning planned, expense written to the cashbox",
+      "notAvailable": "No free unit on these days",
+      "legend": "Dry cleaning",
+      "inCleaning": "in dry cleaning: {{count}}",
+      "listTitle": "Dry cleaning",
+      "cancel": "Cancel",
+      "cancelTitle": "Cancel dry cleaning?",
+      "cancelMessage": "{{product}}, {{from}} — {{to}}. The expense amount returns to the cashbox.",
+      "cancelled": "Dry cleaning cancelled, amount returned to the cashbox",
+      "state": {
+        "PLANNED": "Planned",
+        "IN_PROGRESS": "In progress",
+        "DONE": "Done",
+        "CANCELLED": "Cancelled"
+      }
+    }
   }
 }

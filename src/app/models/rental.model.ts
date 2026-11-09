@@ -31,6 +31,8 @@ export interface RentalApiError {
   message?: string | string[];
   variantId?: string;
   available?: number;
+  /** 409 NOT_AVAILABLE of POST /rental/cleanings */
+  conflicts?: RentalCleaningConflictDay[];
 }
 
 export type Money = string | number;
@@ -247,8 +249,11 @@ export interface RentalCalendar {
     productId: string;
     productName: string;
     owned: number;
-    days: { date: string; busy: number; available: number }[];
+    /** cleaning — units held by planned dry cleaning that day (R13), included in busy */
+    days: { date: string; busy: number; available: number; cleaning: number }[];
+    /** Rentals only */
     bookings: { rentalId: string; from: string; to: string; quantity: number }[];
+    cleanings: { cleaningId: string; from: string; to: string }[];
   }[];
   rentals: {
     id: string;
@@ -258,6 +263,78 @@ export interface RentalCalendar {
     endDate: string;
     customerName: string | null;
   }[];
+}
+
+export enum RentalCleaningState {
+  PLANNED = 'PLANNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED',
+}
+
+/** Planned dry cleaning of one unit (R13), row of /rental/cleanings */
+export interface RentalCleaning {
+  id: string;
+  warehouseId: string;
+  variantId: string;
+  sku: string;
+  productId: string;
+  productName: string;
+  startDate: string;
+  /** Noon after the last day — the unit is free again */
+  endDate: string;
+  /** Salon local dates, YYYY-MM-DD */
+  firstDay: string;
+  lastDay: string;
+  days: number;
+  amount: Money;
+  paymentType: PaymentType;
+  comment: string | null;
+  status: 'ACTIVE' | 'CANCELLED';
+  state: RentalCleaningState;
+  canCancel: boolean;
+  createdBy: string;
+  createdAt: string;
+  cancelledBy: string | null;
+  cancelledAt: string | null;
+}
+
+export interface RentalCleaningPayload {
+  warehouseId: string;
+  variantId: string;
+  /** YYYY-MM-DD, first day */
+  startDate: string;
+  /** 1…30 */
+  days: number;
+  amount: number;
+  paymentType: PaymentType;
+  comment?: string;
+}
+
+/** Day where a unit is missing; also the 409 NOT_AVAILABLE body of POST /rental/cleanings */
+export interface RentalCleaningConflictDay {
+  date: string;
+  rentals: {
+    rentalId: string;
+    code: string;
+    orderId: string;
+    customerName: string | null;
+    startDate: string;
+    endDate: string;
+    quantity: number;
+  }[];
+  cleanings: { cleaningId: string; startDate: string; endDate: string }[];
+}
+
+/** GET /rental/cleanings/check */
+export interface RentalCleaningCheck {
+  ok: boolean;
+  owned: number;
+  /** Free for the whole period without this cleaning */
+  available: number;
+  startDate: string;
+  endDate: string;
+  conflicts: RentalCleaningConflictDay[];
 }
 
 export interface CleaningConflict {

@@ -45,6 +45,8 @@ export enum CashTransactionCategory {
   RENT = 'RENT',
   /** Income from rental orders (not RENT) */
   RENTAL = 'RENTAL',
+  /** Planned dry cleaning of a rental item (expense; its cancel storno is income). Not in the manual form. */
+  DRY_CLEANING = 'DRY_CLEANING',
   DELIVERY = 'DELIVERY',
   SALARY = 'SALARY',
   PURCHASE = 'PURCHASE',
