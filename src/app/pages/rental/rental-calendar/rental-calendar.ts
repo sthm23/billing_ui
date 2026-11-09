@@ -117,6 +117,9 @@ export class RentalCalendar implements OnInit {
   }
 
   cellClass(day: CalendarDay) {
+    // Busy only because of dry cleaning: blue, not the booking yellow/red
+    if (day.cleaning > 0 && day.busy === day.cleaning) return 'bg-blue-100 text-blue-700 font-semibold';
+    // Bookings and dry cleaning on the same day: booking colour + blue outline
     const cleaning = day.cleaning > 0 ? ' outline outline-2 -outline-offset-2 outline-blue-400' : '';
     if (day.busy === 0) return 'bg-green-50 text-green-700' + cleaning;
     if (day.available === 0) return 'bg-red-100 text-red-700 font-semibold' + cleaning;
