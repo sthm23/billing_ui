@@ -83,7 +83,6 @@ export class OrgView {
       attributes: this.categoryService.getAttributeList(1, 100)
     }).pipe(
       switchMap(({ brands, categories, attributes }) => {
-        console.log(brands, categories, attributes);
         this.brandList.set(brands.map(brand => ({ id: brand.id, name: brand.name })));
         this.attributeList.set(attributes.data.map(attr => ({ id: attr.id, name: attr.name })));
         return this.storeService.getStoreById(id)
@@ -157,7 +156,6 @@ export class OrgView {
 
   clearForm() { }
   submitForm() {
-    console.log(this.storeForm.value);
     if (this.storeForm.valid) {
       const value = this.storeForm.value;
       const payload = {
