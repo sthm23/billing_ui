@@ -19,6 +19,9 @@ export type SelectType = {
 export type MultiSelectType = {
   key: string,
   label: string,
+  icon?: string,
+  /** false — a folder node that can't be picked (p-treeselect) */
+  selectable?: boolean,
   children?: MultiSelectType[]
 }
 

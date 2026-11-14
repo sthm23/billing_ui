@@ -90,9 +90,12 @@ export interface CreateProduct {
   tagIds: string[],
   description?: string
 }
+/** Level 1 = store direction (parentId null), level 2 = product subcategory; name is Russian */
 export interface Category {
   id: string
   name: string
+  nameUz?: string | null
+  nameEn?: string | null
   parentId: string | null
   children?: Category[]
 }

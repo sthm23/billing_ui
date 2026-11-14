@@ -25,7 +25,7 @@
             <div class="flex flex-wrap gap-2 w-full">
               <label for="category">{{'product.category' | transloco}}</label>
               <p-treeselect id="category" class="w-full" formControlName="category"
-                [options]="categories() | translatePipe:translateObject:categoryArr" [class]="isValidField('category')"
+                [options]="categories()" [class]="isValidField('category')"
                 [placeholder]="'product.categoryPlaceholder'|transloco" />
             </div>
 

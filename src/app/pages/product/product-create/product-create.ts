@@ -25,7 +25,6 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TextareaModule } from 'primeng/textarea';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { TranslateService } from '../../../shared/services/translate.service';
-import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-product-create',
@@ -43,8 +42,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     TreeSelectModule,
     MultiSelectModule,
     TextareaModule,
-    TranslocoPipe,
-    TranslatePipe
+    TranslocoPipe
   ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
@@ -254,26 +252,19 @@ export class ProductCreate implements OnInit, OnDestroy {
   }
 
 
-  private makeSelectTypes(data: SelectType[]): MultiSelectType[] {
-    const result = [];
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i];
-      if (item.children && item.children.length) {
-        result.push({
-          key: item.id,
-          label: item.name,
-          icon: 'pi pi-fw pi-folder',
-          children: this.makeSelectTypes(item.children)
-        });
-      } else {
-        result.push({
-          key: item.id,
-          label: item.name,
-          icon: 'pi pi-fw pi-clipboard',
-        });
-      }
-    }
-    return result as MultiSelectType[];
+  /** Directions (level 1) are folders; only a subcategory (level 2) can be picked. */
+  private makeSelectTypes(data: Category[]): MultiSelectType[] {
+    return data.map((direction) => ({
+      key: direction.id,
+      label: direction.name,
+      icon: 'pi pi-fw pi-folder',
+      selectable: false,
+      children: (direction.children ?? []).map((sub) => ({
+        key: sub.id,
+        label: sub.name,
+        icon: 'pi pi-fw pi-clipboard',
+      })),
+    }));
   }
 
   goToList() {

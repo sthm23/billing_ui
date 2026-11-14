@@ -91,7 +91,8 @@ export class OrgCreate implements OnInit, OnDestroy {
         id: owner.id
       })));
       this.categoryArr = categories;
-      const data = this.makeSelectTypes(categories)
+      // A store gets a direction (level 1) only — subcategories belong to products
+      const data = this.makeSelectTypes(categories.map(({ children, ...direction }) => direction))
       this.categoryList.set(data);
 
       this.brandList.set(brands.map((brand) => ({
