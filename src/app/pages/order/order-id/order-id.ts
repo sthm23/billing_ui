@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { SaleDialog, SaleDialogOutput } from '../../../shared/components/sale-dialog/sale-dialog';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { AdditionalService } from './additional-service/additional-service';
+import { distributeSetDiscount } from '../../../shared/utils/set-discount';
 
 
 
@@ -304,17 +305,25 @@ export class OrderId implements OnInit {
 
   handleSaleDialogChange(event: SaleDialogOutput) {
     this.saleDialogVisible = event.visible;
-    if (event.saleType === 'PRICE') {
-      const currentOrderItems = this.orderItems();
-      const updatedItems = currentOrderItems.map(item => {
-        return {
-          ...item,
-          sale: (event.sale / currentOrderItems.length) / item.quantity
-        };
-      });
-      this.orderItems.set(updatedItems);
-      this.saleAmount.set(event.sale);
+    // Closing/cancelling the dialog emits price 0 and sale 0 — keep the discounts as they are
+    if (event.saleType !== 'PRICE' || (event.price === 0 && event.sale === 0)) {
+      return;
     }
+    // Order set discount: same distribution as the rental and mobile (docs/features/orders.md);
+    // saleAmount follows from the items via the effect.
+    const currentOrderItems = this.orderItems();
+    const base = currentOrderItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    let sales: number[];
+    try {
+      sales = distributeSetDiscount(
+        currentOrderItems.map(item => ({ unitPrice: +item.price, quantity: item.quantity })),
+        base - event.sale
+      );
+    } catch {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Discount cannot be larger than the total' });
+      return;
+    }
+    this.orderItems.set(currentOrderItems.map((item, i) => ({ ...item, sale: sales[i] })));
   }
 
   backToList() {

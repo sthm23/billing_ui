@@ -1,10 +1,11 @@
 /**
- * Distribution of a discount on a whole set (rental booking) over its lines.
+ * Distribution of a discount on a whole set over its lines: a rental booking
+ * and a sale order (docs/features/orders.md).
  * The algorithm is fixed in docs/features/rental.md#set-discount-distribution
  * and must stay identical in billing-mobile — do not change one without the other.
  */
 export interface DiscountLine {
-  /** Unit price (item: rentPricePerDay × days; service: its price), whole sums */
+  /** Unit price (rental item: rentPricePerDay × days; sale item: retailPrice; service: its price), whole sums */
   unitPrice: number;
   /** Service: 1 */
   quantity: number;
